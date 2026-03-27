@@ -1,6 +1,7 @@
 @if (loading()) {
   <app-loading-spinner />
-} @else if (session(); as s) {
+} @else {
+  @if (session(); as s) {
   <div class="detail-page">
     <div class="detail-header">
       <div>
@@ -78,4 +79,5 @@
       </div>
     </div>
   </div>
+  }
 }

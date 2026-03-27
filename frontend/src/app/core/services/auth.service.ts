@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { ApiService } from './api.service';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models';
+import { ApiService } from './api.service';
+import { keysToCamel } from '../utils/camel-case';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,24 +13,38 @@ export class AuthService {
   private readonly TOKEN_KEY = 'stride_pro_token';
   private readonly USER_KEY = 'stride_pro_user';
 
-  private readonly _isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
-  private readonly _currentUser$ = new BehaviorSubject<User | null>(this.getStoredUser());
+  private readonly _isAuthenticated$ = new BehaviorSubject<boolean>(
+    this.hasToken(),
+  );
+  private readonly _currentUser$ = new BehaviorSubject<User | null>(
+    this.getStoredUser(),
+  );
 
   readonly isAuthenticated$ = this._isAuthenticated$.asObservable();
   readonly currentUser$ = this._currentUser$.asObservable();
 
   login(email: string, password: string): Observable<AuthResponse> {
     const body: LoginRequest = { email, password };
-    return this.api.post<AuthResponse>('/auth/login', body).pipe(
-      tap((response) => this.handleAuthResponse(response))
-    );
+    return this.api
+      .post<AuthResponse>('/auth/login', body)
+      .pipe(tap((response) => this.handleAuthResponse(response)));
   }
 
-  register(email: string, password: string, firstName: string, lastName: string): Observable<AuthResponse> {
-    const body: RegisterRequest = { email, password, firstName, lastName };
-    return this.api.post<AuthResponse>('/auth/register', body).pipe(
-      tap((response) => this.handleAuthResponse(response))
-    );
+  register(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+  ): Observable<AuthResponse> {
+    const body: RegisterRequest = {
+      email,
+      password,
+      first_name: firstName,
+      last_name: lastName,
+    };
+    return this.api
+      .post<AuthResponse>('/auth/register', body)
+      .pipe(tap((response) => this.handleAuthResponse(response)));
   }
 
   logout(): void {
@@ -49,7 +64,7 @@ export class AuthService {
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.token);
+    localStorage.setItem(this.TOKEN_KEY, response.tokens.accessToken);
     localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
     this._isAuthenticated$.next(true);
     this._currentUser$.next(response.user);
@@ -63,7 +78,7 @@ export class AuthService {
     const userJson = localStorage.getItem(this.USER_KEY);
     if (userJson) {
       try {
-        return JSON.parse(userJson);
+        return keysToCamel<User>(JSON.parse(userJson));
       } catch {
         return null;
       }

@@ -144,11 +144,17 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
 }
 
 export interface AuthResponse {
-  token: string;
+  tokens: AuthTokens;
   user: User;
 }

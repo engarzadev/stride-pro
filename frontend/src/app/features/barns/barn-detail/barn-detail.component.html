@@ -1,6 +1,7 @@
 @if (loading()) {
   <app-loading-spinner />
-} @else if (barn(); as b) {
+} @else {
+  @if (barn(); as b) {
   <div class="detail-page">
     <div class="detail-header">
       <div>
@@ -69,4 +70,5 @@
       </div>
     }
   </div>
+  }
 }

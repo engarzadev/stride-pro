@@ -1,16 +1,15 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
 import { Appointment, Client, Horse, Invoice } from '../../core/models';
+import { ApiService } from '../../core/services/api.service';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
-import { CurrencyFormatPipe } from '../../shared/pipes/currency-format.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [LoadingSpinnerComponent, DateFormatPipe, CurrencyFormatPipe],
+  imports: [LoadingSpinnerComponent, DateFormatPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
@@ -52,7 +51,9 @@ export class DashboardComponent implements OnInit {
   }
 
   get pendingInvoices(): Invoice[] {
-    return this.invoices().filter((i) => i.status === 'pending' || i.status === 'overdue');
+    return this.invoices().filter(
+      (i) => i.status === 'pending' || i.status === 'overdue',
+    );
   }
 
   navigateTo(path: string): void {

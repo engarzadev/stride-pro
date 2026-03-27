@@ -1,6 +1,7 @@
 @if (loading()) {
   <app-loading-spinner />
-} @else if (appointment(); as a) {
+} @else {
+  @if (appointment(); as a) {
   <div class="detail-page">
     <div class="detail-header">
       <div>
@@ -81,7 +82,7 @@
             </div>
             <div class="detail-field">
               <label>Body Zones</label>
-              <p>{{ a.session.bodyZones?.join(', ') || '-' }}</p>
+              <p>{{ a.session.bodyZones.join(', ') || '-' }}</p>
             </div>
           </div>
           <div class="mt-4">
@@ -91,4 +92,5 @@
       </div>
     }
   </div>
+  }
 }

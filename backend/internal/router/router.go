@@ -43,6 +43,11 @@ func New(deps Deps) http.Handler {
 	rateLimiter := middleware.NewRateLimiter(10, 50) // 10 req/s, burst of 50
 	r.Use(rateLimiter.Middleware)
 
+	// Handle preflight OPTIONS requests for all routes
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods("OPTIONS")
+
 	// Health check
 	r.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		if err := deps.DB.HealthCheck(); err != nil {
