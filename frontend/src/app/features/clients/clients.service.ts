@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
 import { Client } from '../../core/models';
+import { ApiService } from '../../core/services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
@@ -11,19 +11,30 @@ export class ClientsService {
     return this.api.get<Client[]>('/clients');
   }
 
-  getById(id: number): Observable<Client> {
+  getById(id: string): Observable<Client> {
     return this.api.get<Client>(`/clients/${id}`);
   }
 
   create(client: Partial<Client>): Observable<Client> {
-    return this.api.post<Client>('/clients', client);
+    return this.api.post<Client>('/clients', this.toPayload(client));
   }
 
-  update(id: number, client: Partial<Client>): Observable<Client> {
-    return this.api.put<Client>(`/clients/${id}`, client);
+  update(id: string, client: Partial<Client>): Observable<Client> {
+    return this.api.put<Client>(`/clients/${id}`, this.toPayload(client));
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.api.delete<void>(`/clients/${id}`);
+  }
+
+  private toPayload(client: Partial<Client>): object {
+    return {
+      first_name: client.firstName,
+      last_name: client.lastName,
+      email: client.email,
+      phone: client.phone,
+      address: client.address,
+      notes: client.notes,
+    };
   }
 }

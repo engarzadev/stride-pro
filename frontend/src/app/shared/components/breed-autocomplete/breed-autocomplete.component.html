@@ -1,0 +1,27 @@
+<div class="breed-autocomplete">
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Search or enter breed..."
+    autocomplete="off"
+    [ngModel]="inputValue()"
+    [disabled]="isDisabled()"
+    (ngModelChange)="onInput($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+
+  @if (isOpen() && filteredBreeds().length > 0) {
+    <ul class="breed-dropdown" role="listbox">
+      @for (breed of filteredBreeds(); track breed) {
+        <li
+          class="breed-option"
+          role="option"
+          (mousedown)="selectBreed(breed)"
+        >
+          {{ breed }}
+        </li>
+      }
+    </ul>
+  }
+</div>

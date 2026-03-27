@@ -7,11 +7,12 @@ import { BarnsService } from '../../barns/barns.service';
 import { Client, Barn } from '../../../core/models';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
 
 @Component({
   selector: 'app-horse-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, BreedAutocompleteComponent],
   templateUrl: './horse-form.component.html',
   styleUrls: ['./horse-form.component.scss'],
 })

@@ -9,14 +9,14 @@ export interface User {
 }
 
 export interface Client {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   address: string;
   notes: string;
-  userId: number;
+  userId: string;
   createdAt: string;
   updatedAt: string;
   horses?: Horse[];

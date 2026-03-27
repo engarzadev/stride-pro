@@ -1,12 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ClientsService } from '../clients.service';
 import { Client } from '../../../core/models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  TableAction,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { ClientsService } from '../clients.service';
 
 @Component({
   selector: 'app-client-list',
@@ -43,6 +47,7 @@ export class ClientListComponent implements OnInit {
   loadClients(): void {
     this.clientsService.getAll().subscribe({
       next: (clients) => {
+        console.log('clients', clients);
         this.clients.set(clients);
         this.loading.set(false);
       },
@@ -58,7 +63,10 @@ export class ClientListComponent implements OnInit {
     this.router.navigate(['/clients', row['id']]);
   }
 
-  async onAction(event: { action: string; row: Record<string, unknown> }): Promise<void> {
+  async onAction(event: {
+    action: string;
+    row: Record<string, unknown>;
+  }): Promise<void> {
     if (event.action === 'edit') {
       this.router.navigate(['/clients', event.row['id'], 'edit']);
     } else if (event.action === 'delete') {
@@ -69,7 +77,7 @@ export class ClientListComponent implements OnInit {
         confirmClass: 'btn-danger',
       });
       if (confirmed) {
-        this.clientsService.delete(event.row['id'] as number).subscribe({
+        this.clientsService.delete(event.row['id'] as string).subscribe({
           next: () => {
             this.toast.success('Client deleted successfully');
             this.loadClients();

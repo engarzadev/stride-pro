@@ -22,7 +22,7 @@ export class ClientFormComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
-  private clientId = 0;
+  private clientId = '';
 
   readonly form = this.fb.nonNullable.group({
     firstName: ['', [Validators.required]],
@@ -37,7 +37,7 @@ export class ClientFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.clientId = Number(id);
+      this.clientId = id;
       this.loading.set(true);
       this.clientsService.getById(this.clientId).subscribe({
         next: (client) => {
