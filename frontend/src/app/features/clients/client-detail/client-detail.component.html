@@ -1,0 +1,74 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else if (client(); as c) {
+  <div class="detail-page">
+    <div class="detail-header">
+      <div>
+        <a routerLink="/clients" class="back-link">&larr; Back to Clients</a>
+        <h1>{{ c.firstName }} {{ c.lastName }}</h1>
+      </div>
+      <div class="detail-actions">
+        <a [routerLink]="['/clients', c.id, 'edit']" class="btn btn-outline">Edit</a>
+        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header">Client Information</div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Email</label>
+            <p>{{ c.email || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Phone</label>
+            <p>{{ c.phone || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Address</label>
+            <p>{{ c.address || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Created</label>
+            <p>{{ c.createdAt | dateFormat }}</p>
+          </div>
+        </div>
+        @if (c.notes) {
+          <div class="detail-field mt-4">
+            <label>Notes</label>
+            <p>{{ c.notes }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (c.horses && c.horses.length > 0) {
+      <div class="card">
+        <div class="card-header">Horses</div>
+        <div class="card-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Breed</th>
+                <th>Age</th>
+                <th>Gender</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (horse of c.horses; track horse.id) {
+                <tr class="clickable" [routerLink]="['/horses', horse.id]">
+                  <td>{{ horse.name }}</td>
+                  <td>{{ horse.breed }}</td>
+                  <td>{{ horse.age }}</td>
+                  <td>{{ horse.gender }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+}

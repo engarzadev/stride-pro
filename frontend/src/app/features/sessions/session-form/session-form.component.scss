@@ -1,0 +1,44 @@
+.form-page {
+  max-width: 720px;
+  h1 { margin: 0.25rem 0 1.5rem; }
+}
+
+.back-link {
+  font-size: 0.8125rem;
+  color: #64748b;
+  &:hover { color: #2563eb; }
+}
+
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.zone-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+
+  input {
+    accent-color: #2563eb;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+
+  &.selected {
+    background-color: #eff6ff;
+    border-color: #2563eb;
+    color: #2563eb;
+    font-weight: 500;
+  }
+}

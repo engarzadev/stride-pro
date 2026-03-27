@@ -1,0 +1,132 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="form-page">
+    <a routerLink="/invoices" class="back-link">&larr; Back to Invoices</a>
+    <h1>{{ isEdit() ? 'Edit Invoice' : 'New Invoice' }}</h1>
+
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="clientId">Client *</label>
+              <select id="clientId" class="form-control" formControlName="clientId"
+                [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
+                <option [value]="0" disabled>Select a client</option>
+                @for (client of clients(); track client.id) {
+                  <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
+                }
+              </select>
+              @if (form.controls.clientId.touched && form.controls.clientId.errors?.['required']) {
+                <div class="form-error">Client is required.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="status">Status</label>
+              <select id="status" class="form-control" formControlName="status">
+                <option value="draft">Draft</option>
+                <option value="sent">Sent</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="date">Invoice Date *</label>
+              <input id="date" type="date" class="form-control" formControlName="date"
+                [class.is-invalid]="form.controls.date.touched && form.controls.date.invalid">
+              @if (form.controls.date.touched && form.controls.date.errors?.['required']) {
+                <div class="form-error">Invoice date is required.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="dueDate">Due Date *</label>
+              <input id="dueDate" type="date" class="form-control" formControlName="dueDate"
+                [class.is-invalid]="form.controls.dueDate.touched && form.controls.dueDate.invalid">
+              @if (form.controls.dueDate.touched && form.controls.dueDate.errors?.['required']) {
+                <div class="form-error">Due date is required.</div>
+              }
+            </div>
+          </div>
+
+          <div class="line-items-section">
+            <div class="section-header">
+              <h3>Line Items</h3>
+              <button type="button" class="btn btn-outline btn-sm" (click)="addItem()">+ Add Item</button>
+            </div>
+
+            <table class="line-items-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th class="col-qty">Qty</th>
+                  <th class="col-price">Unit Price</th>
+                  <th class="col-amount">Amount</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody formArrayName="items">
+                @for (item of items.controls; track $index; let i = $index) {
+                  <tr [formGroupName]="i">
+                    <td>
+                      <input type="text" class="form-control" formControlName="description"
+                        placeholder="Description" (input)="recalculate()">
+                    </td>
+                    <td>
+                      <input type="number" class="form-control text-right" formControlName="quantity"
+                        min="1" (input)="recalculate()">
+                    </td>
+                    <td>
+                      <input type="number" class="form-control text-right" formControlName="unitPrice"
+                        min="0" step="0.01" (input)="recalculate()">
+                    </td>
+                    <td class="text-right amount-cell">
+                      {{ (item.get('quantity')?.value || 0) * (item.get('unitPrice')?.value || 0) | currencyFormat }}
+                    </td>
+                    <td>
+                      <button type="button" class="btn-icon btn-remove" (click)="removeItem(i)"
+                        [disabled]="items.length === 1" title="Remove item">&times;</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+
+            <div class="totals">
+              <div class="totals-row">
+                <span>Subtotal</span>
+                <span>{{ subtotal() | currencyFormat }}</span>
+              </div>
+              <div class="totals-row">
+                <span>Tax</span>
+                <span>{{ tax() | currencyFormat }}</span>
+              </div>
+              <div class="totals-row total-final">
+                <span>Total</span>
+                <span>{{ total() | currencyFormat }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea id="notes" class="form-control" formControlName="notes" rows="3"
+              placeholder="Optional notes for the invoice"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Invoice' : 'Create Invoice' }} }
+            </button>
+            <a routerLink="/invoices" class="btn btn-outline">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

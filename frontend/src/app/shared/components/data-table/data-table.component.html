@@ -1,0 +1,63 @@
+<div class="table-container">
+  @if (data.length === 0) {
+    <div class="empty-state">
+      <p>No records found.</p>
+    </div>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          @for (col of columns; track col.key) {
+            <th [class.sortable]="col.sortable" (click)="onSort(col)">
+              {{ col.label }}
+              @if (col.sortable && sortKey() === col.key) {
+                <span class="sort-icon">{{ sortDir() === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+              }
+            </th>
+          }
+          @if (actions.length > 0) {
+            <th class="actions-col">Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of getSortedData(); track row['id']) {
+          <tr [class.clickable]="clickable" (click)="clickable ? rowClick.emit(row) : null">
+            @for (col of columns; track col.key) {
+              <td>
+                @switch (col.type) {
+                  @case ('date') {
+                    {{ getNestedValue(row, col.key) | dateFormat }}
+                  }
+                  @case ('currency') {
+                    {{ getNestedValue(row, col.key) | currencyFormat }}
+                  }
+                  @case ('badge') {
+                    <span class="badge" [class]="'badge-' + (col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')">
+                      {{ getNestedValue(row, col.key) }}
+                    </span>
+                  }
+                  @default {
+                    {{ getNestedValue(row, col.key) }}
+                  }
+                }
+              </td>
+            }
+            @if (actions.length > 0) {
+              <td class="actions-cell" (click)="$event.stopPropagation()">
+                @for (action of actions; track action.action) {
+                  <button
+                    class="btn btn-sm"
+                    [class]="'btn btn-sm ' + (action.class || 'btn-outline')"
+                    (click)="actionClick.emit({ action: action.action, row })">
+                    {{ action.icon }} {{ action.label }}
+                  </button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

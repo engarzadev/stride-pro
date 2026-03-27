@@ -1,0 +1,81 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else if (session(); as s) {
+  <div class="detail-page">
+    <div class="detail-header">
+      <div>
+        <a routerLink="/sessions" class="back-link">&larr; Back to Sessions</a>
+        <h1>Session Details</h1>
+      </div>
+      <div class="detail-actions">
+        <a [routerLink]="['/sessions', s.id, 'edit']" class="btn btn-outline">Edit</a>
+        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header">Session Information</div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Type</label>
+            <p>{{ s.type || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Date</label>
+            <p>{{ s.createdAt | dateFormat }}</p>
+          </div>
+          @if (s.appointment) {
+            <div class="detail-field">
+              <label>Appointment</label>
+              <p><a [routerLink]="['/appointments', s.appointmentId]">View Appointment</a></p>
+            </div>
+            @if (s.appointment.horse) {
+              <div class="detail-field">
+                <label>Horse</label>
+                <p><a [routerLink]="['/horses', s.appointment.horse.id]">{{ s.appointment.horse.name }}</a></p>
+              </div>
+            }
+            @if (s.appointment.client) {
+              <div class="detail-field">
+                <label>Client</label>
+                <p><a [routerLink]="['/clients', s.appointment.client.id]">{{ s.appointment.client.firstName }} {{ s.appointment.client.lastName }}</a></p>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (s.bodyZones && s.bodyZones.length > 0) {
+      <div class="card mb-6">
+        <div class="card-header">Body Zones</div>
+        <div class="card-body">
+          <div class="body-zones">
+            @for (zone of s.bodyZones; track zone) {
+              <span class="badge badge-primary">{{ zone }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="card mb-6">
+      <div class="card-header">Clinical Notes</div>
+      <div class="card-body">
+        <div class="detail-field mb-4">
+          <label>Notes</label>
+          <p>{{ s.notes || 'No notes recorded.' }}</p>
+        </div>
+        <div class="detail-field mb-4">
+          <label>Findings</label>
+          <p>{{ s.findings || 'No findings recorded.' }}</p>
+        </div>
+        <div class="detail-field">
+          <label>Recommendations</label>
+          <p>{{ s.recommendations || 'No recommendations recorded.' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+}

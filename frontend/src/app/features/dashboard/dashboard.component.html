@@ -1,0 +1,93 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="dashboard">
+    <h1 class="dashboard-title">Dashboard</h1>
+
+    <div class="stats-grid">
+      <div class="stat-card" (click)="navigateTo('/clients')">
+        <div class="stat-icon clients-icon">&#263A;</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ clients().length }}</div>
+          <div class="stat-label">Clients</div>
+        </div>
+      </div>
+
+      <div class="stat-card" (click)="navigateTo('/horses')">
+        <div class="stat-icon horses-icon">&#9816;</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ horses().length }}</div>
+          <div class="stat-label">Horses</div>
+        </div>
+      </div>
+
+      <div class="stat-card" (click)="navigateTo('/appointments')">
+        <div class="stat-icon appointments-icon">&#9783;</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ upcomingAppointments.length }}</div>
+          <div class="stat-label">Upcoming Appointments</div>
+        </div>
+      </div>
+
+      <div class="stat-card" (click)="navigateTo('/invoices')">
+        <div class="stat-icon invoices-icon">&#9993;</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ pendingInvoices.length }}</div>
+          <div class="stat-label">Pending Invoices</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="card-header">Recent Appointments</div>
+        <div class="card-body">
+          @if (appointments().length === 0) {
+            <p class="text-muted">No appointments yet.</p>
+          } @else {
+            <div class="appointment-list">
+              @for (apt of appointments().slice(0, 5); track apt.id) {
+                <div class="appointment-item" (click)="navigateTo('/appointments/' + apt.id)">
+                  <div class="appointment-info">
+                    <div class="appointment-title">
+                      {{ apt.horse?.name || 'Horse #' + apt.horseId }}
+                    </div>
+                    <div class="appointment-sub">
+                      {{ apt.client?.firstName }} {{ apt.client?.lastName }} &middot; {{ apt.type }}
+                    </div>
+                  </div>
+                  <div class="appointment-meta">
+                    <div class="appointment-date">{{ apt.date | dateFormat }}</div>
+                    <span class="badge" [class]="apt.status === 'completed' ? 'badge-success' : apt.status === 'cancelled' ? 'badge-danger' : 'badge-primary'">
+                      {{ apt.status }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Quick Actions</div>
+        <div class="card-body">
+          <div class="quick-actions">
+            <button class="btn btn-outline quick-action" (click)="navigateTo('/clients/new')">
+              + New Client
+            </button>
+            <button class="btn btn-outline quick-action" (click)="navigateTo('/horses/new')">
+              + New Horse
+            </button>
+            <button class="btn btn-outline quick-action" (click)="navigateTo('/appointments/new')">
+              + New Appointment
+            </button>
+            <button class="btn btn-outline quick-action" (click)="navigateTo('/invoices/new')">
+              + New Invoice
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

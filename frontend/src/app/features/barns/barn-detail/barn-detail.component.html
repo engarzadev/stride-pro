@@ -1,0 +1,72 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else if (barn(); as b) {
+  <div class="detail-page">
+    <div class="detail-header">
+      <div>
+        <a routerLink="/barns" class="back-link">&larr; Back to Barns</a>
+        <h1>{{ b.name }}</h1>
+      </div>
+      <div class="detail-actions">
+        <a [routerLink]="['/barns', b.id, 'edit']" class="btn btn-outline">Edit</a>
+        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header">Barn Information</div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Address</label>
+            <p>{{ b.address || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Phone</label>
+            <p>{{ b.phone || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Email</label>
+            <p>{{ b.email || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Created</label>
+            <p>{{ b.createdAt | dateFormat }}</p>
+          </div>
+        </div>
+        @if (b.notes) {
+          <div class="detail-field mt-4">
+            <label>Notes</label>
+            <p>{{ b.notes }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (b.horses && b.horses.length > 0) {
+      <div class="card">
+        <div class="card-header">Horses at this Barn</div>
+        <div class="card-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Breed</th>
+                <th>Owner</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (horse of b.horses; track horse.id) {
+                <tr class="clickable" [routerLink]="['/horses', horse.id]">
+                  <td>{{ horse.name }}</td>
+                  <td>{{ horse.breed }}</td>
+                  <td>{{ horse.client?.firstName }} {{ horse.client?.lastName }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+}

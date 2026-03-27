@@ -1,0 +1,14 @@
+<app-page-header title="Invoices" buttonText="Create Invoice" (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="card">
+    <app-data-table
+      [columns]="columns"
+      [data]="$any(invoices())"
+      [actions]="actions"
+      (rowClick)="onRowClick($event)"
+      (actionClick)="onAction($event)" />
+  </div>
+}

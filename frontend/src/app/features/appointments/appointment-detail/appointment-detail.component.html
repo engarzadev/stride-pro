@@ -1,0 +1,94 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else if (appointment(); as a) {
+  <div class="detail-page">
+    <div class="detail-header">
+      <div>
+        <a routerLink="/appointments" class="back-link">&larr; Back to Appointments</a>
+        <h1>Appointment Details</h1>
+      </div>
+      <div class="detail-actions">
+        <a [routerLink]="['/appointments', a.id, 'edit']" class="btn btn-outline">Edit</a>
+        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header">
+        Appointment Information
+        <span class="badge" [class]="getStatusClass(a.status)">{{ a.status }}</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Date</label>
+            <p>{{ a.date | dateFormat }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Time</label>
+            <p>{{ a.time || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Duration</label>
+            <p>{{ a.duration ? a.duration + ' minutes' : '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Type</label>
+            <p>{{ a.type || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Client</label>
+            @if (a.client) {
+              <p><a [routerLink]="['/clients', a.clientId]">{{ a.client.firstName }} {{ a.client.lastName }}</a></p>
+            } @else {
+              <p>-</p>
+            }
+          </div>
+          <div class="detail-field">
+            <label>Horse</label>
+            @if (a.horse) {
+              <p><a [routerLink]="['/horses', a.horseId]">{{ a.horse.name }}</a></p>
+            } @else {
+              <p>-</p>
+            }
+          </div>
+          <div class="detail-field">
+            <label>Barn</label>
+            @if (a.barn) {
+              <p><a [routerLink]="['/barns', a.barnId]">{{ a.barn.name }}</a></p>
+            } @else {
+              <p>-</p>
+            }
+          </div>
+        </div>
+        @if (a.notes) {
+          <div class="detail-field mt-4">
+            <label>Notes</label>
+            <p>{{ a.notes }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (a.session) {
+      <div class="card">
+        <div class="card-header">Linked Session</div>
+        <div class="card-body">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label>Type</label>
+              <p>{{ a.session.type }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Body Zones</label>
+              <p>{{ a.session.bodyZones?.join(', ') || '-' }}</p>
+            </div>
+          </div>
+          <div class="mt-4">
+            <a [routerLink]="['/sessions', a.session.id]" class="btn btn-outline">View Session Details</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

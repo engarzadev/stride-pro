@@ -1,0 +1,14 @@
+<app-page-header title="Barns" buttonText="Add Barn" (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="card">
+    <app-data-table
+      [columns]="columns"
+      [data]="$any(barns())"
+      [actions]="actions"
+      (rowClick)="onRowClick($event)"
+      (actionClick)="onAction($event)" />
+  </div>
+}

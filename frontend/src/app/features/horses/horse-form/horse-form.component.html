@@ -1,0 +1,95 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="form-page">
+    <a routerLink="/horses" class="back-link">&larr; Back to Horses</a>
+    <h1>{{ isEdit() ? 'Edit Horse' : 'New Horse' }}</h1>
+
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label class="form-label" for="name">Name *</label>
+            <input id="name" type="text" class="form-control" formControlName="name"
+              [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid">
+            @if (form.controls.name.touched && form.controls.name.errors?.['required']) {
+              <div class="form-error">Name is required.</div>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="breed">Breed</label>
+              <input id="breed" type="text" class="form-control" formControlName="breed">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="color">Color</label>
+              <input id="color" type="text" class="form-control" formControlName="color">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="age">Age</label>
+              <input id="age" type="number" class="form-control" formControlName="age" min="0">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="gender">Gender</label>
+              <select id="gender" class="form-control" formControlName="gender">
+                <option value="">Select gender</option>
+                <option value="mare">Mare</option>
+                <option value="stallion">Stallion</option>
+                <option value="gelding">Gelding</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="weight">Weight (lbs)</label>
+            <input id="weight" type="number" class="form-control" formControlName="weight" min="0">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="clientId">Client *</label>
+              <select id="clientId" class="form-control" formControlName="clientId"
+                [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
+                <option [value]="0">Select a client</option>
+                @for (client of clients(); track client.id) {
+                  <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
+                }
+              </select>
+              @if (form.controls.clientId.touched && form.controls.clientId.invalid) {
+                <div class="form-error">Please select a client.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="barnId">Barn</label>
+              <select id="barnId" class="form-control" formControlName="barnId">
+                <option [value]="0">No barn assigned</option>
+                @for (barn of barns(); track barn.id) {
+                  <option [value]="barn.id">{{ barn.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea id="notes" class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Horse' : 'Create Horse' }} }
+            </button>
+            <a routerLink="/horses" class="btn btn-outline">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

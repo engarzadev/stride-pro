@@ -1,0 +1,14 @@
+<app-page-header title="Clients" buttonText="Add Client" (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="card">
+    <app-data-table
+      [columns]="columns"
+      [data]="$any(clients())"
+      [actions]="actions"
+      (rowClick)="onRowClick($event)"
+      (actionClick)="onAction($event)" />
+  </div>
+}

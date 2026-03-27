@@ -1,0 +1,25 @@
+# Dependencies
+frontend/node_modules/
+
+# Environment files
+backend/.env
+
+# Build output
+frontend/dist/
+backend/bin/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular cache
+frontend/.angular/
+
+# Test coverage
+frontend/coverage/

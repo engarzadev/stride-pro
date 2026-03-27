@@ -1,0 +1,88 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="form-page">
+    <a routerLink="/sessions" class="back-link">&larr; Back to Sessions</a>
+    <h1>{{ isEdit() ? 'Edit Session' : 'New Session' }}</h1>
+
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="appointmentId">Appointment *</label>
+              <select id="appointmentId" class="form-control" formControlName="appointmentId"
+                [class.is-invalid]="form.controls.appointmentId.touched && form.controls.appointmentId.invalid">
+                <option [value]="0">Select an appointment</option>
+                @for (apt of appointments(); track apt.id) {
+                  <option [value]="apt.id">
+                    {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
+                    ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
+                  </option>
+                }
+              </select>
+              @if (form.controls.appointmentId.touched && form.controls.appointmentId.invalid) {
+                <div class="form-error">Please select an appointment.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="type">Type *</label>
+              <select id="type" class="form-control" formControlName="type"
+                [class.is-invalid]="form.controls.type.touched && form.controls.type.invalid">
+                <option value="">Select type</option>
+                <option value="massage">Massage</option>
+                <option value="chiropractic">Chiropractic</option>
+                <option value="acupuncture">Acupuncture</option>
+                <option value="rehabilitation">Rehabilitation</option>
+                <option value="evaluation">Evaluation</option>
+                <option value="treatment">Treatment</option>
+                <option value="other">Other</option>
+              </select>
+              @if (form.controls.type.touched && form.controls.type.errors?.['required']) {
+                <div class="form-error">Type is required.</div>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Body Zones</label>
+            <div class="zone-grid">
+              @for (zone of bodyZoneOptions; track zone) {
+                <label class="zone-checkbox" [class.selected]="selectedZones().has(zone)">
+                  <input type="checkbox" [checked]="selectedZones().has(zone)" (change)="toggleZone(zone)">
+                  {{ zone }}
+                </label>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notes">Notes</label>
+            <textarea id="notes" class="form-control" formControlName="notes" rows="3"
+              placeholder="General session notes..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="findings">Findings</label>
+            <textarea id="findings" class="form-control" formControlName="findings" rows="3"
+              placeholder="Clinical findings..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="recommendations">Recommendations</label>
+            <textarea id="recommendations" class="form-control" formControlName="recommendations" rows="3"
+              placeholder="Follow-up recommendations..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Session' : 'Create Session' }} }
+            </button>
+            <a routerLink="/sessions" class="btn btn-outline">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
