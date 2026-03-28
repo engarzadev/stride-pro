@@ -25,7 +25,7 @@ export class BarnDetailComponent implements OnInit {
   readonly barn = signal<Barn | null>(null);
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id')!;
     this.barnsService.getById(id).subscribe({
       next: (barn) => {
         this.barn.set(barn);

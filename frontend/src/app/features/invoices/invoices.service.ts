@@ -15,7 +15,7 @@ export class InvoicesService {
     return this.api.get<Invoice[]>('/invoices');
   }
 
-  getById(id: number): Observable<Invoice> {
+  getById(id: string): Observable<Invoice> {
     return this.api.get<Invoice>(`/invoices/${id}`);
   }
 
@@ -23,11 +23,11 @@ export class InvoicesService {
     return this.api.post<Invoice>('/invoices', invoice);
   }
 
-  update(id: number, invoice: InvoicePayload): Observable<Invoice> {
+  update(id: string, invoice: InvoicePayload): Observable<Invoice> {
     return this.api.put<Invoice>(`/invoices/${id}`, invoice);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.api.delete<void>(`/invoices/${id}`);
   }
 }

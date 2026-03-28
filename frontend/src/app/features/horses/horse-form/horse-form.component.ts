@@ -8,6 +8,8 @@ import { Client, Barn } from '../../../core/models';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
+import { QuickCreateClientService } from '../../../shared/components/quick-create/quick-create-client.component';
+import { QuickCreateBarnService } from '../../../shared/components/quick-create/quick-create-barn.component';
 
 @Component({
   selector: 'app-horse-form',
@@ -24,13 +26,15 @@ export class HorseFormComponent implements OnInit {
   private readonly clientsService = inject(ClientsService);
   private readonly barnsService = inject(BarnsService);
   private readonly toast = inject(ToastService);
+  private readonly quickCreateClient = inject(QuickCreateClientService);
+  private readonly quickCreateBarn = inject(QuickCreateBarnService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly clients = signal<Client[]>([]);
   readonly barns = signal<Barn[]>([]);
-  private horseId = 0;
+  private horseId = '';
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
@@ -40,8 +44,8 @@ export class HorseFormComponent implements OnInit {
     color: [''],
     weight: [0],
     notes: [''],
-    clientId: [0, [Validators.required, Validators.min(1)]],
-    barnId: [0],
+    clientId: ['', [Validators.required]],
+    barnId: [null as string | null],
   });
 
   ngOnInit(): void {
@@ -51,7 +55,7 @@ export class HorseFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.horseId = Number(id);
+      this.horseId = id;
       this.loading.set(true);
       this.horsesService.getById(this.horseId).subscribe({
         next: (horse) => {
@@ -73,6 +77,22 @@ export class HorseFormComponent implements OnInit {
           this.router.navigate(['/horses']);
         },
       });
+    }
+  }
+
+  async openCreateClient(): Promise<void> {
+    const client = await this.quickCreateClient.open();
+    if (client) {
+      this.clients.update((c) => [...c, client]);
+      this.form.controls.clientId.setValue(client.id);
+    }
+  }
+
+  async openCreateBarn(): Promise<void> {
+    const barn = await this.quickCreateBarn.open();
+    if (barn) {
+      this.barns.update((b) => [...b, barn]);
+      this.form.controls.barnId.setValue(barn.id);
     }
   }
 

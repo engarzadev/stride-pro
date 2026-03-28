@@ -11,13 +11,16 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="clientId">Client *</label>
-              <select id="clientId" class="form-control" formControlName="clientId"
-                [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
-                <option [value]="0" disabled>Select a client</option>
-                @for (client of clients(); track client.id) {
-                  <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
-                }
-              </select>
+              <div class="select-with-add">
+                <select id="clientId" class="form-control" formControlName="clientId"
+                  [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
+                  <option [value]="0" disabled>Select a client</option>
+                  @for (client of clients(); track client.id) {
+                    <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
+                  }
+                </select>
+                <button type="button" class="btn-add-new" title="Create new client" (click)="openCreateClient()">+ New</button>
+              </div>
               @if (form.controls.clientId.touched && form.controls.clientId.errors?.['required']) {
                 <div class="form-error">Client is required.</div>
               }

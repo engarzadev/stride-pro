@@ -23,11 +23,11 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const barnColumns = `id, user_id, name, address, phone, email, notes, created_at, updated_at`
+const barnColumns = `id, user_id, name, contact_name, address, phone, email, notes, created_at, updated_at`
 
 func scanBarn(scanner interface{ Scan(...interface{}) error }) (*models.Barn, error) {
 	b := &models.Barn{}
-	err := scanner.Scan(&b.ID, &b.UserID, &b.Name, &b.Address, &b.Phone, &b.Email, &b.Notes, &b.CreatedAt, &b.UpdatedAt)
+	err := scanner.Scan(&b.ID, &b.UserID, &b.Name, &b.ContactName, &b.Address, &b.Phone, &b.Email, &b.Notes, &b.CreatedAt, &b.UpdatedAt)
 	return b, err
 }
 
@@ -39,8 +39,8 @@ func (r *Repository) Create(b *models.Barn) error {
 
 	_, err := r.db.Exec(`
 		INSERT INTO barns (`+barnColumns+`)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-		b.ID, b.UserID, b.Name, b.Address, b.Phone, b.Email, b.Notes, b.CreatedAt, b.UpdatedAt,
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+		b.ID, b.UserID, b.Name, b.ContactName, b.Address, b.Phone, b.Email, b.Notes, b.CreatedAt, b.UpdatedAt,
 	)
 	if err != nil {
 		return fmt.Errorf("inserting barn: %w", err)
@@ -87,9 +87,9 @@ func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Barn, error) {
 func (r *Repository) Update(b *models.Barn) error {
 	b.UpdatedAt = time.Now()
 	result, err := r.db.Exec(`
-		UPDATE barns SET name=$1, address=$2, phone=$3, email=$4, notes=$5, updated_at=$6
-		WHERE id=$7 AND user_id=$8`,
-		b.Name, b.Address, b.Phone, b.Email, b.Notes, b.UpdatedAt, b.ID, b.UserID,
+		UPDATE barns SET name=$1, contact_name=$2, address=$3, phone=$4, email=$5, notes=$6, updated_at=$7
+		WHERE id=$8 AND user_id=$9`,
+		b.Name, b.ContactName, b.Address, b.Phone, b.Email, b.Notes, b.UpdatedAt, b.ID, b.UserID,
 	)
 	if err != nil {
 		return fmt.Errorf("updating barn: %w", err)

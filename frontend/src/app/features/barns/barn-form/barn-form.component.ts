@@ -22,10 +22,11 @@ export class BarnFormComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
-  private barnId = 0;
+  private barnId = '';
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
+    contactName: [''],
     address: [''],
     phone: [''],
     email: ['', [Validators.email]],
@@ -36,12 +37,13 @@ export class BarnFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.barnId = Number(id);
+      this.barnId = id;
       this.loading.set(true);
       this.barnsService.getById(this.barnId).subscribe({
         next: (barn) => {
           this.form.patchValue({
             name: barn.name,
+            contactName: barn.contactName,
             address: barn.address,
             phone: barn.phone,
             email: barn.email,

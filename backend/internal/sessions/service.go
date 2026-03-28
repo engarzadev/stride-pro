@@ -32,7 +32,7 @@ type CreateInput struct {
 // Validate checks the input for errors.
 func (i *CreateInput) Validate() validator.Errors {
 	errs := validator.Errors{}
-	validator.OneOf(errs, "type", i.Type, []string{"skeletal", "muscular", "soft_tissue", "other"})
+	validator.OneOf(errs, "type", i.Type, []string{"massage", "chiropractic", "acupuncture", "rehabilitation", "evaluation", "treatment", "pemf", "other"})
 	return errs
 }
 

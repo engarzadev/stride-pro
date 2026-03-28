@@ -9,5 +9,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class PageHeaderComponent {
   @Input() title = '';
   @Input() buttonText = '';
+  @Input() secondButtonText = '';
   @Output() buttonClick = new EventEmitter<void>();
+  @Output() secondButtonClick = new EventEmitter<void>();
 }

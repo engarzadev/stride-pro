@@ -11,16 +11,19 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="appointmentId">Appointment *</label>
-              <select id="appointmentId" class="form-control" formControlName="appointmentId"
-                [class.is-invalid]="form.controls.appointmentId.touched && form.controls.appointmentId.invalid">
-                <option [value]="0">Select an appointment</option>
-                @for (apt of appointments(); track apt.id) {
-                  <option [value]="apt.id">
-                    {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
-                    ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
-                  </option>
-                }
-              </select>
+              <div class="select-with-add">
+                <select id="appointmentId" class="form-control" formControlName="appointmentId"
+                  [class.is-invalid]="form.controls.appointmentId.touched && form.controls.appointmentId.invalid">
+                  <option [value]="0">Select an appointment</option>
+                  @for (apt of appointments(); track apt.id) {
+                    <option [value]="apt.id">
+                      {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
+                      ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
+                    </option>
+                  }
+                </select>
+                <button type="button" class="btn-add-new" title="Create new appointment" (click)="openCreateAppointment()">+ New</button>
+              </div>
               @if (form.controls.appointmentId.touched && form.controls.appointmentId.invalid) {
                 <div class="form-error">Please select an appointment.</div>
               }

@@ -1,12 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { HorsesService } from '../horses.service';
 import { Horse } from '../../../core/models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  TableAction,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { HorsesService } from '../horses.service';
 
 @Component({
   selector: 'app-horse-list',
@@ -24,12 +28,21 @@ export class HorseListComponent implements OnInit {
   readonly loading = signal(true);
   readonly horses = signal<Horse[]>([]);
 
+  readonly tableHorses = computed(() =>
+    this.horses().map((h) => ({
+      ...h,
+      clientName: h.client ? `${h.client.firstName} ${h.client.lastName}` : '',
+      barnName: h.barn?.name ?? '',
+    })),
+  );
+
   readonly columns: TableColumn[] = [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'breed', label: 'Breed', sortable: true },
-    { key: 'client.firstName', label: 'Client', sortable: true },
+    { key: 'clientName', label: 'Client', sortable: true },
+    { key: 'barnName', label: 'Barn', sortable: true },
     { key: 'age', label: 'Age', sortable: true },
-    { key: 'gender', label: 'Gender' },
+    { key: 'gender', label: 'Gender', capitalize: true },
   ];
 
   readonly actions: TableAction[] = [
@@ -59,7 +72,10 @@ export class HorseListComponent implements OnInit {
     this.router.navigate(['/horses', row['id']]);
   }
 
-  async onAction(event: { action: string; row: Record<string, unknown> }): Promise<void> {
+  async onAction(event: {
+    action: string;
+    row: Record<string, unknown>;
+  }): Promise<void> {
     if (event.action === 'edit') {
       this.router.navigate(['/horses', event.row['id'], 'edit']);
     } else if (event.action === 'delete') {
@@ -70,7 +86,7 @@ export class HorseListComponent implements OnInit {
         confirmClass: 'btn-danger',
       });
       if (confirmed) {
-        this.horsesService.delete(event.row['id'] as number).subscribe({
+        this.horsesService.delete(event.row['id'] as string).subscribe({
           next: () => {
             this.toast.success('Horse deleted successfully');
             this.loadHorses();

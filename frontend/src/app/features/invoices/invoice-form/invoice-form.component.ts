@@ -7,6 +7,7 @@ import { Client } from '../../../core/models';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { QuickCreateClientService } from '../../../shared/components/quick-create/quick-create-client.component';
 
 @Component({
   selector: 'app-invoice-form',
@@ -22,15 +23,16 @@ export class InvoiceFormComponent implements OnInit {
   private readonly invoicesService = inject(InvoicesService);
   private readonly clientsService = inject(ClientsService);
   private readonly toast = inject(ToastService);
+  private readonly quickCreateClient = inject(QuickCreateClientService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly clients = signal<Client[]>([]);
-  private invoiceId = 0;
+  private invoiceId = '';
 
   readonly form = this.fb.nonNullable.group({
-    clientId: [0, [Validators.required, Validators.min(1)]],
+    clientId: ['', [Validators.required]],
     date: ['', [Validators.required]],
     dueDate: ['', [Validators.required]],
     status: ['draft'],
@@ -54,14 +56,14 @@ export class InvoiceFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.invoiceId = Number(id);
+      this.invoiceId = id;
       this.loading.set(true);
       this.invoicesService.getById(this.invoiceId).subscribe({
         next: (invoice) => {
           this.form.patchValue({
             clientId: invoice.clientId,
-            date: invoice.date,
-            dueDate: invoice.dueDate,
+            date: invoice.date ? invoice.date.substring(0, 10) : '',
+            dueDate: invoice.dueDate ? invoice.dueDate.substring(0, 10) : '',
             status: invoice.status,
             notes: invoice.notes,
           });
@@ -87,6 +89,14 @@ export class InvoiceFormComponent implements OnInit {
           this.router.navigate(['/invoices']);
         },
       });
+    }
+  }
+
+  async openCreateClient(): Promise<void> {
+    const client = await this.quickCreateClient.open();
+    if (client) {
+      this.clients.update((c) => [...c, client]);
+      this.form.controls.clientId.setValue(client.id);
     }
   }
 
@@ -132,10 +142,11 @@ export class InvoiceFormComponent implements OnInit {
     this.recalculate();
 
     const formValue = this.form.getRawValue();
+    const toDateTime = (d: string) => (d && d.length === 10 ? `${d}T00:00:00Z` : d);
     const data = {
       clientId: formValue.clientId,
-      date: formValue.date,
-      dueDate: formValue.dueDate,
+      date: toDateTime(formValue.date),
+      dueDate: toDateTime(formValue.dueDate),
       status: formValue.status,
       notes: formValue.notes,
       subtotal: this.subtotal(),

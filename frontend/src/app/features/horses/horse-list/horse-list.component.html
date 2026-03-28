@@ -6,7 +6,7 @@
   <div class="card">
     <app-data-table
       [columns]="columns"
-      [data]="$any(horses())"
+      [data]="$any(tableHorses())"
       [actions]="actions"
       (rowClick)="onRowClick($event)"
       (actionClick)="onAction($event)" />

@@ -11,7 +11,7 @@ export class BarnsService {
     return this.api.get<Barn[]>('/barns');
   }
 
-  getById(id: number): Observable<Barn> {
+  getById(id: string): Observable<Barn> {
     return this.api.get<Barn>(`/barns/${id}`);
   }
 
@@ -19,11 +19,11 @@ export class BarnsService {
     return this.api.post<Barn>('/barns', barn);
   }
 
-  update(id: number, barn: Partial<Barn>): Observable<Barn> {
+  update(id: string, barn: Partial<Barn>): Observable<Barn> {
     return this.api.put<Barn>(`/barns/${id}`, barn);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.api.delete<void>(`/barns/${id}`);
   }
 }

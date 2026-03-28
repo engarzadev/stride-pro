@@ -11,7 +11,7 @@ export class AppointmentsService {
     return this.api.get<Appointment[]>('/appointments');
   }
 
-  getById(id: number): Observable<Appointment> {
+  getById(id: string): Observable<Appointment> {
     return this.api.get<Appointment>(`/appointments/${id}`);
   }
 
@@ -19,11 +19,11 @@ export class AppointmentsService {
     return this.api.post<Appointment>('/appointments', appointment);
   }
 
-  update(id: number, appointment: Partial<Appointment>): Observable<Appointment> {
+  update(id: string, appointment: Partial<Appointment>): Observable<Appointment> {
     return this.api.put<Appointment>(`/appointments/${id}`, appointment);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.api.delete<void>(`/appointments/${id}`);
   }
 }

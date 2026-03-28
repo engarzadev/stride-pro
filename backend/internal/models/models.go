@@ -49,21 +49,24 @@ type Horse struct {
 	Color     string         `json:"color"`
 	Weight    float64        `json:"weight"`
 	Notes     string         `json:"notes"`
+	Client    *Client        `json:"client,omitempty"`
+	Barn      *Barn          `json:"barn,omitempty"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 }
 
 // Barn represents a location where horses are kept.
 type Barn struct {
-	ID        uuid.UUID `json:"id"`
-	UserID    uuid.UUID `json:"user_id"`
-	Name      string    `json:"name"`
-	Address   string    `json:"address"`
-	Phone     string    `json:"phone"`
-	Email     string    `json:"email"`
-	Notes     string    `json:"notes"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"user_id"`
+	Name        string    `json:"name"`
+	ContactName string    `json:"contact_name"`
+	Address     string    `json:"address"`
+	Phone       string    `json:"phone"`
+	Email       string    `json:"email"`
+	Notes       string    `json:"notes"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // Appointment represents a scheduled visit or session.
@@ -73,11 +76,16 @@ type Appointment struct {
 	ClientID    uuid.UUID     `json:"client_id"`
 	HorseID     uuid.UUID     `json:"horse_id"`
 	BarnID      uuid.NullUUID `json:"barn_id"`
-	ScheduledAt time.Time     `json:"scheduled_at"`
+	ScheduledAt time.Time     `json:"-"`
+	Date        string        `json:"date"`
+	Time        string        `json:"time"`
 	Duration    int           `json:"duration"`
 	Status      string        `json:"status"`
 	Type        string        `json:"type"`
 	Notes       string        `json:"notes"`
+	Client      *Client       `json:"client,omitempty"`
+	Horse       *Horse        `json:"horse,omitempty"`
+	Barn        *Barn         `json:"barn,omitempty"`
 	CreatedAt   time.Time     `json:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at"`
 }
@@ -92,6 +100,7 @@ type Session struct {
 	Notes           string          `json:"notes"`
 	Findings        string          `json:"findings"`
 	Recommendations string          `json:"recommendations"`
+	Appointment     *Appointment    `json:"appointment,omitempty"`
 	CreatedAt       time.Time       `json:"created_at"`
 	UpdatedAt       time.Time       `json:"updated_at"`
 }
@@ -105,6 +114,7 @@ type Invoice struct {
 	DueDate   time.Time     `json:"due_date"`
 	Total     float64       `json:"total"`
 	Notes     string        `json:"notes"`
+	Client    *Client       `json:"client,omitempty"`
 	Items     []InvoiceItem `json:"items,omitempty"`
 	CreatedAt time.Time     `json:"created_at"`
 	UpdatedAt time.Time     `json:"updated_at"`

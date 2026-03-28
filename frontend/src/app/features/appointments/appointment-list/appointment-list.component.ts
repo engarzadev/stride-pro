@@ -1,12 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppointmentsService } from '../appointments.service';
 import { Appointment } from '../../../core/models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  TableAction,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { AppointmentsService } from '../appointments.service';
 
 @Component({
   selector: 'app-appointment-list',
@@ -24,18 +28,36 @@ export class AppointmentListComponent implements OnInit {
   readonly loading = signal(true);
   readonly appointments = signal<Appointment[]>([]);
 
+  readonly tableAppointments = computed(() =>
+    this.appointments().map((a) => ({
+      ...a,
+      time: a.time
+        ? (() => {
+            const [h, m] = a.time!.split(':');
+            const hour = parseInt(h, 10);
+            return `${hour % 12 || 12}:${m} ${hour < 12 ? 'AM' : 'PM'}`;
+          })()
+        : '',
+      clientName: a.client ? `${a.client.firstName} ${a.client.lastName}` : '',
+      horseName: a.horse?.name ?? '',
+    })),
+  );
+
   readonly columns: TableColumn[] = [
     { key: 'date', label: 'Date', sortable: true, type: 'date' },
     { key: 'time', label: 'Time' },
-    { key: 'client.firstName', label: 'Client', sortable: true },
-    { key: 'horse.name', label: 'Horse', sortable: true },
-    { key: 'type', label: 'Type' },
+    { key: 'clientName', label: 'Client', sortable: true },
+    { key: 'horseName', label: 'Horse', sortable: true },
+    { key: 'type', label: 'Type', capitalize: true },
     {
-      key: 'status', label: 'Status', type: 'badge',
+      key: 'status',
+      label: 'Status',
+      type: 'badge',
+      capitalize: true,
       badgeMap: {
-        scheduled: 'primary',
+        scheduled: 'success',
         confirmed: 'success',
-        completed: 'success',
+        completed: 'secondary',
         cancelled: 'danger',
         'no-show': 'warning',
       },
@@ -69,18 +91,22 @@ export class AppointmentListComponent implements OnInit {
     this.router.navigate(['/appointments', row['id']]);
   }
 
-  async onAction(event: { action: string; row: Record<string, unknown> }): Promise<void> {
+  async onAction(event: {
+    action: string;
+    row: Record<string, unknown>;
+  }): Promise<void> {
     if (event.action === 'edit') {
       this.router.navigate(['/appointments', event.row['id'], 'edit']);
     } else if (event.action === 'delete') {
       const confirmed = await this.confirmDialog.confirm({
         title: 'Delete Appointment',
-        message: 'Are you sure you want to delete this appointment? This action cannot be undone.',
+        message:
+          'Are you sure you want to delete this appointment? This action cannot be undone.',
         confirmText: 'Delete',
         confirmClass: 'btn-danger',
       });
       if (confirmed) {
-        this.appointmentsService.delete(event.row['id'] as number).subscribe({
+        this.appointmentsService.delete(event.row['id'] as string).subscribe({
           next: () => {
             this.toast.success('Appointment deleted successfully');
             this.loadAppointments();

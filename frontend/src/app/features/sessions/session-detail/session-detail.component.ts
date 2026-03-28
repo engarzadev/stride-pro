@@ -25,7 +25,7 @@ export class SessionDetailComponent implements OnInit {
   readonly session = signal<Session | null>(null);
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id')!;
     this.sessionsService.getById(id).subscribe({
       next: (session) => {
         this.session.set(session);

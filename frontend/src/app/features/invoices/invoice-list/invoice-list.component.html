@@ -6,7 +6,7 @@
   <div class="card">
     <app-data-table
       [columns]="columns"
-      [data]="$any(invoices())"
+      [data]="$any(tableInvoices())"
       [actions]="actions"
       (rowClick)="onRowClick($event)"
       (actionClick)="onAction($event)" />

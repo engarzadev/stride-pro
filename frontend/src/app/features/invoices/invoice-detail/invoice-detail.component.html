@@ -2,99 +2,125 @@
   <app-loading-spinner />
 } @else {
   @if (invoice(); as inv) {
-  <div class="detail-page">
-    <div class="detail-header">
-      <div>
-        <a routerLink="/invoices" class="back-link">&larr; Back to Invoices</a>
-        <h1>Invoice {{ inv.invoiceNumber }}</h1>
-      </div>
-      <div class="detail-actions">
-        <a [routerLink]="['/invoices', inv.id, 'edit']" class="btn btn-outline">Edit</a>
-        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
-      </div>
-    </div>
-
-    <div class="card mb-6">
-      <div class="card-header">
-        <span>Invoice Details</span>
-        <span class="badge" [class]="getStatusClass(inv.status)">{{ inv.status }}</span>
-      </div>
-      <div class="card-body">
-        <div class="detail-grid">
-          <div class="detail-field">
-            <label>Client</label>
-            @if (inv.client) {
-              <p><a [routerLink]="['/clients', inv.clientId]">{{ inv.client.firstName }} {{ inv.client.lastName }}</a></p>
-            } @else {
-              <p>-</p>
-            }
-          </div>
-          <div class="detail-field">
-            <label>Date</label>
-            <p>{{ inv.date | dateFormat }}</p>
-          </div>
-          <div class="detail-field">
-            <label>Due Date</label>
-            <p>{{ inv.dueDate | dateFormat }}</p>
-          </div>
-          <div class="detail-field">
-            <label>Status</label>
-            <p>{{ inv.status }}</p>
-          </div>
+    <div class="detail-page">
+      <div class="detail-header">
+        <div>
+          <a routerLink="/invoices" class="back-link"
+            >&larr; Back to Invoices</a
+          >
+          <h1>Invoice {{ inv.invoiceNumber }}</h1>
+        </div>
+        <div class="detail-actions">
+          <a
+            [routerLink]="['/invoices', inv.id, 'edit']"
+            class="btn btn-outline"
+            >Edit</a
+          >
+          <button class="btn btn-danger" (click)="onDelete()">Delete</button>
         </div>
       </div>
-    </div>
 
-    @if (inv.items && inv.items.length > 0) {
       <div class="card mb-6">
-        <div class="card-header">Line Items</div>
-        <div class="card-body p-0">
-          <table class="line-items-table">
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Unit Price</th>
-                <th class="text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of inv.items; track item.id) {
-                <tr>
-                  <td>{{ item.description }}</td>
-                  <td class="text-right">{{ item.quantity }}</td>
-                  <td class="text-right">{{ item.unitPrice | currencyFormat }}</td>
-                  <td class="text-right">{{ item.amount | currencyFormat }}</td>
-                </tr>
-              }
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" class="text-right"><strong>Subtotal</strong></td>
-                <td class="text-right">{{ inv.subtotal | currencyFormat }}</td>
-              </tr>
-              <tr>
-                <td colspan="3" class="text-right"><strong>Tax</strong></td>
-                <td class="text-right">{{ inv.tax | currencyFormat }}</td>
-              </tr>
-              <tr class="total-row">
-                <td colspan="3" class="text-right"><strong>Total</strong></td>
-                <td class="text-right"><strong>{{ inv.total | currencyFormat }}</strong></td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="card-header">
+          <span>Invoice Details</span>
+          <span class="badge" [class]="getStatusClass(inv.status)">{{
+            inv.status | titlecase
+          }}</span>
         </div>
-      </div>
-    }
-
-    @if (inv.notes) {
-      <div class="card">
-        <div class="card-header">Notes</div>
         <div class="card-body">
-          <p>{{ inv.notes }}</p>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label>Client</label>
+              @if (inv.client) {
+                <p>
+                  <a [routerLink]="['/clients', inv.clientId]"
+                    >{{ inv.client.firstName }} {{ inv.client.lastName }}</a
+                  >
+                </p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+            <div class="detail-field">
+              <label>Invoice Date</label>
+              <p>{{ inv.createdAt | dateFormat }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Due Date</label>
+              <p>{{ inv.dueDate | dateFormat }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Status</label>
+              <p>
+                <span class="badge" [class]="getStatusClass(inv.status)">{{
+                  inv.status | titlecase
+                }}</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    }
-  </div>
+
+      @if (inv.items && inv.items.length > 0) {
+        <div class="card mb-6">
+          <div class="card-header">Line Items</div>
+          <div class="card-body p-0">
+            <table class="line-items-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of inv.items; track item.id) {
+                  <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">
+                      {{ item.unitPrice | currencyFormat }}
+                    </td>
+                    <td class="text-right">
+                      {{ item.amount | currencyFormat }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="text-right">
+                    <strong>Subtotal</strong>
+                  </td>
+                  <td class="text-right">
+                    {{ inv.subtotal | currencyFormat }}
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-right"><strong>Tax</strong></td>
+                  <td class="text-right">{{ inv.tax | currencyFormat }}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" class="text-right"><strong>Total</strong></td>
+                  <td class="text-right">
+                    <strong>{{ inv.total | currencyFormat }}</strong>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      }
+
+      @if (inv.notes) {
+        <div class="card">
+          <div class="card-header">Notes</div>
+          <div class="card-body">
+            <p>{{ inv.notes }}</p>
+          </div>
+        </div>
+      }
+    </div>
   }
 }

@@ -19,11 +19,12 @@ func NewService(repo *Repository) *Service {
 
 // CreateInput holds data for creating or updating a barn.
 type CreateInput struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
-	Phone   string `json:"phone"`
-	Email   string `json:"email"`
-	Notes   string `json:"notes"`
+	Name        string `json:"name"`
+	ContactName string `json:"contact_name"`
+	Address     string `json:"address"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
+	Notes       string `json:"notes"`
 }
 
 // Validate checks the input for errors.
@@ -37,12 +38,13 @@ func (i *CreateInput) Validate() validator.Errors {
 // Create validates and creates a new barn.
 func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Barn, error) {
 	b := &models.Barn{
-		UserID:  userID,
-		Name:    input.Name,
-		Address: input.Address,
-		Phone:   input.Phone,
-		Email:   input.Email,
-		Notes:   input.Notes,
+		UserID:      userID,
+		Name:        input.Name,
+		ContactName: input.ContactName,
+		Address:     input.Address,
+		Phone:       input.Phone,
+		Email:       input.Email,
+		Notes:       input.Notes,
 	}
 	if err := s.repo.Create(b); err != nil {
 		return nil, err
@@ -63,13 +65,14 @@ func (s *Service) GetAll(userID uuid.UUID) ([]models.Barn, error) {
 // Update modifies an existing barn.
 func (s *Service) Update(userID, barnID uuid.UUID, input CreateInput) (*models.Barn, error) {
 	b := &models.Barn{
-		ID:      barnID,
-		UserID:  userID,
-		Name:    input.Name,
-		Address: input.Address,
-		Phone:   input.Phone,
-		Email:   input.Email,
-		Notes:   input.Notes,
+		ID:          barnID,
+		UserID:      userID,
+		Name:        input.Name,
+		ContactName: input.ContactName,
+		Address:     input.Address,
+		Phone:       input.Phone,
+		Email:       input.Email,
+		Notes:       input.Notes,
 	}
 	if err := s.repo.Update(b); err != nil {
 		return nil, err

@@ -54,13 +54,16 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="clientId">Client *</label>
-              <select id="clientId" class="form-control" formControlName="clientId"
-                [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
-                <option [value]="0">Select a client</option>
-                @for (client of clients(); track client.id) {
-                  <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
-                }
-              </select>
+              <div class="select-with-add">
+                <select id="clientId" class="form-control" formControlName="clientId"
+                  [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
+                  <option [value]="0">Select a client</option>
+                  @for (client of clients(); track client.id) {
+                    <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
+                  }
+                </select>
+                <button type="button" class="btn-add-new" title="Create new client" (click)="openCreateClient()">+ New</button>
+              </div>
               @if (form.controls.clientId.touched && form.controls.clientId.invalid) {
                 <div class="form-error">Please select a client.</div>
               }
@@ -68,12 +71,15 @@
 
             <div class="form-group">
               <label class="form-label" for="barnId">Barn</label>
-              <select id="barnId" class="form-control" formControlName="barnId">
-                <option [value]="0">No barn assigned</option>
-                @for (barn of barns(); track barn.id) {
-                  <option [value]="barn.id">{{ barn.name }}</option>
-                }
-              </select>
+              <div class="select-with-add">
+                <select id="barnId" class="form-control" formControlName="barnId">
+                  <option [value]="0">No barn assigned</option>
+                  @for (barn of barns(); track barn.id) {
+                    <option [value]="barn.id">{{ barn.name }}</option>
+                  }
+                </select>
+                <button type="button" class="btn-add-new" title="Create new barn" (click)="openCreateBarn()">+ New</button>
+              </div>
             </div>
           </div>
 

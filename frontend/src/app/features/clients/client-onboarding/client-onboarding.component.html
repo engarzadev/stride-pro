@@ -1,0 +1,300 @@
+<div class="onboarding-page">
+
+  <!-- Progress Steps -->
+  <div class="step-indicator">
+    <div class="step-item" [class.active]="step() === 1" [class.done]="step() > 1">
+      <div class="step-circle">
+        @if (step() > 1) { <span class="checkmark">&#10003;</span> } @else { 1 }
+      </div>
+      <span class="step-label">Client</span>
+    </div>
+    <div class="step-line" [class.done]="step() > 1"></div>
+
+    <div class="step-item" [class.active]="step() === 2" [class.done]="step() > 2">
+      <div class="step-circle">
+        @if (step() > 2) { <span class="checkmark">&#10003;</span> } @else { 2 }
+      </div>
+      <span class="step-label">Horse</span>
+    </div>
+    <div class="step-line" [class.done]="step() > 2"></div>
+
+    <div class="step-item" [class.active]="step() === 3" [class.done]="step() > 3">
+      <div class="step-circle">
+        @if (step() > 3) { <span class="checkmark">&#10003;</span> } @else { 3 }
+      </div>
+      <span class="step-label">Appointment</span>
+    </div>
+    <div class="step-line" [class.done]="step() > 3"></div>
+
+    <div class="step-item" [class.active]="step() === 4" [class.done]="step() > 4">
+      <div class="step-circle">4</div>
+      <span class="step-label">Done</span>
+    </div>
+  </div>
+
+  <!-- Step 1: Client Info -->
+  @if (step() === 1) {
+    <div class="card">
+      <div class="card-header">
+        <h2>Client Information</h2>
+        <p class="step-subtitle">Start with the basics — you can fill in more details later.</p>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="clientForm" (ngSubmit)="saveClient()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="firstName">First Name *</label>
+              <input id="firstName" type="text" class="form-control" formControlName="firstName"
+                [class.is-invalid]="clientForm.controls.firstName.touched && clientForm.controls.firstName.invalid">
+              @if (clientForm.controls.firstName.touched && clientForm.controls.firstName.errors?.['required']) {
+                <div class="form-error">First name is required.</div>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lastName">Last Name *</label>
+              <input id="lastName" type="text" class="form-control" formControlName="lastName"
+                [class.is-invalid]="clientForm.controls.lastName.touched && clientForm.controls.lastName.invalid">
+              @if (clientForm.controls.lastName.touched && clientForm.controls.lastName.errors?.['required']) {
+                <div class="form-error">Last name is required.</div>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input id="email" type="email" class="form-control" formControlName="email"
+                [class.is-invalid]="clientForm.controls.email.touched && clientForm.controls.email.invalid">
+              @if (clientForm.controls.email.touched && clientForm.controls.email.errors?.['email']) {
+                <div class="form-error">Please enter a valid email address.</div>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone</label>
+              <input id="phone" type="tel" class="form-control" formControlName="phone">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="address">Address</label>
+            <input id="address" type="text" class="form-control" formControlName="address">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="clientNotes">Notes</label>
+            <textarea id="clientNotes" class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer step-actions">
+        <a routerLink="/clients" class="btn btn-outline">Cancel</a>
+        <button class="btn btn-primary" (click)="saveClient()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Next: Add Horse &rarr; }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 2: Horse -->
+  @if (step() === 2) {
+    <div class="card">
+      <div class="card-header">
+        <h2>Add First Horse</h2>
+        <p class="step-subtitle">
+          Adding a horse for
+          <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>.
+          You can skip this and add horses later.
+        </p>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="horseForm" (ngSubmit)="saveHorse()">
+          <div class="form-group">
+            <label class="form-label" for="horseName">Name *</label>
+            <input id="horseName" type="text" class="form-control" formControlName="name"
+              [class.is-invalid]="horseForm.controls.name.touched && horseForm.controls.name.invalid">
+            @if (horseForm.controls.name.touched && horseForm.controls.name.errors?.['required']) {
+              <div class="form-error">Horse name is required.</div>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Breed</label>
+              <app-breed-autocomplete formControlName="breed" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="color">Color</label>
+              <input id="color" type="text" class="form-control" formControlName="color">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="age">Age</label>
+              <input id="age" type="number" class="form-control" formControlName="age" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="gender">Gender</label>
+              <select id="gender" class="form-control" formControlName="gender">
+                <option value="">Select gender</option>
+                <option value="mare">Mare</option>
+                <option value="stallion">Stallion</option>
+                <option value="gelding">Gelding</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="weight">Weight (lbs)</label>
+              <input id="weight" type="number" class="form-control" formControlName="weight" min="0">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="barnId">Barn</label>
+            <div class="select-with-add">
+              <select id="barnId" class="form-control" formControlName="barnId">
+                <option [ngValue]="null">No barn assigned</option>
+                @for (barn of barns(); track barn.id) {
+                  <option [value]="barn.id">{{ barn.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn-add-new" (click)="addNewBarn()">+ New Barn</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="horseNotes">Notes</label>
+            <textarea id="horseNotes" class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer step-actions">
+        <button class="btn btn-outline" (click)="skipHorse()" [disabled]="saving()">Skip for now</button>
+        <button class="btn btn-primary" (click)="saveHorse()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Next: Schedule Appointment &rarr; }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 3: Appointment -->
+  @if (step() === 3) {
+    <div class="card">
+      <div class="card-header">
+        <h2>Schedule First Appointment</h2>
+        <p class="step-subtitle">
+          Book an appointment for
+          <strong>{{ createdHorse()?.name }}</strong>.
+          You can skip this and schedule appointments later.
+        </p>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="appointmentForm" (ngSubmit)="saveAppointment()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="date">Date *</label>
+              <input id="date" type="date" class="form-control" formControlName="date"
+                [class.is-invalid]="appointmentForm.controls.date.touched && appointmentForm.controls.date.invalid">
+              @if (appointmentForm.controls.date.touched && appointmentForm.controls.date.errors?.['required']) {
+                <div class="form-error">Date is required.</div>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="time">Time</label>
+              <input id="time" type="time" class="form-control" formControlName="time">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="apptType">Type *</label>
+              <select id="apptType" class="form-control" formControlName="type"
+                [class.is-invalid]="appointmentForm.controls.type.touched && appointmentForm.controls.type.invalid">
+                <option value="">Select type</option>
+                @for (t of appointmentTypes; track t) {
+                  <option [value]="t">{{ t | titlecase }}</option>
+                }
+              </select>
+              @if (appointmentForm.controls.type.touched && appointmentForm.controls.type.errors?.['required']) {
+                <div class="form-error">Appointment type is required.</div>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="duration">Duration (min)</label>
+              <input id="duration" type="number" class="form-control" formControlName="duration" min="1">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="apptNotes">Notes</label>
+            <textarea id="apptNotes" class="form-control" formControlName="notes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer step-actions">
+        <button class="btn btn-outline" (click)="skipAppointment()" [disabled]="saving()">Skip for now</button>
+        <button class="btn btn-primary" (click)="saveAppointment()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Finish &rarr; }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 4: Done -->
+  @if (step() === 4) {
+    <div class="card done-card">
+      <div class="card-body">
+        <div class="done-icon">&#10003;</div>
+        <h2>All set!</h2>
+        <p class="done-subtitle">
+          <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>
+          has been added to your system.
+        </p>
+
+        <div class="summary-items">
+          <div class="summary-item">
+            <div class="summary-item-icon client-icon">C</div>
+            <div class="summary-item-info">
+              <span class="summary-item-label">Client</span>
+              <span class="summary-item-value">{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</span>
+            </div>
+          </div>
+
+          @if (createdHorse()) {
+            <div class="summary-item">
+              <div class="summary-item-icon horse-icon">H</div>
+              <div class="summary-item-info">
+                <span class="summary-item-label">Horse</span>
+                <span class="summary-item-value">{{ createdHorse()?.name }}</span>
+              </div>
+            </div>
+          }
+
+          @if (createdAppointment()) {
+            <div class="summary-item">
+              <div class="summary-item-icon appt-icon">A</div>
+              <div class="summary-item-info">
+                <span class="summary-item-label">Appointment</span>
+                <span class="summary-item-value">
+                  {{ createdAppointment()?.type | titlecase }} &mdash;
+                  {{ createdAppointment()?.date | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="done-actions">
+          <button class="btn btn-primary" (click)="goToClient()">View Client Profile</button>
+          @if (!createdHorse()) {
+            <button class="btn btn-outline" (click)="goToNewHorse()">Add a Horse</button>
+          }
+          @if (createdHorse() && !createdAppointment()) {
+            <button class="btn btn-outline" (click)="goToNewAppointment()">Schedule Appointment</button>
+          }
+          <a routerLink="/clients" class="btn btn-outline">Back to Clients</a>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

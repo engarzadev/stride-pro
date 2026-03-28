@@ -1,13 +1,17 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { InvoicesService } from '../invoices.service';
 import { Invoice } from '../../../core/models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  TableAction,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
-import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { InvoicesService } from '../invoices.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -21,9 +25,23 @@ export class InvoiceListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+  private readonly datePipe = new DatePipe('en-US');
 
   readonly loading = signal(true);
   readonly invoices = signal<Invoice[]>([]);
+
+  readonly tableInvoices = computed(() =>
+    this.invoices().map((inv) => ({
+      ...inv,
+      invoiceNumber: `#${inv.id.slice(0, 5).toUpperCase()}`,
+      clientName: inv.client
+        ? `${inv.client.firstName} ${inv.client.lastName}`
+        : '',
+      date: this.datePipe.transform(inv.createdAt, 'MMMM dd, yyyy') ?? '',
+      dueDate: this.datePipe.transform(inv.dueDate, 'MMMM dd, yyyy') ?? '',
+      total: `$${inv.total.toFixed(2)}`,
+    })),
+  );
 
   readonly columns: TableColumn[] = [
     { key: 'invoiceNumber', label: 'Invoice #', sortable: true },
@@ -31,7 +49,19 @@ export class InvoiceListComponent implements OnInit {
     { key: 'date', label: 'Date', sortable: true },
     { key: 'dueDate', label: 'Due Date', sortable: true },
     { key: 'total', label: 'Total', sortable: true },
-    { key: 'status', label: 'Status', sortable: true },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      type: 'badge',
+      capitalize: true,
+      badgeMap: {
+        draft: 'secondary',
+        sent: 'primary',
+        paid: 'success',
+        overdue: 'danger',
+      },
+    },
   ];
 
   readonly actions: TableAction[] = [
@@ -46,11 +76,7 @@ export class InvoiceListComponent implements OnInit {
   loadInvoices(): void {
     this.invoicesService.getAll().subscribe({
       next: (invoices) => {
-        const mapped = invoices.map((inv) => ({
-          ...inv,
-          clientName: inv.client ? `${inv.client.firstName} ${inv.client.lastName}` : '-',
-        }));
-        this.invoices.set(mapped as Invoice[]);
+        this.invoices.set(invoices);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
@@ -65,7 +91,10 @@ export class InvoiceListComponent implements OnInit {
     this.router.navigate(['/invoices', row['id']]);
   }
 
-  async onAction(event: { action: string; row: Record<string, unknown> }): Promise<void> {
+  async onAction(event: {
+    action: string;
+    row: Record<string, unknown>;
+  }): Promise<void> {
     if (event.action === 'edit') {
       this.router.navigate(['/invoices', event.row['id'], 'edit']);
     } else if (event.action === 'delete') {
@@ -76,7 +105,7 @@ export class InvoiceListComponent implements OnInit {
         confirmClass: 'btn-danger',
       });
       if (confirmed) {
-        this.invoicesService.delete(event.row['id'] as number).subscribe({
+        this.invoicesService.delete(event.row['id'] as string).subscribe({
           next: () => {
             this.toast.success('Invoice deleted successfully');
             this.loadInvoices();

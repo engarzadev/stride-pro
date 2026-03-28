@@ -8,6 +8,7 @@ export interface TableColumn {
   sortable?: boolean;
   type?: 'text' | 'date' | 'currency' | 'badge';
   badgeMap?: Record<string, string>;
+  capitalize?: boolean;
 }
 
 export interface TableAction {

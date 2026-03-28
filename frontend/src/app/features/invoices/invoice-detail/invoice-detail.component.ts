@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { InvoicesService } from '../invoices.service';
 import { Invoice } from '../../../core/models';
@@ -11,7 +12,7 @@ import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 @Component({
   selector: 'app-invoice-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, CurrencyFormatPipe],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, CurrencyFormatPipe, TitleCasePipe],
   templateUrl: './invoice-detail.component.html',
   styleUrls: ['./invoice-detail.component.scss'],
 })
@@ -26,7 +27,7 @@ export class InvoiceDetailComponent implements OnInit {
   readonly invoice = signal<Invoice | null>(null);
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id')!;
     this.invoicesService.getById(id).subscribe({
       next: (invoice) => {
         this.invoice.set(invoice);
@@ -42,7 +43,7 @@ export class InvoiceDetailComponent implements OnInit {
   getStatusClass(status: string): string {
     switch (status) {
       case 'paid': return 'badge-success';
-      case 'sent': return 'badge-info';
+      case 'sent': return 'badge-primary';
       case 'overdue': return 'badge-danger';
       case 'draft': return 'badge-secondary';
       default: return 'badge-secondary';

@@ -1,0 +1,90 @@
+@if (service.visible()) {
+  <div class="modal-overlay" (click)="onCancel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">New Horse</h3>
+        <button type="button" class="modal-close" (click)="onCancel()">&times;</button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label class="form-label" for="qh-name">Name *</label>
+          <input id="qh-name" type="text" class="form-control" formControlName="name"
+            [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid">
+          @if (form.controls.name.touched && form.controls.name.errors?.['required']) {
+            <div class="form-error">Horse name is required.</div>
+          }
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Breed</label>
+            <app-breed-autocomplete formControlName="breed" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="qh-color">Color</label>
+            <input id="qh-color" type="text" class="form-control" formControlName="color">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="qh-age">Age</label>
+            <input id="qh-age" type="number" class="form-control" formControlName="age" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="qh-gender">Gender</label>
+            <select id="qh-gender" class="form-control" formControlName="gender">
+              <option value="">Select gender</option>
+              <option value="mare">Mare</option>
+              <option value="stallion">Stallion</option>
+              <option value="gelding">Gelding</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="qh-weight">Weight (lbs)</label>
+          <input id="qh-weight" type="number" class="form-control" formControlName="weight" min="0">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="qh-clientId">Client *</label>
+            @if (preselectedClient(); as client) {
+              <div class="form-control-static">{{ client.firstName }} {{ client.lastName }}</div>
+            } @else {
+              <select id="qh-clientId" class="form-control" formControlName="clientId"
+                [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
+                <option [value]="0">Select a client</option>
+                @for (c of clients(); track c.id) {
+                  <option [value]="c.id">{{ c.firstName }} {{ c.lastName }}</option>
+                }
+              </select>
+              @if (form.controls.clientId.touched && form.controls.clientId.invalid) {
+                <div class="form-error">Please select a client.</div>
+              }
+            }
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="qh-barnId">Barn</label>
+            <div class="select-with-add">
+              <select id="qh-barnId" class="form-control" formControlName="barnId">
+                <option [value]="null">No barn assigned</option>
+                @for (barn of barns(); track barn.id) {
+                  <option [value]="barn.id">{{ barn.name }}</option>
+                }
+              </select>
+              <button type="button" class="btn-add-new" title="Create new barn" (click)="openCreateBarn()">+ New</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="qh-notes">Notes</label>
+          <textarea id="qh-notes" class="form-control" formControlName="notes" rows="2"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            @if (saving()) { Saving... } @else { Create Horse }
+          </button>
+          <button type="button" class="btn btn-outline" (click)="onCancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

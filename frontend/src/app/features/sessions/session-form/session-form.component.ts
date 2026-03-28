@@ -7,6 +7,7 @@ import { Appointment } from '../../../core/models';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { QuickCreateAppointmentService } from '../../../shared/components/quick-create/quick-create-appointment.component';
 
 @Component({
   selector: 'app-session-form',
@@ -22,12 +23,13 @@ export class SessionFormComponent implements OnInit {
   private readonly sessionsService = inject(SessionsService);
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly toast = inject(ToastService);
+  private readonly quickCreateAppointment = inject(QuickCreateAppointmentService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly appointments = signal<Appointment[]>([]);
-  private sessionId = 0;
+  private sessionId = '';
 
   readonly bodyZoneOptions = [
     'Head', 'Neck', 'Withers', 'Back', 'Loin', 'Croup',
@@ -39,7 +41,7 @@ export class SessionFormComponent implements OnInit {
   readonly selectedZones = signal<Set<string>>(new Set());
 
   readonly form = this.fb.nonNullable.group({
-    appointmentId: [0, [Validators.required, Validators.min(1)]],
+    appointmentId: ['', [Validators.required]],
     type: ['', [Validators.required]],
     notes: [''],
     findings: [''],
@@ -52,7 +54,7 @@ export class SessionFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.sessionId = Number(id);
+      this.sessionId = id;
       this.loading.set(true);
       this.sessionsService.getById(this.sessionId).subscribe({
         next: (session) => {
@@ -73,6 +75,14 @@ export class SessionFormComponent implements OnInit {
           this.router.navigate(['/sessions']);
         },
       });
+    }
+  }
+
+  async openCreateAppointment(): Promise<void> {
+    const appointment = await this.quickCreateAppointment.open();
+    if (appointment) {
+      this.appointments.update((a) => [...a, appointment]);
+      this.form.controls.appointmentId.setValue(appointment.id);
     }
   }
 

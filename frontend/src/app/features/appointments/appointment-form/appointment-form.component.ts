@@ -8,6 +8,9 @@ import { BarnsService } from '../../barns/barns.service';
 import { Client, Horse, Barn } from '../../../core/models';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { QuickCreateClientService } from '../../../shared/components/quick-create/quick-create-client.component';
+import { QuickCreateHorseService } from '../../../shared/components/quick-create/quick-create-horse.component';
+import { QuickCreateBarnService } from '../../../shared/components/quick-create/quick-create-barn.component';
 
 @Component({
   selector: 'app-appointment-form',
@@ -25,6 +28,9 @@ export class AppointmentFormComponent implements OnInit {
   private readonly horsesService = inject(HorsesService);
   private readonly barnsService = inject(BarnsService);
   private readonly toast = inject(ToastService);
+  private readonly quickCreateClient = inject(QuickCreateClientService);
+  private readonly quickCreateHorse = inject(QuickCreateHorseService);
+  private readonly quickCreateBarn = inject(QuickCreateBarnService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -32,12 +38,12 @@ export class AppointmentFormComponent implements OnInit {
   readonly clients = signal<Client[]>([]);
   readonly allHorses = signal<Horse[]>([]);
   readonly barns = signal<Barn[]>([]);
-  private appointmentId = 0;
+  private appointmentId = '';
 
   readonly form = this.fb.nonNullable.group({
-    clientId: [0, [Validators.required, Validators.min(1)]],
-    horseId: [0, [Validators.required, Validators.min(1)]],
-    barnId: [0],
+    clientId: ['', [Validators.required]],
+    horseId: ['', [Validators.required]],
+    barnId: [null as string | null],
     date: ['', [Validators.required]],
     time: [''],
     duration: [60],
@@ -49,7 +55,7 @@ export class AppointmentFormComponent implements OnInit {
   get filteredHorses(): Horse[] {
     const clientId = this.form.controls.clientId.value;
     if (!clientId) return this.allHorses();
-    return this.allHorses().filter((h) => h.clientId === Number(clientId));
+    return this.allHorses().filter((h) => h.clientId === clientId);
   }
 
   ngOnInit(): void {
@@ -57,21 +63,35 @@ export class AppointmentFormComponent implements OnInit {
     this.horsesService.getAll().subscribe((h) => this.allHorses.set(h));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
 
-    this.form.controls.clientId.valueChanges.subscribe(() => {
-      this.form.controls.horseId.setValue(0);
+    this.form.controls.horseId.disable();
+    this.form.controls.barnId.disable();
+
+    this.form.controls.clientId.valueChanges.subscribe((clientId) => {
+      this.form.controls.horseId.setValue('');
+      this.form.controls.barnId.setValue(null);
+      this.form.controls.barnId.disable();
+      if (clientId) {
+        this.form.controls.horseId.enable();
+      } else {
+        this.form.controls.horseId.disable();
+      }
     });
 
     this.form.controls.horseId.valueChanges.subscribe((horseId) => {
-      const horse = this.allHorses().find((h) => h.id === Number(horseId));
-      if (horse?.barnId) {
-        this.form.controls.barnId.setValue(horse.barnId);
+      const horse = this.allHorses().find((h) => h.id === horseId);
+      if (horseId) {
+        this.form.controls.barnId.enable();
+        this.form.controls.barnId.setValue(horse?.barnId ?? null);
+      } else {
+        this.form.controls.barnId.setValue(null);
+        this.form.controls.barnId.disable();
       }
     });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit.set(true);
-      this.appointmentId = Number(id);
+      this.appointmentId = id;
       this.loading.set(true);
       this.appointmentsService.getById(this.appointmentId).subscribe({
         next: (apt) => {
@@ -93,6 +113,34 @@ export class AppointmentFormComponent implements OnInit {
           this.router.navigate(['/appointments']);
         },
       });
+    }
+  }
+
+  async openCreateClient(): Promise<void> {
+    const client = await this.quickCreateClient.open();
+    if (client) {
+      this.clients.update((c) => [...c, client]);
+      this.form.controls.clientId.setValue(client.id);
+    }
+  }
+
+  async openCreateHorse(): Promise<void> {
+    const selectedClientId = this.form.controls.clientId.value;
+    const horse = await this.quickCreateHorse.open({ clientId: selectedClientId || undefined });
+    if (horse) {
+      this.allHorses.update((h) => [...h, horse]);
+      this.form.controls.horseId.setValue(horse.id);
+      if (horse.barnId) {
+        this.form.controls.barnId.setValue(horse.barnId);
+      }
+    }
+  }
+
+  async openCreateBarn(): Promise<void> {
+    const barn = await this.quickCreateBarn.open();
+    if (barn) {
+      this.barns.update((b) => [...b, barn]);
+      this.form.controls.barnId.setValue(barn.id);
     }
   }
 

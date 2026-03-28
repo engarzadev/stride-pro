@@ -23,15 +23,29 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const invoiceColumns = `id, user_id, client_id, status, due_date, total, notes, created_at, updated_at`
+const invoiceSelectCols = `i.id, i.user_id, i.client_id, i.status, i.due_date, i.total, i.notes, i.created_at, i.updated_at, c.id, c.first_name, c.last_name`
+const invoiceJoins = `FROM invoices i LEFT JOIN clients c ON i.client_id = c.id`
 
 func scanInvoice(scanner interface{ Scan(...interface{}) error }) (*models.Invoice, error) {
 	inv := &models.Invoice{}
+	var clientID uuid.NullUUID
+	var clientFirstName, clientLastName sql.NullString
 	err := scanner.Scan(
 		&inv.ID, &inv.UserID, &inv.ClientID, &inv.Status,
 		&inv.DueDate, &inv.Total, &inv.Notes, &inv.CreatedAt, &inv.UpdatedAt,
+		&clientID, &clientFirstName, &clientLastName,
 	)
-	return inv, err
+	if err != nil {
+		return nil, err
+	}
+	if clientID.Valid {
+		inv.Client = &models.Client{
+			ID:        clientID.UUID,
+			FirstName: clientFirstName.String,
+			LastName:  clientLastName.String,
+		}
+	}
+	return inv, nil
 }
 
 // Create inserts a new invoice and its items in a transaction.
@@ -46,7 +60,7 @@ func (r *Repository) Create(inv *models.Invoice) error {
 	}
 
 	_, err = tx.Exec(`
-		INSERT INTO invoices (`+invoiceColumns+`)
+		INSERT INTO invoices (id, user_id, client_id, status, due_date, total, notes, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		inv.ID, inv.UserID, inv.ClientID, inv.Status,
 		inv.DueDate, inv.Total, inv.Notes, inv.CreatedAt, inv.UpdatedAt,
@@ -77,7 +91,7 @@ func (r *Repository) Create(inv *models.Invoice) error {
 // GetByID returns a single invoice with its items, scoped to the user.
 func (r *Repository) GetByID(userID, invoiceID uuid.UUID) (*models.Invoice, error) {
 	inv, err := scanInvoice(r.db.QueryRow(
-		`SELECT `+invoiceColumns+` FROM invoices WHERE id = $1 AND user_id = $2`,
+		`SELECT `+invoiceSelectCols+` `+invoiceJoins+` WHERE i.id = $1 AND i.user_id = $2`,
 		invoiceID, userID,
 	))
 	if errors.Is(err, sql.ErrNoRows) {
@@ -99,7 +113,7 @@ func (r *Repository) GetByID(userID, invoiceID uuid.UUID) (*models.Invoice, erro
 // GetAllByUserID returns all invoices belonging to a user (without items for performance).
 func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Invoice, error) {
 	rows, err := r.db.Query(
-		`SELECT `+invoiceColumns+` FROM invoices WHERE user_id = $1 ORDER BY created_at DESC`, userID,
+		`SELECT `+invoiceSelectCols+` `+invoiceJoins+` WHERE i.user_id = $1 ORDER BY i.created_at DESC`, userID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("querying invoices: %w", err)
@@ -120,7 +134,7 @@ func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Invoice, error) 
 // GetByClientID returns all invoices for a specific client.
 func (r *Repository) GetByClientID(userID, clientID uuid.UUID) ([]models.Invoice, error) {
 	rows, err := r.db.Query(
-		`SELECT `+invoiceColumns+` FROM invoices WHERE user_id = $1 AND client_id = $2 ORDER BY created_at DESC`,
+		`SELECT `+invoiceSelectCols+` `+invoiceJoins+` WHERE i.user_id = $1 AND i.client_id = $2 ORDER BY i.created_at DESC`,
 		userID, clientID,
 	)
 	if err != nil {

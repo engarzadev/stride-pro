@@ -41,6 +41,10 @@ tr.clickable {
   cursor: pointer;
 }
 
+td.capitalize {
+  text-transform: capitalize;
+}
+
 .actions-cell {
   display: flex;
   gap: 0.375rem;

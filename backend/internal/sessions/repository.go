@@ -23,15 +23,41 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const sessionColumns = `id, user_id, appointment_id, type, body_zones, notes, findings, recommendations, created_at, updated_at`
+const sessionSelectCols = `s.id, s.user_id, s.appointment_id, s.type, s.body_zones, s.notes, s.findings, s.recommendations, s.created_at, s.updated_at, a.id, c.id, c.first_name, c.last_name, h.id, h.name`
+const sessionJoins = `FROM sessions s LEFT JOIN appointments a ON s.appointment_id = a.id LEFT JOIN clients c ON a.client_id = c.id LEFT JOIN horses h ON a.horse_id = h.id`
 
 func scanSession(scanner interface{ Scan(...interface{}) error }) (*models.Session, error) {
 	s := &models.Session{}
+	var apptID uuid.NullUUID
+	var clientID uuid.NullUUID
+	var clientFirstName, clientLastName sql.NullString
+	var horseID uuid.NullUUID
+	var horseName sql.NullString
 	err := scanner.Scan(
 		&s.ID, &s.UserID, &s.AppointmentID, &s.Type, &s.BodyZones,
 		&s.Notes, &s.Findings, &s.Recommendations, &s.CreatedAt, &s.UpdatedAt,
+		&apptID, &clientID, &clientFirstName, &clientLastName, &horseID, &horseName,
 	)
-	return s, err
+	if err != nil {
+		return nil, err
+	}
+	if apptID.Valid {
+		s.Appointment = &models.Appointment{ID: apptID.UUID}
+		if clientID.Valid {
+			s.Appointment.Client = &models.Client{
+				ID:        clientID.UUID,
+				FirstName: clientFirstName.String,
+				LastName:  clientLastName.String,
+			}
+		}
+		if horseID.Valid {
+			s.Appointment.Horse = &models.Horse{
+				ID:   horseID.UUID,
+				Name: horseName.String,
+			}
+		}
+	}
+	return s, nil
 }
 
 // Create inserts a new session.
@@ -41,7 +67,7 @@ func (r *Repository) Create(s *models.Session) error {
 	s.UpdatedAt = time.Now()
 
 	_, err := r.db.Exec(`
-		INSERT INTO sessions (`+sessionColumns+`)
+		INSERT INTO sessions (id, user_id, appointment_id, type, body_zones, notes, findings, recommendations, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
 		s.ID, s.UserID, s.AppointmentID, s.Type, s.BodyZones,
 		s.Notes, s.Findings, s.Recommendations, s.CreatedAt, s.UpdatedAt,
@@ -55,7 +81,7 @@ func (r *Repository) Create(s *models.Session) error {
 // GetByID returns a single session by ID, scoped to the user.
 func (r *Repository) GetByID(userID, sessionID uuid.UUID) (*models.Session, error) {
 	s, err := scanSession(r.db.QueryRow(
-		`SELECT `+sessionColumns+` FROM sessions WHERE id = $1 AND user_id = $2`,
+		`SELECT `+sessionSelectCols+` `+sessionJoins+` WHERE s.id = $1 AND s.user_id = $2`,
 		sessionID, userID,
 	))
 	if errors.Is(err, sql.ErrNoRows) {
@@ -70,7 +96,7 @@ func (r *Repository) GetByID(userID, sessionID uuid.UUID) (*models.Session, erro
 // GetAllByUserID returns all sessions belonging to a user.
 func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Session, error) {
 	rows, err := r.db.Query(
-		`SELECT `+sessionColumns+` FROM sessions WHERE user_id = $1 ORDER BY created_at DESC`, userID,
+		`SELECT `+sessionSelectCols+` `+sessionJoins+` WHERE s.user_id = $1 ORDER BY s.created_at DESC`, userID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("querying sessions: %w", err)
@@ -91,7 +117,7 @@ func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Session, error) 
 // GetByAppointmentID returns all sessions for a specific appointment.
 func (r *Repository) GetByAppointmentID(userID, appointmentID uuid.UUID) ([]models.Session, error) {
 	rows, err := r.db.Query(
-		`SELECT `+sessionColumns+` FROM sessions WHERE user_id = $1 AND appointment_id = $2 ORDER BY created_at`,
+		`SELECT `+sessionSelectCols+` `+sessionJoins+` WHERE s.user_id = $1 AND s.appointment_id = $2 ORDER BY s.created_at`,
 		userID, appointmentID,
 	)
 	if err != nil {

@@ -24,7 +24,7 @@
         @for (row of getSortedData(); track row['id']) {
           <tr [class.clickable]="clickable" (click)="clickable ? rowClick.emit(row) : null">
             @for (col of columns; track col.key) {
-              <td>
+              <td [class.capitalize]="col.capitalize">
                 @switch (col.type) {
                   @case ('date') {
                     {{ getNestedValue(row, col.key) | dateFormat }}

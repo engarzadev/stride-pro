@@ -15,6 +15,29 @@
   }
 }
 
+.select-with-add {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  select { flex: 1; }
+}
+
+.btn-add-new {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover { background-color: #e2e8f0; }
+}
+
 .line-items-section {
   margin: 1.5rem 0;
 }

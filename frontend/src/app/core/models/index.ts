@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -23,7 +23,7 @@ export interface Client {
 }
 
 export interface Horse {
-  id: number;
+  id: string;
   name: string;
   breed: string;
   age: number;
@@ -31,8 +31,8 @@ export interface Horse {
   color: string;
   weight: number;
   notes: string;
-  clientId: number;
-  barnId: number;
+  clientId: string;
+  barnId: string | null;
   client?: Client;
   barn?: Barn;
   createdAt: string;
@@ -40,24 +40,25 @@ export interface Horse {
 }
 
 export interface Barn {
-  id: number;
+  id: string;
   name: string;
+  contactName: string;
   address: string;
   phone: string;
   email: string;
   notes: string;
-  userId: number;
+  userId: string;
   createdAt: string;
   updatedAt: string;
   horses?: Horse[];
 }
 
 export interface Appointment {
-  id: number;
-  clientId: number;
-  horseId: number;
-  barnId: number;
-  userId: number;
+  id: string;
+  clientId: string;
+  horseId: string;
+  barnId: string | null;
+  userId: string;
   date: string;
   time: string;
   duration: number;
@@ -73,8 +74,8 @@ export interface Appointment {
 }
 
 export interface Session {
-  id: number;
-  appointmentId: number;
+  id: string;
+  appointmentId: string;
   type: string;
   bodyZones: string[];
   notes: string;
@@ -86,8 +87,8 @@ export interface Session {
 }
 
 export interface InvoiceItem {
-  id: number;
-  invoiceId: number;
+  id: string;
+  invoiceId: string;
   description: string;
   quantity: number;
   unitPrice: number;
@@ -95,9 +96,9 @@ export interface InvoiceItem {
 }
 
 export interface Invoice {
-  id: number;
-  clientId: number;
-  userId: number;
+  id: string;
+  clientId: string;
+  userId: string;
   invoiceNumber: string;
   date: string;
   dueDate: string;

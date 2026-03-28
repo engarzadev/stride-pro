@@ -1,12 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BarnsService } from '../barns.service';
 import { Barn } from '../../../core/models';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  TableAction,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { BarnsService } from '../barns.service';
 
 @Component({
   selector: 'app-barn-list',
@@ -26,6 +30,7 @@ export class BarnListComponent implements OnInit {
 
   readonly columns: TableColumn[] = [
     { key: 'name', label: 'Name', sortable: true },
+    { key: 'contactName', label: 'Contact Name', sortable: true },
     { key: 'address', label: 'Address', sortable: true },
     { key: 'phone', label: 'Phone' },
     { key: 'email', label: 'Email' },
@@ -58,7 +63,10 @@ export class BarnListComponent implements OnInit {
     this.router.navigate(['/barns', row['id']]);
   }
 
-  async onAction(event: { action: string; row: Record<string, unknown> }): Promise<void> {
+  async onAction(event: {
+    action: string;
+    row: Record<string, unknown>;
+  }): Promise<void> {
     if (event.action === 'edit') {
       this.router.navigate(['/barns', event.row['id'], 'edit']);
     } else if (event.action === 'delete') {
@@ -69,7 +77,7 @@ export class BarnListComponent implements OnInit {
         confirmClass: 'btn-danger',
       });
       if (confirmed) {
-        this.barnsService.delete(event.row['id'] as number).subscribe({
+        this.barnsService.delete(event.row['id'] as string).subscribe({
           next: () => {
             this.toast.success('Barn deleted successfully');
             this.loadBarns();

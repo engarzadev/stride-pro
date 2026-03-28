@@ -23,15 +23,38 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const horseColumns = `id, user_id, client_id, barn_id, name, breed, age, gender, color, weight, notes, created_at, updated_at`
+const horseSelectCols = `h.id, h.user_id, h.client_id, h.barn_id, h.name, h.breed, h.age, h.gender, h.color, h.weight, h.notes, h.created_at, h.updated_at, c.id, c.first_name, c.last_name, b.id, b.name`
+const horseJoins = `FROM horses h LEFT JOIN clients c ON h.client_id = c.id LEFT JOIN barns b ON h.barn_id = b.id`
 
 func scanHorse(scanner interface{ Scan(...interface{}) error }) (*models.Horse, error) {
 	h := &models.Horse{}
+	var clientID uuid.NullUUID
+	var clientFirstName, clientLastName sql.NullString
+	var barnID uuid.NullUUID
+	var barnName sql.NullString
 	err := scanner.Scan(
 		&h.ID, &h.UserID, &h.ClientID, &h.BarnID, &h.Name, &h.Breed,
 		&h.Age, &h.Gender, &h.Color, &h.Weight, &h.Notes, &h.CreatedAt, &h.UpdatedAt,
+		&clientID, &clientFirstName, &clientLastName,
+		&barnID, &barnName,
 	)
-	return h, err
+	if err != nil {
+		return nil, err
+	}
+	if clientID.Valid {
+		h.Client = &models.Client{
+			ID:        clientID.UUID,
+			FirstName: clientFirstName.String,
+			LastName:  clientLastName.String,
+		}
+	}
+	if barnID.Valid {
+		h.Barn = &models.Barn{
+			ID:   barnID.UUID,
+			Name: barnName.String,
+		}
+	}
+	return h, nil
 }
 
 // Create inserts a new horse.
@@ -41,7 +64,7 @@ func (r *Repository) Create(h *models.Horse) error {
 	h.UpdatedAt = time.Now()
 
 	_, err := r.db.Exec(`
-		INSERT INTO horses (`+horseColumns+`)
+		INSERT INTO horses (id, user_id, client_id, barn_id, name, breed, age, gender, color, weight, notes, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
 		h.ID, h.UserID, h.ClientID, h.BarnID, h.Name, h.Breed,
 		h.Age, h.Gender, h.Color, h.Weight, h.Notes, h.CreatedAt, h.UpdatedAt,
@@ -55,7 +78,7 @@ func (r *Repository) Create(h *models.Horse) error {
 // GetByID returns a single horse by ID, scoped to the user.
 func (r *Repository) GetByID(userID, horseID uuid.UUID) (*models.Horse, error) {
 	h, err := scanHorse(r.db.QueryRow(
-		`SELECT `+horseColumns+` FROM horses WHERE id = $1 AND user_id = $2`,
+		`SELECT `+horseSelectCols+` `+horseJoins+` WHERE h.id = $1 AND h.user_id = $2`,
 		horseID, userID,
 	))
 	if errors.Is(err, sql.ErrNoRows) {
@@ -70,7 +93,7 @@ func (r *Repository) GetByID(userID, horseID uuid.UUID) (*models.Horse, error) {
 // GetAllByUserID returns all horses belonging to a user.
 func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Horse, error) {
 	rows, err := r.db.Query(
-		`SELECT `+horseColumns+` FROM horses WHERE user_id = $1 ORDER BY name`, userID,
+		`SELECT `+horseSelectCols+` `+horseJoins+` WHERE h.user_id = $1 ORDER BY h.name`, userID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("querying horses: %w", err)
@@ -91,7 +114,7 @@ func (r *Repository) GetAllByUserID(userID uuid.UUID) ([]models.Horse, error) {
 // GetByClientID returns all horses for a specific client.
 func (r *Repository) GetByClientID(userID, clientID uuid.UUID) ([]models.Horse, error) {
 	rows, err := r.db.Query(
-		`SELECT `+horseColumns+` FROM horses WHERE user_id = $1 AND client_id = $2 ORDER BY name`,
+		`SELECT `+horseSelectCols+` `+horseJoins+` WHERE h.user_id = $1 AND h.client_id = $2 ORDER BY h.name`,
 		userID, clientID,
 	)
 	if err != nil {
@@ -113,7 +136,7 @@ func (r *Repository) GetByClientID(userID, clientID uuid.UUID) ([]models.Horse, 
 // GetByBarnID returns all horses at a specific barn.
 func (r *Repository) GetByBarnID(userID, barnID uuid.UUID) ([]models.Horse, error) {
 	rows, err := r.db.Query(
-		`SELECT `+horseColumns+` FROM horses WHERE user_id = $1 AND barn_id = $2 ORDER BY name`,
+		`SELECT `+horseSelectCols+` `+horseJoins+` WHERE h.user_id = $1 AND h.barn_id = $2 ORDER BY h.name`,
 		userID, barnID,
 	)
 	if err != nil {

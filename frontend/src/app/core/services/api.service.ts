@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { keysToCamel } from '../utils/camel-case';
+import { keysToCamel, keysToSnake } from '../utils/camel-case';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -23,11 +23,11 @@ export class ApiService {
   }
 
   post<T>(path: string, body: unknown): Observable<T> {
-    return this.http.post<{ data: T }>(`${this.baseUrl}${path}`, body).pipe(map((r) => keysToCamel<T>(r.data)));
+    return this.http.post<{ data: T }>(`${this.baseUrl}${path}`, keysToSnake(body)).pipe(map((r) => keysToCamel<T>(r.data)));
   }
 
   put<T>(path: string, body: unknown): Observable<T> {
-    return this.http.put<{ data: T }>(`${this.baseUrl}${path}`, body).pipe(map((r) => keysToCamel<T>(r.data)));
+    return this.http.put<{ data: T }>(`${this.baseUrl}${path}`, keysToSnake(body)).pipe(map((r) => keysToCamel<T>(r.data)));
   }
 
   delete<T>(path: string): Observable<T> {

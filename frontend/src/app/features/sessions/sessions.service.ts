@@ -11,7 +11,7 @@ export class SessionsService {
     return this.api.get<Session[]>('/sessions');
   }
 
-  getById(id: number): Observable<Session> {
+  getById(id: string): Observable<Session> {
     return this.api.get<Session>(`/sessions/${id}`);
   }
 
@@ -19,11 +19,11 @@ export class SessionsService {
     return this.api.post<Session>('/sessions', session);
   }
 
-  update(id: number, session: Partial<Session>): Observable<Session> {
+  update(id: string, session: Partial<Session>): Observable<Session> {
     return this.api.put<Session>(`/sessions/${id}`, session);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.api.delete<void>(`/sessions/${id}`);
   }
 }

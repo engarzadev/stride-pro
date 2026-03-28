@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AppointmentsService } from '../appointments.service';
 import { Appointment } from '../../../core/models';
@@ -10,7 +11,7 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 @Component({
   selector: 'app-appointment-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe],
   templateUrl: './appointment-detail.component.html',
   styleUrls: ['./appointment-detail.component.scss'],
 })
@@ -25,7 +26,7 @@ export class AppointmentDetailComponent implements OnInit {
   readonly appointment = signal<Appointment | null>(null);
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = this.route.snapshot.paramMap.get('id')!;
     this.appointmentsService.getById(id).subscribe({
       next: (appointment) => {
         this.appointment.set(appointment);
@@ -40,9 +41,9 @@ export class AppointmentDetailComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
-      scheduled: 'badge-primary',
+      scheduled: 'badge-success',
       confirmed: 'badge-success',
-      completed: 'badge-success',
+      completed: 'badge-secondary',
       cancelled: 'badge-danger',
       'no-show': 'badge-warning',
     };
