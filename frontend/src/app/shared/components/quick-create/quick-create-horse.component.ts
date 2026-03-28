@@ -2,6 +2,7 @@ import {
   Component,
   Injectable,
   OnInit,
+  ViewChild,
   computed,
   effect,
   inject,
@@ -119,7 +120,7 @@ export class QuickCreateHorseService {
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Barn</mat-label>
-            <mat-select formControlName="barnId">
+            <mat-select #barnSelect formControlName="barnId">
               <mat-option [value]="null">No barn assigned</mat-option>
               @for (barn of barns(); track barn.id) {
                 <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
@@ -129,7 +130,7 @@ export class QuickCreateHorseService {
               matSuffix
               mat-icon-button
               type="button"
-              (click)="openCreateBarn()"
+              (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()"
               title="Create new barn"
             >
               <mat-icon>add</mat-icon>

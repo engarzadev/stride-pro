@@ -48,7 +48,7 @@ func (r *Repository) Create(b *models.Barn) error {
 	return nil
 }
 
-// GetByID returns a single barn by ID, scoped to the user.
+// GetByID returns a single barn by ID, scoped to the user, including associated horses.
 func (r *Repository) GetByID(userID, barnID uuid.UUID) (*models.Barn, error) {
 	b, err := scanBarn(r.db.QueryRow(
 		`SELECT `+barnColumns+` FROM barns WHERE id = $1 AND user_id = $2`, barnID, userID,
@@ -58,6 +58,39 @@ func (r *Repository) GetByID(userID, barnID uuid.UUID) (*models.Barn, error) {
 	}
 	if err != nil {
 		return nil, fmt.Errorf("querying barn: %w", err)
+	}
+
+	rows, err := r.db.Query(`
+		SELECT h.id, h.name, h.breed, h.age, h.gender,
+		       c.id, c.first_name, c.last_name
+		FROM horses h
+		LEFT JOIN clients c ON h.client_id = c.id
+		WHERE h.user_id = $1 AND h.barn_id = $2
+		ORDER BY h.name`, userID, barnID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("querying barn horses: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		h := &models.Horse{}
+		var clientID uuid.NullUUID
+		var clientFirstName, clientLastName sql.NullString
+		if err := rows.Scan(&h.ID, &h.Name, &h.Breed, &h.Age, &h.Gender,
+			&clientID, &clientFirstName, &clientLastName); err != nil {
+			return nil, fmt.Errorf("scanning barn horse: %w", err)
+		}
+		if clientID.Valid {
+			h.Client = &models.Client{
+				ID:        clientID.UUID,
+				FirstName: clientFirstName.String,
+				LastName:  clientLastName.String,
+			}
+		}
+		b.Horses = append(b.Horses, h)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating barn horses: %w", err)
 	}
 	return b, nil
 }

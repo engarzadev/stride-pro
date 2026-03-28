@@ -40,7 +40,7 @@ func (r *Repository) Create(c *models.Client) error {
 	return nil
 }
 
-// GetByID returns a single client by ID, scoped to the user.
+// GetByID returns a single client by ID, scoped to the user, including associated horses.
 func (r *Repository) GetByID(userID, clientID uuid.UUID) (*models.Client, error) {
 	c := &models.Client{}
 	err := r.db.QueryRow(`
@@ -53,6 +53,27 @@ func (r *Repository) GetByID(userID, clientID uuid.UUID) (*models.Client, error)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("querying client: %w", err)
+	}
+
+	rows, err := r.db.Query(`
+		SELECT id, name, breed, age, gender
+		FROM horses
+		WHERE user_id = $1 AND client_id = $2
+		ORDER BY name`, userID, clientID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("querying client horses: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		h := &models.Horse{}
+		if err := rows.Scan(&h.ID, &h.Name, &h.Breed, &h.Age, &h.Gender); err != nil {
+			return nil, fmt.Errorf("scanning client horse: %w", err)
+		}
+		c.Horses = append(c.Horses, h)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating client horses: %w", err)
 	}
 	return c, nil
 }

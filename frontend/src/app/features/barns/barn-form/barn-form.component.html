@@ -2,67 +2,86 @@
   <app-loading-spinner />
 } @else {
   <div class="form-page">
-    <a routerLink="/barns" class="back-link">&larr; Back to Barns</a>
-    <h1>{{ isEdit() ? "Edit Barn" : "New Barn" }}</h1>
+    <div class="page-header">
+      <a routerLink="/barns" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Barns
+      </a>
+      <div class="header_container">
+        <h1>{{ isEdit() ? "Edit Barn" : "New Barn" }}</h1>
+        <div class="form-aside">
+          <mat-card class="form-card actions-card">
+            <mat-card-content>
+              <button
+                type="button"
+                mat-flat-button
+                color="primary"
+                class="btn-save"
+                [disabled]="saving()"
+                (click)="onSubmit()"
+              >
+                <mat-icon>{{ isEdit() ? "save" : "add" }}</mat-icon>
+                @if (saving()) {
+                  Saving...
+                } @else {
+                  {{ isEdit() ? "Update" : "Create" }}
+                }
+              </button>
+              <a routerLink="/barns" mat-stroked-button class="btn-cancel">Cancel</a>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
 
-    <mat-card>
-      <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input matInput type="text" formControlName="name" />
-            @if (form.controls.name.errors?.["required"]) {
-              <mat-error>Name is required.</mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Contact Name</mat-label>
-            <input matInput type="text" formControlName="contactName" />
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Address</mat-label>
-            <input matInput type="text" formControlName="address" />
-          </mat-form-field>
-
-          <div class="form-row">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-main">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Barn Information</div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" formControlName="name" />
+                @if (form.controls.name.errors?.["required"]) {
+                  <mat-error>Name is required.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Contact Name</mat-label>
+                <input matInput type="text" formControlName="contactName" />
+              </mat-form-field>
+            </div>
             <mat-form-field appearance="outline">
-              <mat-label>Phone</mat-label>
-              <input matInput type="tel" formControlName="phone" />
+              <mat-label>Address</mat-label>
+              <input matInput type="text" formControlName="address" />
             </mat-form-field>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput type="tel" formControlName="phone" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" />
+                @if (form.controls.email.errors?.["email"]) {
+                  <mat-error>Please enter a valid email.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" />
-              @if (form.controls.email.errors?.["email"]) {
-                <mat-error>Please enter a valid email.</mat-error>
-              }
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Notes</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Notes (optional)</mat-label>
+              <textarea matInput formControlName="notes" rows="4"></textarea>
             </mat-form-field>
-          </div>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Notes</mat-label>
-            <textarea matInput formControlName="notes" rows="3"></textarea>
-          </mat-form-field>
-
-          <div class="form-actions">
-            <button
-              type="submit"
-              mat-raised-button
-              color="primary"
-              [disabled]="saving()"
-            >
-              @if (saving()) {
-                Saving...
-              } @else {
-                {{ isEdit() ? "Update Barn" : "Create Barn" }}
-              }
-            </button>
-            <a routerLink="/barns" mat-stroked-button>Cancel</a>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
   </div>
 }

@@ -2,117 +2,126 @@
   <app-loading-spinner />
 } @else {
   <div class="form-page">
-    <a routerLink="/horses" class="back-link">&larr; Back to Horses</a>
-    <h1>{{ isEdit() ? "Edit Horse" : "New Horse" }}</h1>
-
-    <mat-card>
-      <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input matInput type="text" formControlName="name" />
-            @if (form.controls.name.errors?.["required"]) {
-              <mat-error>Name is required.</mat-error>
-            }
-          </mat-form-field>
-
-          <div class="form-row">
-            <app-breed-autocomplete formControlName="breed" />
-            <mat-form-field appearance="outline">
-              <mat-label>Color</mat-label>
-              <input matInput type="text" formControlName="color" />
-            </mat-form-field>
-          </div>
-
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Age</mat-label>
-              <input matInput type="number" formControlName="age" min="0" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Gender</mat-label>
-              <mat-select formControlName="gender">
-                <mat-option value="">Select gender</mat-option>
-                <mat-option value="mare">Mare</mat-option>
-                <mat-option value="stallion">Stallion</mat-option>
-                <mat-option value="gelding">Gelding</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Weight (lbs)</mat-label>
-            <input matInput type="number" formControlName="weight" min="0" />
-          </mat-form-field>
-
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Client</mat-label>
-              <mat-select formControlName="clientId">
-                <mat-option [value]="0">Select a client</mat-option>
-                @for (client of clients(); track client.id) {
-                  <mat-option [value]="client.id"
-                    >{{ client.firstName }} {{ client.lastName }}</mat-option
-                  >
-                }
-              </mat-select>
+    <div class="page-header">
+      <a routerLink="/horses" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Horses
+      </a>
+      <div class="header_container">
+        <h1>{{ isEdit() ? "Edit Horse" : "New Horse" }}</h1>
+        <div class="form-aside">
+          <mat-card class="form-card actions-card">
+            <mat-card-content>
               <button
-                matSuffix
-                mat-icon-button
                 type="button"
-                (click)="openCreateClient()"
-                title="Create new client"
+                mat-flat-button
+                color="primary"
+                class="btn-save"
+                [disabled]="saving()"
+                (click)="onSubmit()"
               >
-                <mat-icon>add</mat-icon>
+                <mat-icon>{{ isEdit() ? "save" : "add" }}</mat-icon>
+                @if (saving()) {
+                  Saving...
+                } @else {
+                  {{ isEdit() ? "Update" : "Create" }}
+                }
               </button>
-              @if (form.controls.clientId.errors) {
-                <mat-error>Please select a client.</mat-error>
+              <a routerLink="/horses" mat-stroked-button class="btn-cancel">Cancel</a>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-main">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Horse Details</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput type="text" formControlName="name" />
+              @if (form.controls.name.errors?.["required"]) {
+                <mat-error>Name is required.</mat-error>
               }
             </mat-form-field>
-
+            <div class="form-row">
+              <app-breed-autocomplete formControlName="breed" />
+              <mat-form-field appearance="outline">
+                <mat-label>Color</mat-label>
+                <input matInput type="text" formControlName="color" />
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Age</mat-label>
+                <input matInput type="number" formControlName="age" min="0" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option value="">Select gender</mat-option>
+                  <mat-option value="mare">Mare</mat-option>
+                  <mat-option value="stallion">Stallion</mat-option>
+                  <mat-option value="gelding">Gelding</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
             <mat-form-field appearance="outline">
-              <mat-label>Barn</mat-label>
-              <mat-select formControlName="barnId">
-                <mat-option [value]="null">No barn assigned</mat-option>
-                @for (barn of barns(); track barn.id) {
-                  <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
-                }
-              </mat-select>
-              <button
-                matSuffix
-                mat-icon-button
-                type="button"
-                (click)="openCreateBarn()"
-                title="Create new barn"
-              >
-                <mat-icon>add</mat-icon>
-              </button>
+              <mat-label>Weight (lbs)</mat-label>
+              <input matInput type="number" formControlName="weight" min="0" />
             </mat-form-field>
-          </div>
+          </mat-card-content>
+        </mat-card>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Notes</mat-label>
-            <textarea matInput formControlName="notes" rows="3"></textarea>
-          </mat-form-field>
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Assignment</div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Client</mat-label>
+                <mat-select #clientSelect formControlName="clientId">
+                  <mat-option [value]="0">Select a client</mat-option>
+                  @for (client of clients(); track client.id) {
+                    <mat-option [value]="client.id">
+                      {{ client.firstName }} {{ client.lastName }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); clientSelect.close(); openCreateClient()" title="Create new client">
+                  <mat-icon>add</mat-icon>
+                </button>
+                @if (form.controls.clientId.errors) {
+                  <mat-error>Please select a client.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Barn</mat-label>
+                <mat-select #barnSelect formControlName="barnId">
+                  <mat-option [value]="null">No barn assigned</mat-option>
+                  @for (barn of barns(); track barn.id) {
+                    <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                  }
+                </mat-select>
+                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()" title="Create new barn">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
 
-          <div class="form-actions">
-            <button
-              type="submit"
-              mat-raised-button
-              color="primary"
-              [disabled]="saving()"
-            >
-              @if (saving()) {
-                Saving...
-              } @else {
-                {{ isEdit() ? "Update Horse" : "Create Horse" }}
-              }
-            </button>
-            <a routerLink="/horses" mat-stroked-button>Cancel</a>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Notes</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Notes (optional)</mat-label>
+              <textarea matInput formControlName="notes" rows="4"></textarea>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
   </div>
 }

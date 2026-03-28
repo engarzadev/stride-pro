@@ -2,67 +2,87 @@
   <app-loading-spinner />
 } @else {
   <div class="form-page">
-    <a routerLink="/appointments" class="back-link"
-      >&larr; Back to Appointments</a
-    >
-    <h1>{{ isEdit() ? "Edit Appointment" : "New Appointment" }}</h1>
-
-    <mat-card>
-      <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Client</mat-label>
-              <mat-select formControlName="clientId">
-                <mat-option [value]="0">Select a client</mat-option>
-                @for (client of clients(); track client.id) {
-                  <mat-option [value]="client.id"
-                    >{{ client.firstName }} {{ client.lastName }}</mat-option
-                  >
-                }
-              </mat-select>
+    <div class="page-header">
+      <a routerLink="/appointments" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Appointments
+      </a>
+      <div class="header_container">
+        <h1>{{ isEdit() ? "Edit Appointment" : "New Appointment" }}</h1>
+        <div class="form-aside">
+          <mat-card class="form-card actions-card">
+            <mat-card-content>
               <button
-                matSuffix
-                mat-icon-button
                 type="button"
-                (click)="openCreateClient()"
-                title="Create new client"
+                mat-flat-button
+                color="primary"
+                class="btn-save"
+                [disabled]="saving()"
+                (click)="onSubmit()"
               >
-                <mat-icon>add</mat-icon>
-              </button>
-              @if (form.controls.clientId.errors) {
-                <mat-error>Please select a client.</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Horse</mat-label>
-              <mat-select formControlName="horseId">
-                <mat-option [value]="0">Select a horse</mat-option>
-                @for (horse of filteredHorses; track horse.id) {
-                  <mat-option [value]="horse.id">{{ horse.name }}</mat-option>
+                <mat-icon>{{ isEdit() ? "save" : "event" }}</mat-icon>
+                @if (saving()) {
+                  Saving...
+                } @else {
+                  {{ isEdit() ? "Update" : "Create" }}
                 }
-              </mat-select>
-              <button
-                matSuffix
-                mat-icon-button
-                type="button"
-                (click)="openCreateHorse()"
-                [disabled]="form.controls.horseId.disabled"
-                title="Create new horse"
-              >
-                <mat-icon>add</mat-icon>
               </button>
-              @if (form.controls.horseId.errors) {
-                <mat-error>Please select a horse.</mat-error>
-              }
-            </mat-form-field>
-          </div>
+              <a routerLink="/appointments" mat-stroked-button class="btn-cancel">Cancel</a>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
 
-          <div class="form-row">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-main">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Participants</div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Client</mat-label>
+                <mat-select #clientSelect formControlName="clientId">
+                  <mat-option [value]="0">Select a client</mat-option>
+                  @for (client of clients(); track client.id) {
+                    <mat-option [value]="client.id">
+                      {{ client.firstName }} {{ client.lastName }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); clientSelect.close(); openCreateClient()" title="Create new client">
+                  <mat-icon>add</mat-icon>
+                </button>
+                @if (form.controls.clientId.errors) {
+                  <mat-error>Please select a client.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Horse</mat-label>
+                <mat-select #horseSelect formControlName="horseId">
+                  <mat-option [value]="0">Select a horse</mat-option>
+                  @for (horse of filteredHorses; track horse.id) {
+                    <mat-option [value]="horse.id">{{ horse.name }}</mat-option>
+                  }
+                </mat-select>
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  (click)="$event.stopPropagation(); horseSelect.close(); openCreateHorse()"
+                  [disabled]="form.controls.horseId.disabled"
+                  title="Create new horse"
+                >
+                  <mat-icon>add</mat-icon>
+                </button>
+                @if (form.controls.horseId.errors) {
+                  <mat-error>Please select a horse.</mat-error>
+                }
+              </mat-form-field>
+            </div>
             <mat-form-field appearance="outline">
               <mat-label>Barn</mat-label>
-              <mat-select formControlName="barnId">
+              <mat-select #barnSelect formControlName="barnId">
                 <mat-option [value]="null">No barn</mat-option>
                 @for (barn of barns(); track barn.id) {
                   <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
@@ -72,96 +92,87 @@
                 matSuffix
                 mat-icon-button
                 type="button"
-                (click)="openCreateBarn()"
+                (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()"
                 [disabled]="form.controls.barnId.disabled"
                 title="Create new barn"
               >
                 <mat-icon>add</mat-icon>
               </button>
             </mat-form-field>
-          </div>
+          </mat-card-content>
+        </mat-card>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Date</mat-label>
-              <input matInput type="date" formControlName="date" />
-              @if (form.controls.date.errors?.["required"]) {
-                <mat-error>Date is required.</mat-error>
-              }
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Schedule</div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="datePicker" formControlName="date" />
+                <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+                <mat-datepicker #datePicker></mat-datepicker>
+                @if (form.controls.date.errors?.["required"]) {
+                  <mat-error>Date is required.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Time</mat-label>
+                <input matInput [matTimepicker]="timePicker" formControlName="time" />
+                <mat-timepicker-toggle matIconSuffix [for]="timePicker"></mat-timepicker-toggle>
+                <mat-timepicker #timePicker></mat-timepicker>
+                @if (form.controls.time.errors?.["required"]) {
+                  <mat-error>Time is required.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Duration (minutes)</mat-label>
+                <input matInput type="number" formControlName="duration" min="15" step="15" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option value="">Select type</mat-option>
+                  <mat-option value="checkup">Checkup</mat-option>
+                  <mat-option value="treatment">Treatment</mat-option>
+                  <mat-option value="massage">Massage</mat-option>
+                  <mat-option value="chiropractic">Chiropractic</mat-option>
+                  <mat-option value="acupuncture">Acupuncture</mat-option>
+                  <mat-option value="rehabilitation">Rehabilitation</mat-option>
+                  <mat-option value="evaluation">Evaluation</mat-option>
+                  <mat-option value="other">Other</mat-option>
+                </mat-select>
+                @if (form.controls.type.errors?.["required"]) {
+                  <mat-error>Type is required.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            @if (isEdit()) {
+              <mat-form-field appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option value="scheduled">Scheduled</mat-option>
+                  <mat-option value="confirmed">Confirmed</mat-option>
+                  <mat-option value="completed">Completed</mat-option>
+                  <mat-option value="cancelled">Cancelled</mat-option>
+                  <mat-option value="no-show">No Show</mat-option>
+                </mat-select>
+              </mat-form-field>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Notes</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Notes (optional)</mat-label>
+              <textarea matInput formControlName="notes" rows="4"></textarea>
             </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Time</mat-label>
-              <input matInput type="time" formControlName="time" />
-            </mat-form-field>
-          </div>
-
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Duration (minutes)</mat-label>
-              <input
-                matInput
-                type="number"
-                formControlName="duration"
-                min="15"
-                step="15"
-              />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Type</mat-label>
-              <mat-select formControlName="type">
-                <mat-option value="">Select type</mat-option>
-                <mat-option value="checkup">Checkup</mat-option>
-                <mat-option value="treatment">Treatment</mat-option>
-                <mat-option value="massage">Massage</mat-option>
-                <mat-option value="chiropractic">Chiropractic</mat-option>
-                <mat-option value="acupuncture">Acupuncture</mat-option>
-                <mat-option value="rehabilitation">Rehabilitation</mat-option>
-                <mat-option value="evaluation">Evaluation</mat-option>
-                <mat-option value="other">Other</mat-option>
-              </mat-select>
-              @if (form.controls.type.errors?.["required"]) {
-                <mat-error>Type is required.</mat-error>
-              }
-            </mat-form-field>
-          </div>
-
-          @if (isEdit()) {
-            <mat-form-field appearance="outline">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="status">
-                <mat-option value="scheduled">Scheduled</mat-option>
-                <mat-option value="confirmed">Confirmed</mat-option>
-                <mat-option value="completed">Completed</mat-option>
-                <mat-option value="cancelled">Cancelled</mat-option>
-                <mat-option value="no-show">No Show</mat-option>
-              </mat-select>
-            </mat-form-field>
-          }
-
-          <mat-form-field appearance="outline">
-            <mat-label>Notes</mat-label>
-            <textarea matInput formControlName="notes" rows="3"></textarea>
-          </mat-form-field>
-
-          <div class="form-actions">
-            <button
-              type="submit"
-              mat-raised-button
-              color="primary"
-              [disabled]="saving()"
-            >
-              @if (saving()) {
-                Saving...
-              } @else {
-                {{ isEdit() ? "Update Appointment" : "Create Appointment" }}
-              }
-            </button>
-            <a routerLink="/appointments" mat-stroked-button>Cancel</a>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
   </div>
 }

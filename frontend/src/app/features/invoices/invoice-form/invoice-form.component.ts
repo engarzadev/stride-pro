@@ -1,12 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ViewChild, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { InvoicesService } from '../invoices.service';
 import { ClientsService } from '../../clients/clients.service';
 import { Client } from '../../../core/models';
@@ -18,7 +19,7 @@ import { QuickCreateClientService } from '../../../shared/components/quick-creat
 @Component({
   selector: 'app-invoice-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, CurrencyFormatPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, CurrencyFormatPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatDatepickerModule],
   templateUrl: './invoice-form.component.html',
   styleUrls: ['./invoice-form.component.scss'],
 })
@@ -31,6 +32,8 @@ export class InvoiceFormComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly quickCreateClient = inject(QuickCreateClientService);
 
+  @ViewChild('clientSelect') clientSelect!: MatSelect;
+
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
@@ -39,8 +42,8 @@ export class InvoiceFormComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     clientId: ['', [Validators.required]],
-    date: ['', [Validators.required]],
-    dueDate: ['', [Validators.required]],
+    date: [null as Date | null, [Validators.required]],
+    dueDate: [null as Date | null, [Validators.required]],
     status: ['draft'],
     notes: [''],
     items: this.fb.array([this.createItemGroup()]),
@@ -68,8 +71,8 @@ export class InvoiceFormComponent implements OnInit {
         next: (invoice) => {
           this.form.patchValue({
             clientId: invoice.clientId,
-            date: invoice.date ? invoice.date.substring(0, 10) : '',
-            dueDate: invoice.dueDate ? invoice.dueDate.substring(0, 10) : '',
+            date: invoice.date ? new Date(invoice.date) : null,
+            dueDate: invoice.dueDate ? new Date(invoice.dueDate) : null,
             status: invoice.status,
             notes: invoice.notes,
           });
@@ -148,7 +151,7 @@ export class InvoiceFormComponent implements OnInit {
     this.recalculate();
 
     const formValue = this.form.getRawValue();
-    const toDateTime = (d: string) => (d && d.length === 10 ? `${d}T00:00:00Z` : d);
+    const toDateTime = (d: Date | null) => d ? `${d.toISOString().substring(0, 10)}T00:00:00Z` : '';
     const data = {
       clientId: formValue.clientId,
       date: toDateTime(formValue.date),

@@ -1,6 +1,7 @@
 import { Component, Injectable, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   MatDialog,
   MatDialogModule,
@@ -38,6 +39,7 @@ export class QuickCreateAppointmentService {
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatDatepickerModule,
   ],
   template: `
     <h2 mat-dialog-title>New Appointment</h2>
@@ -83,7 +85,9 @@ export class QuickCreateAppointmentService {
         <div class="form-row">
           <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
-            <input matInput type="date" formControlName="date" />
+            <input matInput [matDatepicker]="datePicker" formControlName="date" />
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
             @if (form.controls.date.errors?.['required']) {
               <mat-error>Date is required.</mat-error>
             }
@@ -163,7 +167,7 @@ export class QuickCreateAppointmentComponent implements OnInit {
     clientId: ['', [Validators.required]],
     horseId: ['', [Validators.required]],
     barnId: [null as string | null],
-    date: ['', [Validators.required]],
+    date: [null as Date | null, [Validators.required]],
     time: [''],
     duration: [60],
     type: ['', [Validators.required]],
@@ -199,7 +203,9 @@ export class QuickCreateAppointmentComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    this.appointmentsService.create(this.form.getRawValue()).subscribe({
+    const raw = this.form.getRawValue();
+    const data = { ...raw, date: raw.date ? raw.date.toISOString().substring(0, 10) : '' };
+    this.appointmentsService.create(data).subscribe({
       next: (appointment) => this.dialogRef.close(appointment),
       error: () => this.saving.set(false),
     });

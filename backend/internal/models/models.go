@@ -32,6 +32,7 @@ type Client struct {
 	Phone     string    `json:"phone"`
 	Address   string    `json:"address"`
 	Notes     string    `json:"notes"`
+	Horses    []*Horse  `json:"horses,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -65,6 +66,7 @@ type Barn struct {
 	Phone       string    `json:"phone"`
 	Email       string    `json:"email"`
 	Notes       string    `json:"notes"`
+	Horses      []*Horse  `json:"horses,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }

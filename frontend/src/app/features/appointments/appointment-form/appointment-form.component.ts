@@ -7,6 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { AppointmentsService } from '../appointments.service';
 import { ClientsService } from '../../clients/clients.service';
 import { HorsesService } from '../../horses/horses.service';
@@ -21,7 +23,7 @@ import { QuickCreateBarnService } from '../../../shared/components/quick-create/
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatDatepickerModule, MatTimepickerModule],
   templateUrl: './appointment-form.component.html',
   styleUrls: ['./appointment-form.component.scss'],
 })
@@ -50,8 +52,8 @@ export class AppointmentFormComponent implements OnInit {
     clientId: ['', [Validators.required]],
     horseId: ['', [Validators.required]],
     barnId: [null as string | null],
-    date: ['', [Validators.required]],
-    time: [''],
+    date: [null as Date | null, [Validators.required]],
+    time: [null as Date | null, [Validators.required]],
     duration: [60],
     type: ['', [Validators.required]],
     status: ['scheduled'],
@@ -105,8 +107,8 @@ export class AppointmentFormComponent implements OnInit {
             clientId: apt.clientId,
             horseId: apt.horseId,
             barnId: apt.barnId,
-            date: apt.date?.substring(0, 10),
-            time: apt.time,
+            date: apt.date ? new Date(apt.date) : null,
+            time: this.timeStringToDate(apt.time),
             duration: apt.duration,
             type: apt.type,
             status: apt.status,
@@ -150,6 +152,19 @@ export class AppointmentFormComponent implements OnInit {
     }
   }
 
+  private timeStringToDate(timeStr: string): Date | null {
+    if (!timeStr) return null;
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const d = new Date();
+    d.setHours(hours, minutes, 0, 0);
+    return d;
+  }
+
+  private dateToTimeString(date: Date | null): string {
+    if (!date) return '';
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -157,7 +172,12 @@ export class AppointmentFormComponent implements OnInit {
     }
 
     this.saving.set(true);
-    const data = this.form.getRawValue();
+    const raw = this.form.getRawValue();
+    const data = {
+      ...raw,
+      date: raw.date ? raw.date.toISOString().substring(0, 10) : '',
+      time: this.dateToTimeString(raw.time),
+    };
 
     const request$ = this.isEdit()
       ? this.appointmentsService.update(this.appointmentId, data)
