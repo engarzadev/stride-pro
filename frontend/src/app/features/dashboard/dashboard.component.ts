@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { Appointment, Client, Horse, Invoice } from '../../core/models';
 import { ApiService } from '../../core/services/api.service';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
@@ -9,7 +11,7 @@ import { DateFormatPipe } from '../../shared/pipes/date-format.pipe';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [LoadingSpinnerComponent, DateFormatPipe],
+  imports: [LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })

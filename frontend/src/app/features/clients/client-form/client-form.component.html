@@ -5,63 +5,60 @@
     <a routerLink="/clients" class="back-link">&larr; Back to Clients</a>
     <h1>{{ isEdit() ? 'Edit Client' : 'New Client' }}</h1>
 
-    <div class="card">
-      <div class="card-body">
+    <mat-card>
+      <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="firstName">First Name *</label>
-              <input id="firstName" type="text" class="form-control" formControlName="firstName"
-                [class.is-invalid]="form.controls.firstName.touched && form.controls.firstName.invalid">
-              @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
-                <div class="form-error">First name is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>First Name *</mat-label>
+              <input matInput type="text" formControlName="firstName">
+              @if (form.controls.firstName.errors?.['required']) {
+                <mat-error>First name is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
 
-            <div class="form-group">
-              <label class="form-label" for="lastName">Last Name *</label>
-              <input id="lastName" type="text" class="form-control" formControlName="lastName"
-                [class.is-invalid]="form.controls.lastName.touched && form.controls.lastName.invalid">
-              @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
-                <div class="form-error">Last name is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name *</mat-label>
+              <input matInput type="text" formControlName="lastName">
+              @if (form.controls.lastName.errors?.['required']) {
+                <mat-error>Last name is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="email">Email</label>
-              <input id="email" type="email" class="form-control" formControlName="email"
-                [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid">
-              @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
-                <div class="form-error">Please enter a valid email.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email">
+              @if (form.controls.email.errors?.['email']) {
+                <mat-error>Please enter a valid email.</mat-error>
               }
-            </div>
+            </mat-form-field>
 
-            <div class="form-group">
-              <label class="form-label" for="phone">Phone</label>
-              <input id="phone" type="tel" class="form-control" formControlName="phone">
-            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput type="tel" formControlName="phone">
+            </mat-form-field>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="address">Address</label>
-            <input id="address" type="text" class="form-control" formControlName="address">
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Address</mat-label>
+            <input matInput type="text" formControlName="address">
+          </mat-form-field>
 
-          <div class="form-group">
-            <label class="form-label" for="notes">Notes</label>
-            <textarea id="notes" class="form-control" formControlName="notes" rows="3"></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3"></textarea>
+          </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
               @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Client' : 'Create Client' }} }
             </button>
-            <a routerLink="/clients" class="btn btn-outline">Cancel</a>
+            <a routerLink="/clients" mat-stroked-button>Cancel</a>
           </div>
         </form>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 }

@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 import { Client } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -15,7 +16,7 @@ import { ClientsService } from '../clients.service';
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent],
+  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss'],
 })

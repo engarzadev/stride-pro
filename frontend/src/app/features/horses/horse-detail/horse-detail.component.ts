@@ -1,6 +1,8 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { Horse } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -11,7 +13,7 @@ import { HorsesService } from '../horses.service';
 @Component({
   selector: 'app-horse-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule],
   templateUrl: './horse-detail.component.html',
   styleUrls: ['./horse-detail.component.scss'],
 })

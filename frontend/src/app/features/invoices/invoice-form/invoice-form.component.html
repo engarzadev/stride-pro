@@ -5,101 +5,100 @@
     <a routerLink="/invoices" class="back-link">&larr; Back to Invoices</a>
     <h1>{{ isEdit() ? 'Edit Invoice' : 'New Invoice' }}</h1>
 
-    <div class="card">
-      <div class="card-body">
+    <mat-card>
+      <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="clientId">Client *</label>
-              <div class="select-with-add">
-                <select id="clientId" class="form-control" formControlName="clientId"
-                  [class.is-invalid]="form.controls.clientId.touched && form.controls.clientId.invalid">
-                  <option [value]="0" disabled>Select a client</option>
-                  @for (client of clients(); track client.id) {
-                    <option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</option>
-                  }
-                </select>
-                <button type="button" class="btn-add-new" title="Create new client" (click)="openCreateClient()">+ New</button>
-              </div>
-              @if (form.controls.clientId.touched && form.controls.clientId.errors?.['required']) {
-                <div class="form-error">Client is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Client *</mat-label>
+              <mat-select formControlName="clientId">
+                <mat-option [value]="0" disabled>Select a client</mat-option>
+                @for (client of clients(); track client.id) {
+                  <mat-option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</mat-option>
+                }
+              </mat-select>
+              <button matSuffix mat-icon-button type="button" (click)="openCreateClient()" title="Create new client">
+                <mat-icon>add</mat-icon>
+              </button>
+              @if (form.controls.clientId.errors?.['required']) {
+                <mat-error>Client is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
 
-            <div class="form-group">
-              <label class="form-label" for="status">Status</label>
-              <select id="status" class="form-control" formControlName="status">
-                <option value="draft">Draft</option>
-                <option value="sent">Sent</option>
-                <option value="paid">Paid</option>
-                <option value="overdue">Overdue</option>
-              </select>
-            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option value="draft">Draft</mat-option>
+                <mat-option value="sent">Sent</mat-option>
+                <mat-option value="paid">Paid</mat-option>
+                <mat-option value="overdue">Overdue</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="date">Invoice Date *</label>
-              <input id="date" type="date" class="form-control" formControlName="date"
-                [class.is-invalid]="form.controls.date.touched && form.controls.date.invalid">
-              @if (form.controls.date.touched && form.controls.date.errors?.['required']) {
-                <div class="form-error">Invoice date is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Invoice Date *</mat-label>
+              <input matInput type="date" formControlName="date">
+              @if (form.controls.date.errors?.['required']) {
+                <mat-error>Invoice date is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
 
-            <div class="form-group">
-              <label class="form-label" for="dueDate">Due Date *</label>
-              <input id="dueDate" type="date" class="form-control" formControlName="dueDate"
-                [class.is-invalid]="form.controls.dueDate.touched && form.controls.dueDate.invalid">
-              @if (form.controls.dueDate.touched && form.controls.dueDate.errors?.['required']) {
-                <div class="form-error">Due date is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Due Date *</mat-label>
+              <input matInput type="date" formControlName="dueDate">
+              @if (form.controls.dueDate.errors?.['required']) {
+                <mat-error>Due date is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
           </div>
 
           <div class="line-items-section">
             <div class="section-header">
               <h3>Line Items</h3>
-              <button type="button" class="btn btn-outline btn-sm" (click)="addItem()">+ Add Item</button>
+              <button type="button" mat-stroked-button (click)="addItem()">+ Add Item</button>
             </div>
 
             <div class="line-items-scroll">
-            <table class="line-items-table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th class="col-qty">Qty</th>
-                  <th class="col-price">Unit Price</th>
-                  <th class="col-amount">Amount</th>
-                  <th class="col-action"></th>
-                </tr>
-              </thead>
-              <tbody formArrayName="items">
-                @for (item of items.controls; track $index; let i = $index) {
-                  <tr [formGroupName]="i">
-                    <td>
-                      <input type="text" class="form-control" formControlName="description"
-                        placeholder="Description" (input)="recalculate()">
-                    </td>
-                    <td>
-                      <input type="number" class="form-control text-right" formControlName="quantity"
-                        min="1" (input)="recalculate()">
-                    </td>
-                    <td>
-                      <input type="number" class="form-control text-right" formControlName="unitPrice"
-                        min="0" step="0.01" (input)="recalculate()">
-                    </td>
-                    <td class="text-right amount-cell">
-                      {{ (item.get('quantity')?.value || 0) * (item.get('unitPrice')?.value || 0) | currencyFormat }}
-                    </td>
-                    <td>
-                      <button type="button" class="btn-icon btn-remove" (click)="removeItem(i)"
-                        [disabled]="items.length === 1" title="Remove item">&times;</button>
-                    </td>
+              <table class="line-items-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-price">Unit Price</th>
+                    <th class="col-amount">Amount</th>
+                    <th class="col-action"></th>
                   </tr>
-                }
-              </tbody>
-            </table>
+                </thead>
+                <tbody formArrayName="items">
+                  @for (item of items.controls; track $index; let i = $index) {
+                    <tr [formGroupName]="i">
+                      <td>
+                        <input type="text" class="inline-input" formControlName="description"
+                          placeholder="Description" (input)="recalculate()">
+                      </td>
+                      <td>
+                        <input type="number" class="inline-input text-right" formControlName="quantity"
+                          min="1" (input)="recalculate()">
+                      </td>
+                      <td>
+                        <input type="number" class="inline-input text-right" formControlName="unitPrice"
+                          min="0" step="0.01" (input)="recalculate()">
+                      </td>
+                      <td class="text-right amount-cell">
+                        {{ (item.get('quantity')?.value || 0) * (item.get('unitPrice')?.value || 0) | currencyFormat }}
+                      </td>
+                      <td>
+                        <button type="button" mat-icon-button color="warn" (click)="removeItem(i)"
+                          [disabled]="items.length === 1" title="Remove item">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
 
             <div class="totals">
@@ -118,20 +117,19 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="notes">Notes</label>
-            <textarea id="notes" class="form-control" formControlName="notes" rows="3"
-              placeholder="Optional notes for the invoice"></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3" placeholder="Optional notes for the invoice"></textarea>
+          </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
               @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Invoice' : 'Create Invoice' }} }
             </button>
-            <a routerLink="/invoices" class="btn btn-outline">Cancel</a>
+            <a routerLink="/invoices" mat-stroked-button>Cancel</a>
           </div>
         </form>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 }

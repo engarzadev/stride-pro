@@ -5,43 +5,53 @@
     <h1 class="dashboard-title">Dashboard</h1>
 
     <div class="stats-grid">
-      <div class="stat-card" (click)="navigateTo('/clients')">
-        <div class="stat-icon clients-icon">&#263A;</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ clients().length }}</div>
-          <div class="stat-label">Clients</div>
-        </div>
-      </div>
+      <mat-card class="stat-card" (click)="navigateTo('/clients')">
+        <mat-card-content>
+          <div class="stat-icon clients-icon">👤</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ clients().length }}</div>
+            <div class="stat-label">Clients</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-      <div class="stat-card" (click)="navigateTo('/horses')">
-        <div class="stat-icon horses-icon">&#9816;</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ horses().length }}</div>
-          <div class="stat-label">Horses</div>
-        </div>
-      </div>
+      <mat-card class="stat-card" (click)="navigateTo('/horses')">
+        <mat-card-content>
+          <div class="stat-icon horses-icon">🐎</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ horses().length }}</div>
+            <div class="stat-label">Horses</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-      <div class="stat-card" (click)="navigateTo('/appointments')">
-        <div class="stat-icon appointments-icon">&#9783;</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ upcomingAppointments.length }}</div>
-          <div class="stat-label">Upcoming Appointments</div>
-        </div>
-      </div>
+      <mat-card class="stat-card" (click)="navigateTo('/appointments')">
+        <mat-card-content>
+          <div class="stat-icon appointments-icon">📅</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ upcomingAppointments.length }}</div>
+            <div class="stat-label">Upcoming Appointments</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-      <div class="stat-card" (click)="navigateTo('/invoices')">
-        <div class="stat-icon invoices-icon">&#9993;</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ pendingInvoices.length }}</div>
-          <div class="stat-label">Pending Invoices</div>
-        </div>
-      </div>
+      <mat-card class="stat-card" (click)="navigateTo('/invoices')">
+        <mat-card-content>
+          <div class="stat-icon invoices-icon">🧾</div>
+          <div class="stat-info">
+            <div class="stat-value">{{ pendingInvoices.length }}</div>
+            <div class="stat-label">Pending Invoices</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
 
     <div class="dashboard-grid">
-      <div class="card">
-        <div class="card-header">Recent Appointments</div>
-        <div class="card-body">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Recent Appointments</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           @if (appointments().length === 0) {
             <p class="text-muted">No appointments yet.</p>
           } @else {
@@ -66,28 +76,30 @@
               }
             </div>
           }
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
 
-      <div class="card">
-        <div class="card-header">Quick Actions</div>
-        <div class="card-body">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Quick Actions</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           <div class="quick-actions">
-            <button class="btn btn-outline quick-action" (click)="navigateTo('/clients/onboard')">
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/clients/onboard')">
               New Client Setup
             </button>
-            <button class="btn btn-outline quick-action" (click)="navigateTo('/horses/new')">
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/horses/new')">
               + New Horse
             </button>
-            <button class="btn btn-outline quick-action" (click)="navigateTo('/appointments/new')">
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/appointments/new')">
               + New Appointment
             </button>
-            <button class="btn btn-outline quick-action" (click)="navigateTo('/invoices/new')">
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/invoices/new')">
               + New Invoice
             </button>
           </div>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
 }

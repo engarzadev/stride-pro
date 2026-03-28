@@ -1,14 +1,14 @@
 <aside class="sidebar" [class.collapsed]="collapsed">
   <div class="sidebar-overlay" (click)="closeSidebar.emit()"></div>
-  <nav class="sidebar-nav">
+  <mat-nav-list class="sidebar-nav">
     @for (item of navItems; track item.path) {
-      <a class="nav-item"
+      <a mat-list-item
          [routerLink]="item.path"
          routerLinkActive="active"
          (click)="closeSidebar.emit()">
-        <span class="nav-icon">{{ item.icon }}</span>
-        <span class="nav-label">{{ item.label }}</span>
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle>{{ item.label }}</span>
       </a>
     }
-  </nav>
+  </mat-nav-list>
 </aside>

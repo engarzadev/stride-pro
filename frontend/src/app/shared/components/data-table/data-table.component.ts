@@ -1,4 +1,7 @@
 import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
 import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
@@ -21,7 +24,7 @@ export interface TableAction {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CurrencyFormatPipe, DateFormatPipe],
+  imports: [MatTableModule, MatSortModule, MatButtonModule, CurrencyFormatPipe, DateFormatPipe],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
@@ -36,14 +39,15 @@ export class DataTableComponent {
   sortKey = signal('');
   sortDir = signal<'asc' | 'desc'>('asc');
 
-  onSort(column: TableColumn): void {
-    if (!column.sortable) return;
-    if (this.sortKey() === column.key) {
-      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortKey.set(column.key);
-      this.sortDir.set('asc');
-    }
+  get displayedColumns(): string[] {
+    const cols = this.columns.map((c) => c.key);
+    if (this.actions.length > 0) cols.push('_actions');
+    return cols;
+  }
+
+  onSort(sort: Sort): void {
+    this.sortKey.set(sort.active);
+    this.sortDir.set(sort.direction as 'asc' | 'desc' || 'asc');
   }
 
   getNestedValue(obj: Record<string, unknown>, path: string): unknown {
@@ -68,5 +72,11 @@ export class DataTableComponent {
       if (aVal > bVal) return 1 * dir;
       return 0;
     });
+  }
+
+  getActionColor(action: TableAction): string {
+    if (action.class === 'btn-danger') return 'warn';
+    if (action.class === 'btn-primary') return 'primary';
+    return '';
   }
 }

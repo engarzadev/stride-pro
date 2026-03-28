@@ -1,6 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SessionsService } from '../sessions.service';
 import { AppointmentsService } from '../../appointments/appointments.service';
 import { Appointment } from '../../../core/models';
@@ -12,7 +19,7 @@ import { QuickCreateAppointmentService } from '../../../shared/components/quick-
 @Component({
   selector: 'app-session-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, DateFormatPipe],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatCheckboxModule],
   templateUrl: './session-form.component.html',
   styleUrls: ['./session-form.component.scss'],
 })

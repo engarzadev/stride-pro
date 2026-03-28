@@ -2,6 +2,12 @@ import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Appointment, Barn, Client, Horse } from '../../../core/models';
 import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
 import { QuickCreateBarnService } from '../../../shared/components/quick-create/quick-create-barn.component';
@@ -20,6 +26,12 @@ import { ClientsService } from '../clients.service';
     BreedAutocompleteComponent,
     TitleCasePipe,
     DatePipe,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './client-onboarding.component.html',
   styleUrls: ['./client-onboarding.component.scss'],

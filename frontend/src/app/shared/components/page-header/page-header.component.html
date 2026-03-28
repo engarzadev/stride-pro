@@ -2,12 +2,12 @@
   <h1>{{ title }}</h1>
   <div class="header-actions">
     @if (secondButtonText) {
-      <button class="btn btn-outline" (click)="secondButtonClick.emit()">
+      <button mat-stroked-button (click)="secondButtonClick.emit()">
         {{ secondButtonText }}
       </button>
     }
     @if (buttonText) {
-      <button class="btn btn-primary" (click)="buttonClick.emit()">
+      <button mat-raised-button color="primary" (click)="buttonClick.emit()">
         + {{ buttonText }}
       </button>
     }

@@ -9,45 +9,41 @@
           <h1>{{ h.name }}</h1>
         </div>
         <div class="detail-actions">
-          <a [routerLink]="['/horses', h.id, 'edit']" class="btn btn-outline"
-            >Edit</a
-          >
-          <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+          <a [routerLink]="['/horses', h.id, 'edit']" mat-stroked-button>Edit</a>
+          <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
         </div>
       </div>
 
-      <div class="card mb-6">
-        <div class="card-header">Horse Information</div>
-        <div class="card-body">
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title>Horse Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           <div class="detail-grid">
             <div class="detail-field">
               <label>Breed</label>
-              <p>{{ h.breed || "-" }}</p>
+              <p>{{ h.breed || '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Age</label>
-              <p>{{ h.age || "-" }}</p>
+              <p>{{ h.age || '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Gender</label>
-              <p>{{ h.gender || "-" | titlecase }}</p>
+              <p>{{ h.gender || '-' | titlecase }}</p>
             </div>
             <div class="detail-field">
               <label>Color</label>
-              <p>{{ h.color || "-" }}</p>
+              <p>{{ h.color || '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Weight</label>
-              <p>{{ h.weight ? h.weight + " lbs" : "-" }}</p>
+              <p>{{ h.weight ? h.weight + ' lbs' : '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Client</label>
               @if (h.client) {
-                <p>
-                  <a [routerLink]="['/clients', h.clientId]"
-                    >{{ h.client.firstName }} {{ h.client.lastName }}</a
-                  >
-                </p>
+                <p><a [routerLink]="['/clients', h.clientId]">{{ h.client.firstName }} {{ h.client.lastName }}</a></p>
               } @else {
                 <p>-</p>
               }
@@ -55,9 +51,7 @@
             <div class="detail-field">
               <label>Barn</label>
               @if (h.barn) {
-                <p>
-                  <a [routerLink]="['/barns', h.barnId]">{{ h.barn.name }}</a>
-                </p>
+                <p><a [routerLink]="['/barns', h.barnId]">{{ h.barn.name }}</a></p>
               } @else {
                 <p>-</p>
               }
@@ -73,8 +67,8 @@
               <p>{{ h.notes }}</p>
             </div>
           }
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   }
 }

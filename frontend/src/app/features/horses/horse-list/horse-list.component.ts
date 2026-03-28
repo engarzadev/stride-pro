@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 import { Horse } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -15,7 +16,7 @@ import { HorsesService } from '../horses.service';
 @Component({
   selector: 'app-horse-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent],
+  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
   templateUrl: './horse-list.component.html',
   styleUrls: ['./horse-list.component.scss'],
 })

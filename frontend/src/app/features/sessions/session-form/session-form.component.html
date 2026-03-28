@@ -5,88 +5,82 @@
     <a routerLink="/sessions" class="back-link">&larr; Back to Sessions</a>
     <h1>{{ isEdit() ? 'Edit Session' : 'New Session' }}</h1>
 
-    <div class="card">
-      <div class="card-body">
+    <mat-card>
+      <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="appointmentId">Appointment *</label>
-              <div class="select-with-add">
-                <select id="appointmentId" class="form-control" formControlName="appointmentId"
-                  [class.is-invalid]="form.controls.appointmentId.touched && form.controls.appointmentId.invalid">
-                  <option [value]="0">Select an appointment</option>
-                  @for (apt of appointments(); track apt.id) {
-                    <option [value]="apt.id">
-                      {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
-                      ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
-                    </option>
-                  }
-                </select>
-                <button type="button" class="btn-add-new" title="Create new appointment" (click)="openCreateAppointment()">+ New</button>
-              </div>
-              @if (form.controls.appointmentId.touched && form.controls.appointmentId.invalid) {
-                <div class="form-error">Please select an appointment.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Appointment *</mat-label>
+              <mat-select formControlName="appointmentId">
+                <mat-option [value]="0">Select an appointment</mat-option>
+                @for (apt of appointments(); track apt.id) {
+                  <mat-option [value]="apt.id">
+                    {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
+                    ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
+                  </mat-option>
+                }
+              </mat-select>
+              <button matSuffix mat-icon-button type="button" (click)="openCreateAppointment()" title="Create new appointment">
+                <mat-icon>add</mat-icon>
+              </button>
+              @if (form.controls.appointmentId.errors) {
+                <mat-error>Please select an appointment.</mat-error>
               }
-            </div>
+            </mat-form-field>
 
-            <div class="form-group">
-              <label class="form-label" for="type">Type *</label>
-              <select id="type" class="form-control" formControlName="type"
-                [class.is-invalid]="form.controls.type.touched && form.controls.type.invalid">
-                <option value="">Select type</option>
-                <option value="massage">Massage</option>
-                <option value="chiropractic">Chiropractic</option>
-                <option value="acupuncture">Acupuncture</option>
-                <option value="rehabilitation">Rehabilitation</option>
-                <option value="evaluation">Evaluation</option>
-                <option value="treatment">Treatment</option>
-                <option value="pemf">PEMF</option>
-                <option value="other">Other</option>
-              </select>
-              @if (form.controls.type.touched && form.controls.type.errors?.['required']) {
-                <div class="form-error">Type is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Type *</mat-label>
+              <mat-select formControlName="type">
+                <mat-option value="">Select type</mat-option>
+                <mat-option value="massage">Massage</mat-option>
+                <mat-option value="chiropractic">Chiropractic</mat-option>
+                <mat-option value="acupuncture">Acupuncture</mat-option>
+                <mat-option value="rehabilitation">Rehabilitation</mat-option>
+                <mat-option value="evaluation">Evaluation</mat-option>
+                <mat-option value="treatment">Treatment</mat-option>
+                <mat-option value="pemf">PEMF</mat-option>
+                <mat-option value="other">Other</mat-option>
+              </mat-select>
+              @if (form.controls.type.errors?.['required']) {
+                <mat-error>Type is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Body Zones</label>
+            <label class="zone-label">Body Zones</label>
             <div class="zone-grid">
               @for (zone of bodyZoneOptions; track zone) {
-                <label class="zone-checkbox" [class.selected]="selectedZones().has(zone)">
-                  <input type="checkbox" [checked]="selectedZones().has(zone)" (change)="toggleZone(zone)">
+                <mat-checkbox [checked]="selectedZones().has(zone)" (change)="toggleZone(zone)">
                   {{ zone }}
-                </label>
+                </mat-checkbox>
               }
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="notes">Notes</label>
-            <textarea id="notes" class="form-control" formControlName="notes" rows="3"
-              placeholder="General session notes..."></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3" placeholder="General session notes..."></textarea>
+          </mat-form-field>
 
-          <div class="form-group">
-            <label class="form-label" for="findings">Findings</label>
-            <textarea id="findings" class="form-control" formControlName="findings" rows="3"
-              placeholder="Clinical findings..."></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Findings</mat-label>
+            <textarea matInput formControlName="findings" rows="3" placeholder="Clinical findings..."></textarea>
+          </mat-form-field>
 
-          <div class="form-group">
-            <label class="form-label" for="recommendations">Recommendations</label>
-            <textarea id="recommendations" class="form-control" formControlName="recommendations" rows="3"
-              placeholder="Follow-up recommendations..."></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Recommendations</mat-label>
+            <textarea matInput formControlName="recommendations" rows="3" placeholder="Follow-up recommendations..."></textarea>
+          </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
               @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Session' : 'Create Session' }} }
             </button>
-            <a routerLink="/sessions" class="btn btn-outline">Cancel</a>
+            <a routerLink="/sessions" mat-stroked-button>Cancel</a>
           </div>
         </form>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 }

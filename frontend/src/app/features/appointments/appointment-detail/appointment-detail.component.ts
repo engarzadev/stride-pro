@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { AppointmentsService } from '../appointments.service';
 import { Appointment } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -11,7 +13,7 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 @Component({
   selector: 'app-appointment-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule],
   templateUrl: './appointment-detail.component.html',
   styleUrls: ['./appointment-detail.component.scss'],
 })

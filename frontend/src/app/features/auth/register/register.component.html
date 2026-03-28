@@ -1,77 +1,51 @@
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-header">
-      <span class="auth-logo">&#127942;</span>
+      <span class="auth-logo">🐎</span>
       <h1>StridePro</h1>
       <p>Create your account</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="firstName">First Name</label>
-          <input
-            id="firstName"
-            type="text"
-            class="form-control"
-            formControlName="firstName"
-            placeholder="John"
-            [class.is-invalid]="form.controls.firstName.touched && form.controls.firstName.invalid">
-          @if (form.controls.firstName.touched && form.controls.firstName.errors?.['required']) {
-            <div class="form-error">First name is required.</div>
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput type="text" formControlName="firstName" placeholder="John">
+          @if (form.controls.firstName.errors?.['required']) {
+            <mat-error>First name is required.</mat-error>
           }
-        </div>
+        </mat-form-field>
 
-        <div class="form-group">
-          <label class="form-label" for="lastName">Last Name</label>
-          <input
-            id="lastName"
-            type="text"
-            class="form-control"
-            formControlName="lastName"
-            placeholder="Doe"
-            [class.is-invalid]="form.controls.lastName.touched && form.controls.lastName.invalid">
-          @if (form.controls.lastName.touched && form.controls.lastName.errors?.['required']) {
-            <div class="form-error">Last name is required.</div>
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput type="text" formControlName="lastName" placeholder="Doe">
+          @if (form.controls.lastName.errors?.['required']) {
+            <mat-error>Last name is required.</mat-error>
           }
-        </div>
+        </mat-form-field>
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          formControlName="email"
-          placeholder="you@example.com"
-          [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid">
-        @if (form.controls.email.touched && form.controls.email.errors) {
-          <div class="form-error">
-            @if (form.controls.email.errors['required']) { Email is required. }
-            @else if (form.controls.email.errors['email']) { Please enter a valid email. }
-          </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="you@example.com">
+        @if (form.controls.email.errors?.['required']) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (form.controls.email.errors?.['email']) {
+          <mat-error>Please enter a valid email.</mat-error>
         }
-      </div>
+      </mat-form-field>
 
-      <div class="form-group">
-        <label class="form-label" for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          formControlName="password"
-          placeholder="At least 6 characters"
-          [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid">
-        @if (form.controls.password.touched && form.controls.password.errors) {
-          <div class="form-error">
-            @if (form.controls.password.errors['required']) { Password is required. }
-            @else if (form.controls.password.errors['minlength']) { Password must be at least 6 characters. }
-          </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="At least 6 characters">
+        @if (form.controls.password.errors?.['required']) {
+          <mat-error>Password is required.</mat-error>
+        } @else if (form.controls.password.errors?.['minlength']) {
+          <mat-error>Password must be at least 6 characters.</mat-error>
         }
-      </div>
+      </mat-form-field>
 
-      <button type="submit" class="btn btn-primary btn-lg auth-submit" [disabled]="loading()">
+      <button type="submit" mat-raised-button color="primary" class="auth-submit" [disabled]="loading()">
         @if (loading()) { Creating account... } @else { Create Account }
       </button>
     </form>

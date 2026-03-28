@@ -1,4 +1,7 @@
-import { Component, Injectable, signal } from '@angular/core';
+import { Component, inject, Injectable } from '@angular/core';
+import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { firstValueFrom } from 'rxjs';
 
 export interface ConfirmDialogData {
   title: string;
@@ -10,36 +13,38 @@ export interface ConfirmDialogData {
 
 @Injectable({ providedIn: 'root' })
 export class ConfirmDialogService {
-  readonly visible = signal(false);
-  readonly data = signal<ConfirmDialogData>({ title: '', message: '' });
-
-  private resolveFn?: (result: boolean) => void;
+  private readonly dialog = inject(MatDialog);
 
   confirm(data: ConfirmDialogData): Promise<boolean> {
-    this.data.set(data);
-    this.visible.set(true);
-    return new Promise<boolean>((resolve) => {
-      this.resolveFn = resolve;
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data,
+      width: '400px',
+      disableClose: false,
     });
-  }
-
-  accept(): void {
-    this.visible.set(false);
-    this.resolveFn?.(true);
-  }
-
-  cancel(): void {
-    this.visible.set(false);
-    this.resolveFn?.(false);
+    return firstValueFrom(ref.afterClosed()).then((result) => !!result);
   }
 }
 
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.scss'],
+  imports: [MatDialogModule, MatButtonModule],
+  template: `
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <mat-dialog-content>
+      <p>{{ data.message }}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-stroked-button (click)="dialogRef.close(false)">
+        {{ data.cancelText || 'Cancel' }}
+      </button>
+      <button mat-raised-button color="warn" (click)="dialogRef.close(true)">
+        {{ data.confirmText || 'Confirm' }}
+      </button>
+    </mat-dialog-actions>
+  `,
 })
 export class ConfirmDialogComponent {
-  constructor(readonly dialogService: ConfirmDialogService) {}
+  readonly data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);
+  readonly dialogRef = inject(MatDialogRef<ConfirmDialogComponent>);
 }

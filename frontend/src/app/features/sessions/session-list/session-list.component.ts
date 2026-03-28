@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 import { Session } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -15,7 +16,7 @@ import { SessionsService } from '../sessions.service';
 @Component({
   selector: 'app-session-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent],
+  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
   templateUrl: './session-list.component.html',
   styleUrls: ['./session-list.component.scss'],
 })

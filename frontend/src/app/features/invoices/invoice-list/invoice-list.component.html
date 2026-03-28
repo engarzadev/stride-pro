@@ -3,12 +3,14 @@
 @if (loading()) {
   <app-loading-spinner />
 } @else {
-  <div class="card">
-    <app-data-table
-      [columns]="columns"
-      [data]="$any(tableInvoices())"
-      [actions]="actions"
-      (rowClick)="onRowClick($event)"
-      (actionClick)="onAction($event)" />
-  </div>
+  <mat-card>
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="$any(tableInvoices())"
+        [actions]="actions"
+        (rowClick)="onRowClick($event)"
+        (actionClick)="onAction($event)" />
+    </mat-card-content>
+  </mat-card>
 }

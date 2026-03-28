@@ -5,29 +5,23 @@
     <div class="detail-page">
       <div class="detail-header">
         <div>
-          <a routerLink="/appointments" class="back-link"
-            >&larr; Back to Appointments</a
-          >
+          <a routerLink="/appointments" class="back-link">&larr; Back to Appointments</a>
           <h1>Appointment Details</h1>
         </div>
         <div class="detail-actions">
-          <a
-            [routerLink]="['/appointments', a.id, 'edit']"
-            class="btn btn-outline"
-            >Edit</a
-          >
-          <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+          <a [routerLink]="['/appointments', a.id, 'edit']" mat-stroked-button>Edit</a>
+          <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
         </div>
       </div>
 
-      <div class="card mb-6">
-        <div class="card-header">
-          Appointment Information
-          <span class="badge" [class]="getStatusClass(a.status)">{{
-            a.status | titlecase
-          }}</span>
-        </div>
-        <div class="card-body">
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title>
+            Appointment Information
+            <span class="badge" [class]="getStatusClass(a.status)">{{ a.status | titlecase }}</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           <div class="detail-grid">
             <div class="detail-field">
               <label>Date</label>
@@ -35,24 +29,20 @@
             </div>
             <div class="detail-field">
               <label>Time</label>
-              <p>{{ a.time || "-" }}</p>
+              <p>{{ a.time || '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Duration</label>
-              <p>{{ a.duration ? a.duration + " minutes" : "-" }}</p>
+              <p>{{ a.duration ? a.duration + ' minutes' : '-' }}</p>
             </div>
             <div class="detail-field">
               <label>Type</label>
-              <p>{{ a.type || "-" | titlecase }}</p>
+              <p>{{ a.type || '-' | titlecase }}</p>
             </div>
             <div class="detail-field">
               <label>Client</label>
               @if (a.client) {
-                <p>
-                  <a [routerLink]="['/clients', a.clientId]"
-                    >{{ a.client.firstName }} {{ a.client.lastName }}</a
-                  >
-                </p>
+                <p><a [routerLink]="['/clients', a.clientId]">{{ a.client.firstName }} {{ a.client.lastName }}</a></p>
               } @else {
                 <p>-</p>
               }
@@ -60,11 +50,7 @@
             <div class="detail-field">
               <label>Horse</label>
               @if (a.horse) {
-                <p>
-                  <a [routerLink]="['/horses', a.horseId]">{{
-                    a.horse.name
-                  }}</a>
-                </p>
+                <p><a [routerLink]="['/horses', a.horseId]">{{ a.horse.name }}</a></p>
               } @else {
                 <p>-</p>
               }
@@ -72,9 +58,7 @@
             <div class="detail-field">
               <label>Barn</label>
               @if (a.barn) {
-                <p>
-                  <a [routerLink]="['/barns', a.barnId]">{{ a.barn.name }}</a>
-                </p>
+                <p><a [routerLink]="['/barns', a.barnId]">{{ a.barn.name }}</a></p>
               } @else {
                 <p>-</p>
               }
@@ -86,13 +70,15 @@
               <p>{{ a.notes }}</p>
             </div>
           }
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
 
       @if (a.session) {
-        <div class="card">
-          <div class="card-header">Linked Session</div>
-          <div class="card-body">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Linked Session</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
             <div class="detail-grid">
               <div class="detail-field">
                 <label>Type</label>
@@ -100,18 +86,14 @@
               </div>
               <div class="detail-field">
                 <label>Body Zones</label>
-                <p>{{ a.session.bodyZones.join(", ") || "-" }}</p>
+                <p>{{ a.session.bodyZones.join(', ') || '-' }}</p>
               </div>
             </div>
             <div class="mt-4">
-              <a
-                [routerLink]="['/sessions', a.session.id]"
-                class="btn btn-outline"
-                >View Session Details</a
-              >
+              <a [routerLink]="['/sessions', a.session.id]" mat-stroked-button>View Session Details</a>
             </div>
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
       }
     </div>
   }

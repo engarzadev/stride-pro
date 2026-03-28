@@ -9,14 +9,16 @@
         <h1>{{ c.firstName }} {{ c.lastName }}</h1>
       </div>
       <div class="detail-actions">
-        <a [routerLink]="['/clients', c.id, 'edit']" class="btn btn-outline">Edit</a>
-        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+        <a [routerLink]="['/clients', c.id, 'edit']" mat-stroked-button>Edit</a>
+        <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
       </div>
     </div>
 
-    <div class="card mb-6">
-      <div class="card-header">Client Information</div>
-      <div class="card-body">
+    <mat-card class="mb-6">
+      <mat-card-header>
+        <mat-card-title>Client Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <div class="detail-grid">
           <div class="detail-field">
             <label>Email</label>
@@ -41,35 +43,38 @@
             <p>{{ c.notes }}</p>
           </div>
         }
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
 
     @if (c.horses && c.horses.length > 0) {
-      <div class="card">
-        <div class="card-header">Horses</div>
-        <div class="card-body">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Breed</th>
-                <th>Age</th>
-                <th>Gender</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (horse of c.horses; track horse.id) {
-                <tr class="clickable" [routerLink]="['/horses', horse.id]">
-                  <td>{{ horse.name }}</td>
-                  <td>{{ horse.breed }}</td>
-                  <td>{{ horse.age }}</td>
-                  <td>{{ horse.gender }}</td>
-                </tr>
-              }
-            </tbody>
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Horses</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <table mat-table [dataSource]="c.horses">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let horse">{{ horse.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="breed">
+              <th mat-header-cell *matHeaderCellDef>Breed</th>
+              <td mat-cell *matCellDef="let horse">{{ horse.breed }}</td>
+            </ng-container>
+            <ng-container matColumnDef="age">
+              <th mat-header-cell *matHeaderCellDef>Age</th>
+              <td mat-cell *matCellDef="let horse">{{ horse.age }}</td>
+            </ng-container>
+            <ng-container matColumnDef="gender">
+              <th mat-header-cell *matHeaderCellDef>Gender</th>
+              <td mat-cell *matCellDef="let horse">{{ horse.gender }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['name','breed','age','gender']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name','breed','age','gender'];"
+                class="clickable" [routerLink]="['/horses', row.id]"></tr>
           </table>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
     }
   </div>
   }

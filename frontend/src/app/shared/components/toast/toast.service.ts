@@ -1,39 +1,43 @@
-import { Injectable, signal } from '@angular/core';
-
-export interface Toast {
-  id: number;
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-}
+import { Injectable, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  private nextId = 0;
-  readonly toasts = signal<Toast[]>([]);
+  private readonly snackBar = inject(MatSnackBar);
 
   success(message: string): void {
-    this.show(message, 'success');
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      panelClass: ['snack-success'],
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+    });
   }
 
   error(message: string): void {
-    this.show(message, 'error');
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      panelClass: ['snack-error'],
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+    });
   }
 
   warning(message: string): void {
-    this.show(message, 'warning');
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      panelClass: ['snack-warning'],
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+    });
   }
 
   info(message: string): void {
-    this.show(message, 'info');
-  }
-
-  remove(id: number): void {
-    this.toasts.update((toasts) => toasts.filter((t) => t.id !== id));
-  }
-
-  private show(message: string, type: Toast['type']): void {
-    const id = this.nextId++;
-    this.toasts.update((toasts) => [...toasts, { id, message, type }]);
-    setTimeout(() => this.remove(id), 5000);
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      panelClass: ['snack-info'],
+      horizontalPosition: 'right',
+      verticalPosition: 'bottom',
+    });
   }
 }

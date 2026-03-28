@@ -4,7 +4,7 @@
   <div class="step-indicator">
     <div class="step-item" [class.active]="step() === 1" [class.done]="step() > 1">
       <div class="step-circle">
-        @if (step() > 1) { <span class="checkmark">&#10003;</span> } @else { 1 }
+        @if (step() > 1) { <mat-icon>check</mat-icon> } @else { 1 }
       </div>
       <span class="step-label">Client</span>
     </div>
@@ -12,7 +12,7 @@
 
     <div class="step-item" [class.active]="step() === 2" [class.done]="step() > 2">
       <div class="step-circle">
-        @if (step() > 2) { <span class="checkmark">&#10003;</span> } @else { 2 }
+        @if (step() > 2) { <mat-icon>check</mat-icon> } @else { 2 }
       </div>
       <span class="step-label">Horse</span>
     </div>
@@ -20,7 +20,7 @@
 
     <div class="step-item" [class.active]="step() === 3" [class.done]="step() > 3">
       <div class="step-circle">
-        @if (step() > 3) { <span class="checkmark">&#10003;</span> } @else { 3 }
+        @if (step() > 3) { <mat-icon>check</mat-icon> } @else { 3 }
       </div>
       <span class="step-label">Appointment</span>
     </div>
@@ -34,216 +34,212 @@
 
   <!-- Step 1: Client Info -->
   @if (step() === 1) {
-    <div class="card">
-      <div class="card-header">
-        <h2>Client Information</h2>
-        <p class="step-subtitle">Start with the basics — you can fill in more details later.</p>
-      </div>
-      <div class="card-body">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Client Information</mat-card-title>
+        <mat-card-subtitle>Start with the basics — you can fill in more details later.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
         <form [formGroup]="clientForm" (ngSubmit)="saveClient()">
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="firstName">First Name *</label>
-              <input id="firstName" type="text" class="form-control" formControlName="firstName"
-                [class.is-invalid]="clientForm.controls.firstName.touched && clientForm.controls.firstName.invalid">
-              @if (clientForm.controls.firstName.touched && clientForm.controls.firstName.errors?.['required']) {
-                <div class="form-error">First name is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>First Name *</mat-label>
+              <input matInput formControlName="firstName">
+              @if (clientForm.controls.firstName.errors?.['required']) {
+                <mat-error>First name is required.</mat-error>
               }
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="lastName">Last Name *</label>
-              <input id="lastName" type="text" class="form-control" formControlName="lastName"
-                [class.is-invalid]="clientForm.controls.lastName.touched && clientForm.controls.lastName.invalid">
-              @if (clientForm.controls.lastName.touched && clientForm.controls.lastName.errors?.['required']) {
-                <div class="form-error">Last name is required.</div>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name *</mat-label>
+              <input matInput formControlName="lastName">
+              @if (clientForm.controls.lastName.errors?.['required']) {
+                <mat-error>Last name is required.</mat-error>
               }
-            </div>
+            </mat-form-field>
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="email">Email</label>
-              <input id="email" type="email" class="form-control" formControlName="email"
-                [class.is-invalid]="clientForm.controls.email.touched && clientForm.controls.email.invalid">
-              @if (clientForm.controls.email.touched && clientForm.controls.email.errors?.['email']) {
-                <div class="form-error">Please enter a valid email address.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email">
+              @if (clientForm.controls.email.errors?.['email']) {
+                <mat-error>Please enter a valid email address.</mat-error>
               }
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="phone">Phone</label>
-              <input id="phone" type="tel" class="form-control" formControlName="phone">
-            </div>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput type="tel" formControlName="phone">
+            </mat-form-field>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="address">Address</label>
-            <input id="address" type="text" class="form-control" formControlName="address">
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address">
+          </mat-form-field>
 
-          <div class="form-group">
-            <label class="form-label" for="clientNotes">Notes</label>
-            <textarea id="clientNotes" class="form-control" formControlName="notes" rows="3"></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3"></textarea>
+          </mat-form-field>
         </form>
-      </div>
-      <div class="card-footer step-actions">
-        <a routerLink="/clients" class="btn btn-outline">Cancel</a>
-        <button class="btn btn-primary" (click)="saveClient()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Next: Add Horse &rarr; }
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <a mat-stroked-button routerLink="/clients">Cancel</a>
+        <button mat-raised-button color="primary" (click)="saveClient()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Next: Add Horse }
         </button>
-      </div>
-    </div>
+      </mat-card-actions>
+    </mat-card>
   }
 
   <!-- Step 2: Horse -->
   @if (step() === 2) {
-    <div class="card">
-      <div class="card-header">
-        <h2>Add First Horse</h2>
-        <p class="step-subtitle">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Add First Horse</mat-card-title>
+        <mat-card-subtitle>
           Adding a horse for
           <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>.
           You can skip this and add horses later.
-        </p>
-      </div>
-      <div class="card-body">
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
         <form [formGroup]="horseForm" (ngSubmit)="saveHorse()">
-          <div class="form-group">
-            <label class="form-label" for="horseName">Name *</label>
-            <input id="horseName" type="text" class="form-control" formControlName="name"
-              [class.is-invalid]="horseForm.controls.name.touched && horseForm.controls.name.invalid">
-            @if (horseForm.controls.name.touched && horseForm.controls.name.errors?.['required']) {
-              <div class="form-error">Horse name is required.</div>
+          <mat-form-field appearance="outline">
+            <mat-label>Name *</mat-label>
+            <input matInput formControlName="name">
+            @if (horseForm.controls.name.errors?.['required']) {
+              <mat-error>Horse name is required.</mat-error>
             }
-          </div>
+          </mat-form-field>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Breed</label>
+            <mat-form-field appearance="outline">
+              <mat-label>Breed</mat-label>
               <app-breed-autocomplete formControlName="breed" />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="color">Color</label>
-              <input id="color" type="text" class="form-control" formControlName="color">
-            </div>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Color</mat-label>
+              <input matInput formControlName="color">
+            </mat-form-field>
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="age">Age</label>
-              <input id="age" type="number" class="form-control" formControlName="age" min="0">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="gender">Gender</label>
-              <select id="gender" class="form-control" formControlName="gender">
-                <option value="">Select gender</option>
-                <option value="mare">Mare</option>
-                <option value="stallion">Stallion</option>
-                <option value="gelding">Gelding</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="weight">Weight (lbs)</label>
-              <input id="weight" type="number" class="form-control" formControlName="weight" min="0">
-            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Age</mat-label>
+              <input matInput type="number" formControlName="age" min="0">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Gender</mat-label>
+              <mat-select formControlName="gender">
+                <mat-option value="">Select gender</mat-option>
+                <mat-option value="mare">Mare</mat-option>
+                <mat-option value="stallion">Stallion</mat-option>
+                <mat-option value="gelding">Gelding</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Weight (lbs)</mat-label>
+              <input matInput type="number" formControlName="weight" min="0">
+            </mat-form-field>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="barnId">Barn</label>
-            <div class="select-with-add">
-              <select id="barnId" class="form-control" formControlName="barnId">
-                <option [ngValue]="null">No barn assigned</option>
-                @for (barn of barns(); track barn.id) {
-                  <option [value]="barn.id">{{ barn.name }}</option>
-                }
-              </select>
-              <button type="button" class="btn-add-new" (click)="addNewBarn()">+ New Barn</button>
-            </div>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Barn</mat-label>
+            <mat-select formControlName="barnId">
+              <mat-option [value]="null">No barn assigned</mat-option>
+              @for (barn of barns(); track barn.id) {
+                <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+              }
+            </mat-select>
+            <button matSuffix mat-icon-button type="button" (click)="addNewBarn()" title="Create new barn">
+              <mat-icon>add</mat-icon>
+            </button>
+          </mat-form-field>
 
-          <div class="form-group">
-            <label class="form-label" for="horseNotes">Notes</label>
-            <textarea id="horseNotes" class="form-control" formControlName="notes" rows="3"></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3"></textarea>
+          </mat-form-field>
         </form>
-      </div>
-      <div class="card-footer step-actions">
-        <button class="btn btn-outline" (click)="skipHorse()" [disabled]="saving()">Skip for now</button>
-        <button class="btn btn-primary" (click)="saveHorse()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Next: Schedule Appointment &rarr; }
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-stroked-button (click)="skipHorse()" [disabled]="saving()">Skip for now</button>
+        <button mat-raised-button color="primary" (click)="saveHorse()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Next: Schedule Appointment }
         </button>
-      </div>
-    </div>
+      </mat-card-actions>
+    </mat-card>
   }
 
   <!-- Step 3: Appointment -->
   @if (step() === 3) {
-    <div class="card">
-      <div class="card-header">
-        <h2>Schedule First Appointment</h2>
-        <p class="step-subtitle">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Schedule First Appointment</mat-card-title>
+        <mat-card-subtitle>
           Book an appointment for
           <strong>{{ createdHorse()?.name }}</strong>.
           You can skip this and schedule appointments later.
-        </p>
-      </div>
-      <div class="card-body">
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
         <form [formGroup]="appointmentForm" (ngSubmit)="saveAppointment()">
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="date">Date *</label>
-              <input id="date" type="date" class="form-control" formControlName="date"
-                [class.is-invalid]="appointmentForm.controls.date.touched && appointmentForm.controls.date.invalid">
-              @if (appointmentForm.controls.date.touched && appointmentForm.controls.date.errors?.['required']) {
-                <div class="form-error">Date is required.</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Date *</mat-label>
+              <input matInput type="date" formControlName="date">
+              @if (appointmentForm.controls.date.errors?.['required']) {
+                <mat-error>Date is required.</mat-error>
               }
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="time">Time</label>
-              <input id="time" type="time" class="form-control" formControlName="time">
-            </div>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Time</mat-label>
+              <input matInput type="time" formControlName="time">
+            </mat-form-field>
           </div>
 
           <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="apptType">Type *</label>
-              <select id="apptType" class="form-control" formControlName="type"
-                [class.is-invalid]="appointmentForm.controls.type.touched && appointmentForm.controls.type.invalid">
-                <option value="">Select type</option>
+            <mat-form-field appearance="outline">
+              <mat-label>Type *</mat-label>
+              <mat-select formControlName="type">
+                <mat-option value="">Select type</mat-option>
                 @for (t of appointmentTypes; track t) {
-                  <option [value]="t">{{ t | titlecase }}</option>
+                  <mat-option [value]="t">{{ t | titlecase }}</mat-option>
                 }
-              </select>
-              @if (appointmentForm.controls.type.touched && appointmentForm.controls.type.errors?.['required']) {
-                <div class="form-error">Appointment type is required.</div>
+              </mat-select>
+              @if (appointmentForm.controls.type.errors?.['required']) {
+                <mat-error>Appointment type is required.</mat-error>
               }
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="duration">Duration (min)</label>
-              <input id="duration" type="number" class="form-control" formControlName="duration" min="1">
-            </div>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Duration (min)</mat-label>
+              <input matInput type="number" formControlName="duration" min="1">
+            </mat-form-field>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="apptNotes">Notes</label>
-            <textarea id="apptNotes" class="form-control" formControlName="notes" rows="3"></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="3"></textarea>
+          </mat-form-field>
         </form>
-      </div>
-      <div class="card-footer step-actions">
-        <button class="btn btn-outline" (click)="skipAppointment()" [disabled]="saving()">Skip for now</button>
-        <button class="btn btn-primary" (click)="saveAppointment()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Finish &rarr; }
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-stroked-button (click)="skipAppointment()" [disabled]="saving()">Skip for now</button>
+        <button mat-raised-button color="primary" (click)="saveAppointment()" [disabled]="saving()">
+          @if (saving()) { Saving... } @else { Finish }
         </button>
-      </div>
-    </div>
+      </mat-card-actions>
+    </mat-card>
   }
 
   <!-- Step 4: Done -->
   @if (step() === 4) {
-    <div class="card done-card">
-      <div class="card-body">
-        <div class="done-icon">&#10003;</div>
+    <mat-card class="done-card">
+      <mat-card-content>
+        <div class="done-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
         <h2>All set!</h2>
         <p class="done-subtitle">
           <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>
@@ -284,17 +280,17 @@
         </div>
 
         <div class="done-actions">
-          <button class="btn btn-primary" (click)="goToClient()">View Client Profile</button>
+          <button mat-raised-button color="primary" (click)="goToClient()">View Client Profile</button>
           @if (!createdHorse()) {
-            <button class="btn btn-outline" (click)="goToNewHorse()">Add a Horse</button>
+            <button mat-stroked-button (click)="goToNewHorse()">Add a Horse</button>
           }
           @if (createdHorse() && !createdAppointment()) {
-            <button class="btn btn-outline" (click)="goToNewAppointment()">Schedule Appointment</button>
+            <button mat-stroked-button (click)="goToNewAppointment()">Schedule Appointment</button>
           }
-          <a routerLink="/clients" class="btn btn-outline">Back to Clients</a>
+          <a mat-stroked-button routerLink="/clients">Back to Clients</a>
         </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   }
 
 </div>

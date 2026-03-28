@@ -9,14 +9,16 @@
         <h1>Session Details</h1>
       </div>
       <div class="detail-actions">
-        <a [routerLink]="['/sessions', s.id, 'edit']" class="btn btn-outline">Edit</a>
-        <button class="btn btn-danger" (click)="onDelete()">Delete</button>
+        <a [routerLink]="['/sessions', s.id, 'edit']" mat-stroked-button>Edit</a>
+        <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
       </div>
     </div>
 
-    <div class="card mb-6">
-      <div class="card-header">Session Information</div>
-      <div class="card-body">
+    <mat-card class="mb-6">
+      <mat-card-header>
+        <mat-card-title>Session Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <div class="detail-grid">
           <div class="detail-field">
             <label>Type</label>
@@ -45,25 +47,29 @@
             }
           }
         </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
 
     @if (s.bodyZones && s.bodyZones.length > 0) {
-      <div class="card mb-6">
-        <div class="card-header">Body Zones</div>
-        <div class="card-body">
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title>Body Zones</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           <div class="body-zones">
             @for (zone of s.bodyZones; track zone) {
               <span class="badge badge-primary">{{ zone }}</span>
             }
           </div>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
     }
 
-    <div class="card mb-6">
-      <div class="card-header">Clinical Notes</div>
-      <div class="card-body">
+    <mat-card class="mb-6">
+      <mat-card-header>
+        <mat-card-title>Clinical Notes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <div class="detail-field mb-4">
           <label>Notes</label>
           <p>{{ s.notes || 'No notes recorded.' }}</p>
@@ -76,8 +82,8 @@
           <label>Recommendations</label>
           <p>{{ s.recommendations || 'No recommendations recorded.' }}</p>
         </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   </div>
   }
 }

@@ -1,5 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { SessionsService } from '../sessions.service';
 import { Session } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -10,7 +12,7 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 @Component({
   selector: 'app-session-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule],
   templateUrl: './session-detail.component.html',
   styleUrls: ['./session-detail.component.scss'],
 })

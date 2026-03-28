@@ -1,10 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, MatListModule, MatIconModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
@@ -13,12 +15,12 @@ export class SidebarComponent {
   @Output() closeSidebar = new EventEmitter<void>();
 
   readonly navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '\u2302' },
-    { path: '/clients', label: 'Clients', icon: '\u263A' },
-    { path: '/horses', label: 'Horses', icon: '\u2658' },
-    { path: '/barns', label: 'Barns', icon: '\u2616' },
-    { path: '/appointments', label: 'Appointments', icon: '\u2637' },
-    { path: '/sessions', label: 'Sessions', icon: '\u2695' },
-    { path: '/invoices', label: 'Invoices', icon: '\u2709' },
+    { path: '/dashboard', label: 'Dashboard', icon: 'home' },
+    { path: '/clients', label: 'Clients', icon: 'people' },
+    { path: '/horses', label: 'Horses', icon: 'pets' },
+    { path: '/barns', label: 'Barns', icon: 'warehouse' },
+    { path: '/appointments', label: 'Appointments', icon: 'event' },
+    { path: '/sessions', label: 'Sessions', icon: 'medical_services' },
+    { path: '/invoices', label: 'Invoices', icon: 'receipt' },
   ];
 }

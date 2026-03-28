@@ -1,63 +1,57 @@
-<div class="table-container">
-  @if (data.length === 0) {
-    <div class="empty-state">
-      <p>No records found.</p>
-    </div>
-  } @else {
-    <table>
-      <thead>
-        <tr>
-          @for (col of columns; track col.key) {
-            <th [class.sortable]="col.sortable" (click)="onSort(col)">
-              {{ col.label }}
-              @if (col.sortable && sortKey() === col.key) {
-                <span class="sort-icon">{{ sortDir() === 'asc' ? '\u25B2' : '\u25BC' }}</span>
+@if (data.length === 0) {
+  <div class="empty-state">
+    <p>No records found.</p>
+  </div>
+} @else {
+  <div class="table-container">
+    <table mat-table [dataSource]="getSortedData()" matSort (matSortChange)="onSort($event)">
+
+      @for (col of columns; track col.key) {
+        <ng-container [matColumnDef]="col.key">
+          <th mat-header-cell *matHeaderCellDef [mat-sort-header]="col.sortable ? col.key : ''">
+            {{ col.label }}
+          </th>
+          <td mat-cell *matCellDef="let row" [class.capitalize]="col.capitalize" [attr.data-label]="col.label">
+            @switch (col.type) {
+              @case ('date') {
+                {{ getNestedValue(row, col.key) | dateFormat }}
               }
-            </th>
-          }
-          @if (actions.length > 0) {
-            <th class="actions-col">Actions</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of getSortedData(); track row['id']) {
-          <tr [class.clickable]="clickable" (click)="clickable ? rowClick.emit(row) : null">
-            @for (col of columns; track col.key) {
-              <td [class.capitalize]="col.capitalize" [attr.data-label]="col.label">
-                @switch (col.type) {
-                  @case ('date') {
-                    {{ getNestedValue(row, col.key) | dateFormat }}
-                  }
-                  @case ('currency') {
-                    {{ getNestedValue(row, col.key) | currencyFormat }}
-                  }
-                  @case ('badge') {
-                    <span class="badge" [class]="'badge-' + (col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')">
-                      {{ getNestedValue(row, col.key) }}
-                    </span>
-                  }
-                  @default {
-                    {{ getNestedValue(row, col.key) }}
-                  }
-                }
-              </td>
+              @case ('currency') {
+                {{ getNestedValue(row, col.key) | currencyFormat }}
+              }
+              @case ('badge') {
+                <span class="badge" [class]="'badge-' + (col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')">
+                  {{ getNestedValue(row, col.key) }}
+                </span>
+              }
+              @default {
+                {{ getNestedValue(row, col.key) }}
+              }
             }
-            @if (actions.length > 0) {
-              <td class="actions-cell" data-label="Actions" (click)="$event.stopPropagation()">
-                @for (action of actions; track action.action) {
-                  <button
-                    class="btn btn-sm"
-                    [class]="'btn btn-sm ' + (action.class || 'btn-outline')"
-                    (click)="actionClick.emit({ action: action.action, row })">
-                    {{ action.icon }} {{ action.label }}
-                  </button>
-                }
-              </td>
+          </td>
+        </ng-container>
+      }
+
+      @if (actions.length > 0) {
+        <ng-container matColumnDef="_actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row" class="actions-cell" (click)="$event.stopPropagation()">
+            @for (action of actions; track action.action) {
+              <button
+                mat-stroked-button
+                [color]="getActionColor(action)"
+                (click)="actionClick.emit({ action: action.action, row })">
+                {{ action.label }}
+              </button>
             }
-          </tr>
-        }
-      </tbody>
+          </td>
+        </ng-container>
+      }
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          [class.clickable]="clickable"
+          (click)="clickable ? rowClick.emit(row) : null"></tr>
     </table>
-  }
-</div>
+  </div>
+}

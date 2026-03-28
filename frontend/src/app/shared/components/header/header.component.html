@@ -1,41 +1,28 @@
-<header class="header">
-  <div class="header-left">
-    <button class="menu-toggle" (click)="toggleSidebar.emit()">
-      <span class="menu-icon">&#9776;</span>
-    </button>
-    <div class="brand">
-      <span class="brand-icon">&#127942;</span>
-      <span class="brand-name">StridePro</span>
-    </div>
-  </div>
+<mat-toolbar class="app-header" color="primary">
+  <button mat-icon-button (click)="toggleSidebar.emit()" aria-label="Toggle sidebar">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="brand-name">🐎 StridePro</span>
 
-  <div class="header-right">
-    @if (currentUser$ | async; as user) {
-      <div class="user-menu" appClickOutside (clickOutside)="closeMenu()">
-        <button class="user-button" (click)="toggleMenu()">
-          <span class="user-avatar"
-            >{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span
-          >
-          <span class="user-name"
-            >{{ user.firstName }} {{ user.lastName }}</span
-          >
-          <span class="chevron">&#9662;</span>
-        </button>
-        @if (menuOpen()) {
-          <div class="dropdown">
-            <div class="dropdown-header">
-              <div class="dropdown-name">
-                {{ user.firstName }} {{ user.lastName }}
-              </div>
-              <div class="dropdown-email">{{ user.email }}</div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item" (click)="logout()">
-              <span>&#9211;</span> Sign Out
-            </button>
-          </div>
-        }
+  <span class="spacer"></span>
+
+  @if (currentUser$ | async; as user) {
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+      <span class="user-avatar">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span>
+      <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <div class="menu-user-info" mat-menu-item disabled>
+        <div class="menu-name">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="menu-email">{{ user.email }}</div>
       </div>
-    }
-  </div>
-</header>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sign Out</span>
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>
