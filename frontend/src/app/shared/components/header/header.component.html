@@ -1,5 +1,10 @@
 <mat-toolbar class="app-header" color="primary">
-  <button mat-icon-button (click)="toggleSidebar.emit()" aria-label="Toggle sidebar">
+  <button
+    mat-icon-button
+    class="mobile-menu-btn"
+    (click)="toggleSidebar.emit()"
+    aria-label="Toggle sidebar"
+  >
     <mat-icon>menu</mat-icon>
   </button>
   <span class="brand-name">🐎 StridePro</span>
@@ -9,8 +14,6 @@
   @if (currentUser$ | async; as user) {
     <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
       <span class="user-avatar">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span>
-      <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
-      <mat-icon>arrow_drop_down</mat-icon>
     </button>
 
     <mat-menu #userMenu="matMenu">

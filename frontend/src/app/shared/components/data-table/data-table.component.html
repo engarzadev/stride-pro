@@ -20,9 +20,15 @@
                 {{ getNestedValue(row, col.key) | currencyFormat }}
               }
               @case ('badge') {
-                <span class="badge" [class]="'badge-' + (col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')">
-                  {{ getNestedValue(row, col.key) }}
-                </span>
+                <mat-chip-set>
+                  <mat-chip
+                    [color]="getChipColor(col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')"
+                    [class]="'chip-' + (col.badgeMap?.['' + getNestedValue(row, col.key)] || 'secondary')"
+                    [highlighted]="true"
+                    disableRipple>
+                    {{ getNestedValue(row, col.key) }}
+                  </mat-chip>
+                </mat-chip-set>
               }
               @default {
                 {{ getNestedValue(row, col.key) }}
@@ -34,16 +40,26 @@
 
       @if (actions.length > 0) {
         <ng-container matColumnDef="_actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let row" class="actions-cell" (click)="$event.stopPropagation()">
-            @for (action of actions; track action.action) {
-              <button
-                mat-stroked-button
-                [color]="getActionColor(action)"
-                (click)="actionClick.emit({ action: action.action, row })">
-                {{ action.label }}
-              </button>
-            }
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation()">
+            <button mat-icon-button [matMenuTriggerFor]="rowMenu" [matMenuTriggerData]="{ row }">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #rowMenu="matMenu">
+              <ng-template matMenuContent let-row="row">
+                @for (action of actions; track action.action) {
+                  <button
+                    mat-menu-item
+                    [class.text-warn]="action.class === 'btn-danger'"
+                    (click)="actionClick.emit({ action: action.action, row })">
+                    @if (action.icon) {
+                      <mat-icon>{{ action.icon }}</mat-icon>
+                    }
+                    {{ action.label }}
+                  </button>
+                }
+              </ng-template>
+            </mat-menu>
           </td>
         </ng-container>
       }

@@ -45,7 +45,7 @@ export class QuickCreateAppointmentService {
       <form [formGroup]="form" id="qc-apt-form" (ngSubmit)="onSubmit()">
         <div class="form-row">
           <mat-form-field appearance="outline">
-            <mat-label>Client *</mat-label>
+            <mat-label>Client</mat-label>
             <mat-select formControlName="clientId">
               <mat-option [value]="0">Select a client</mat-option>
               @for (client of clients(); track client.id) {
@@ -59,7 +59,7 @@ export class QuickCreateAppointmentService {
             }
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Horse *</mat-label>
+            <mat-label>Horse</mat-label>
             <mat-select formControlName="horseId">
               <mat-option [value]="0">Select a horse</mat-option>
               @for (horse of filteredHorses; track horse.id) {
@@ -82,7 +82,7 @@ export class QuickCreateAppointmentService {
         </mat-form-field>
         <div class="form-row">
           <mat-form-field appearance="outline">
-            <mat-label>Date *</mat-label>
+            <mat-label>Date</mat-label>
             <input matInput type="date" formControlName="date" />
             @if (form.controls.date.errors?.['required']) {
               <mat-error>Date is required.</mat-error>
@@ -105,7 +105,7 @@ export class QuickCreateAppointmentService {
             />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Type *</mat-label>
+            <mat-label>Type</mat-label>
             <mat-select formControlName="type">
               <mat-option value="">Select type</mat-option>
               <mat-option value="checkup">Checkup</mat-option>

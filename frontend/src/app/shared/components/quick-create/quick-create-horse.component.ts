@@ -1,16 +1,29 @@
-import { Component, Injectable, OnInit, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  Injectable,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
-import { Client, Barn, Horse } from '../../../core/models';
-import { HorsesService } from '../../../features/horses/horses.service';
-import { ClientsService } from '../../../features/clients/clients.service';
+import { Barn, Client, Horse } from '../../../core/models';
 import { BarnsService } from '../../../features/barns/barns.service';
+import { ClientsService } from '../../../features/clients/clients.service';
+import { HorsesService } from '../../../features/horses/horses.service';
 import { BreedAutocompleteComponent } from '../breed-autocomplete/breed-autocomplete.component';
 import { QuickCreateBarnService } from './quick-create-barn.component';
 
@@ -23,7 +36,10 @@ export class QuickCreateHorseService {
   private readonly dialog = inject(MatDialog);
 
   async open(options: QuickCreateHorseOptions = {}): Promise<Horse | null> {
-    const ref = this.dialog.open(QuickCreateHorseComponent, { width: '650px', data: options });
+    const ref = this.dialog.open(QuickCreateHorseComponent, {
+      width: '650px',
+      data: options,
+    });
     return (await firstValueFrom(ref.afterClosed())) ?? null;
   }
 }
@@ -31,14 +47,23 @@ export class QuickCreateHorseService {
 @Component({
   selector: 'app-quick-create-horse',
   standalone: true,
-  imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, BreedAutocompleteComponent],
+  imports: [
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    BreedAutocompleteComponent,
+  ],
   template: `
     <h2 mat-dialog-title>New Horse</h2>
     <mat-dialog-content>
       <form [formGroup]="form" id="qc-horse-form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
-          <mat-label>Name *</mat-label>
-          <input matInput formControlName="name">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
           @if (form.controls.name.errors?.['required']) {
             <mat-error>Horse name is required.</mat-error>
           }
@@ -50,13 +75,13 @@ export class QuickCreateHorseService {
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Color</mat-label>
-            <input matInput formControlName="color">
+            <input matInput formControlName="color" />
           </mat-form-field>
         </div>
         <div class="form-row">
           <mat-form-field appearance="outline">
             <mat-label>Age</mat-label>
-            <input matInput type="number" formControlName="age" min="0">
+            <input matInput type="number" formControlName="age" min="0" />
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Gender</mat-label>
@@ -70,18 +95,24 @@ export class QuickCreateHorseService {
         </div>
         <mat-form-field appearance="outline">
           <mat-label>Weight (lbs)</mat-label>
-          <input matInput type="number" formControlName="weight" min="0">
+          <input matInput type="number" formControlName="weight" min="0" />
         </mat-form-field>
         <div class="form-row">
           <mat-form-field appearance="outline">
-            <mat-label>Client *</mat-label>
+            <mat-label>Client</mat-label>
             @if (preselectedClient(); as client) {
-              <input matInput [value]="client.firstName + ' ' + client.lastName" readonly>
+              <input
+                matInput
+                [value]="client.firstName + ' ' + client.lastName"
+                readonly
+              />
             } @else {
               <mat-select formControlName="clientId">
                 <mat-option [value]="0">Select a client</mat-option>
                 @for (c of clients(); track c.id) {
-                  <mat-option [value]="c.id">{{ c.firstName }} {{ c.lastName }}</mat-option>
+                  <mat-option [value]="c.id"
+                    >{{ c.firstName }} {{ c.lastName }}</mat-option
+                  >
                 }
               </mat-select>
               @if (form.controls.clientId.errors) {
@@ -97,7 +128,13 @@ export class QuickCreateHorseService {
                 <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
               }
             </mat-select>
-            <button matSuffix mat-icon-button type="button" (click)="openCreateBarn()" title="Create new barn">
+            <button
+              matSuffix
+              mat-icon-button
+              type="button"
+              (click)="openCreateBarn()"
+              title="Create new barn"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </mat-form-field>
@@ -110,8 +147,18 @@ export class QuickCreateHorseService {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-stroked-button (click)="dialogRef.close(null)">Cancel</button>
-      <button mat-raised-button color="primary" form="qc-horse-form" type="submit" [disabled]="saving()">
-        @if (saving()) { Saving... } @else { Create Horse }
+      <button
+        mat-raised-button
+        color="primary"
+        form="qc-horse-form"
+        type="submit"
+        [disabled]="saving()"
+      >
+        @if (saving()) {
+          Saving...
+        } @else {
+          Create Horse
+        }
       </button>
     </mat-dialog-actions>
   `,
@@ -130,7 +177,9 @@ export class QuickCreateHorseComponent implements OnInit {
   readonly barns = signal<Barn[]>([]);
   readonly preselectedClient = computed(() => {
     const clientId = this.options?.clientId;
-    return clientId ? this.clients().find((c) => c.id === clientId) ?? null : null;
+    return clientId
+      ? (this.clients().find((c) => c.id === clientId) ?? null)
+      : null;
   });
 
   readonly form = this.fb.nonNullable.group({

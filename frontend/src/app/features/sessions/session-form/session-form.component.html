@@ -3,24 +3,33 @@
 } @else {
   <div class="form-page">
     <a routerLink="/sessions" class="back-link">&larr; Back to Sessions</a>
-    <h1>{{ isEdit() ? 'Edit Session' : 'New Session' }}</h1>
+    <h1>{{ isEdit() ? "Edit Session" : "New Session" }}</h1>
 
     <mat-card>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Appointment *</mat-label>
+              <mat-label>Appointment</mat-label>
               <mat-select formControlName="appointmentId">
                 <mat-option [value]="0">Select an appointment</mat-option>
                 @for (apt of appointments(); track apt.id) {
                   <mat-option [value]="apt.id">
-                    {{ apt.date | dateFormat }} - {{ apt.horse?.name || 'Horse #' + apt.horseId }}
-                    ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
+                    {{ apt.date | dateFormat }} -
+                    {{ apt.horse?.name || "Horse #" + apt.horseId }} ({{
+                      apt.client?.firstName
+                    }}
+                    {{ apt.client?.lastName }})
                   </mat-option>
                 }
               </mat-select>
-              <button matSuffix mat-icon-button type="button" (click)="openCreateAppointment()" title="Create new appointment">
+              <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                (click)="openCreateAppointment()"
+                title="Create new appointment"
+              >
                 <mat-icon>add</mat-icon>
               </button>
               @if (form.controls.appointmentId.errors) {
@@ -29,7 +38,7 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>Type *</mat-label>
+              <mat-label>Type</mat-label>
               <mat-select formControlName="type">
                 <mat-option value="">Select type</mat-option>
                 <mat-option value="massage">Massage</mat-option>
@@ -41,7 +50,7 @@
                 <mat-option value="pemf">PEMF</mat-option>
                 <mat-option value="other">Other</mat-option>
               </mat-select>
-              @if (form.controls.type.errors?.['required']) {
+              @if (form.controls.type.errors?.["required"]) {
                 <mat-error>Type is required.</mat-error>
               }
             </mat-form-field>
@@ -51,7 +60,10 @@
             <label class="zone-label">Body Zones</label>
             <div class="zone-grid">
               @for (zone of bodyZoneOptions; track zone) {
-                <mat-checkbox [checked]="selectedZones().has(zone)" (change)="toggleZone(zone)">
+                <mat-checkbox
+                  [checked]="selectedZones().has(zone)"
+                  (change)="toggleZone(zone)"
+                >
                   {{ zone }}
                 </mat-checkbox>
               }
@@ -60,22 +72,46 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Notes</mat-label>
-            <textarea matInput formControlName="notes" rows="3" placeholder="General session notes..."></textarea>
+            <textarea
+              matInput
+              formControlName="notes"
+              rows="3"
+              placeholder="General session notes..."
+            ></textarea>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Findings</mat-label>
-            <textarea matInput formControlName="findings" rows="3" placeholder="Clinical findings..."></textarea>
+            <textarea
+              matInput
+              formControlName="findings"
+              rows="3"
+              placeholder="Clinical findings..."
+            ></textarea>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Recommendations</mat-label>
-            <textarea matInput formControlName="recommendations" rows="3" placeholder="Follow-up recommendations..."></textarea>
+            <textarea
+              matInput
+              formControlName="recommendations"
+              rows="3"
+              placeholder="Follow-up recommendations..."
+            ></textarea>
           </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
-              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Session' : 'Create Session' }} }
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              [disabled]="saving()"
+            >
+              @if (saving()) {
+                Saving...
+              } @else {
+                {{ isEdit() ? "Update Session" : "Create Session" }}
+              }
             </button>
             <a routerLink="/sessions" mat-stroked-button>Cancel</a>
           </div>

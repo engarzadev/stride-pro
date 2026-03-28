@@ -1,32 +1,59 @@
 <div class="onboarding-page">
-
   <!-- Progress Steps -->
   <div class="step-indicator">
-    <div class="step-item" [class.active]="step() === 1" [class.done]="step() > 1">
+    <div
+      class="step-item"
+      [class.active]="step() === 1"
+      [class.done]="step() > 1"
+    >
       <div class="step-circle">
-        @if (step() > 1) { <mat-icon>check</mat-icon> } @else { 1 }
+        @if (step() > 1) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          1
+        }
       </div>
       <span class="step-label">Client</span>
     </div>
     <div class="step-line" [class.done]="step() > 1"></div>
 
-    <div class="step-item" [class.active]="step() === 2" [class.done]="step() > 2">
+    <div
+      class="step-item"
+      [class.active]="step() === 2"
+      [class.done]="step() > 2"
+    >
       <div class="step-circle">
-        @if (step() > 2) { <mat-icon>check</mat-icon> } @else { 2 }
+        @if (step() > 2) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          2
+        }
       </div>
       <span class="step-label">Horse</span>
     </div>
     <div class="step-line" [class.done]="step() > 2"></div>
 
-    <div class="step-item" [class.active]="step() === 3" [class.done]="step() > 3">
+    <div
+      class="step-item"
+      [class.active]="step() === 3"
+      [class.done]="step() > 3"
+    >
       <div class="step-circle">
-        @if (step() > 3) { <mat-icon>check</mat-icon> } @else { 3 }
+        @if (step() > 3) {
+          <mat-icon>check</mat-icon>
+        } @else {
+          3
+        }
       </div>
       <span class="step-label">Appointment</span>
     </div>
     <div class="step-line" [class.done]="step() > 3"></div>
 
-    <div class="step-item" [class.active]="step() === 4" [class.done]="step() > 4">
+    <div
+      class="step-item"
+      [class.active]="step() === 4"
+      [class.done]="step() > 4"
+    >
       <div class="step-circle">4</div>
       <span class="step-label">Done</span>
     </div>
@@ -37,22 +64,25 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title>Client Information</mat-card-title>
-        <mat-card-subtitle>Start with the basics — you can fill in more details later.</mat-card-subtitle>
+        <mat-card-subtitle
+          >Start with the basics — you can fill in more details
+          later.</mat-card-subtitle
+        >
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="clientForm" (ngSubmit)="saveClient()">
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>First Name *</mat-label>
-              <input matInput formControlName="firstName">
-              @if (clientForm.controls.firstName.errors?.['required']) {
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" />
+              @if (clientForm.controls.firstName.errors?.["required"]) {
                 <mat-error>First name is required.</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
-              <mat-label>Last Name *</mat-label>
-              <input matInput formControlName="lastName">
-              @if (clientForm.controls.lastName.errors?.['required']) {
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" />
+              @if (clientForm.controls.lastName.errors?.["required"]) {
                 <mat-error>Last name is required.</mat-error>
               }
             </mat-form-field>
@@ -61,20 +91,20 @@
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email">
-              @if (clientForm.controls.email.errors?.['email']) {
+              <input matInput type="email" formControlName="email" />
+              @if (clientForm.controls.email.errors?.["email"]) {
                 <mat-error>Please enter a valid email address.</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Phone</mat-label>
-              <input matInput type="tel" formControlName="phone">
+              <input matInput type="tel" formControlName="phone" />
             </mat-form-field>
           </div>
 
           <mat-form-field appearance="outline">
             <mat-label>Address</mat-label>
-            <input matInput formControlName="address">
+            <input matInput formControlName="address" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -85,8 +115,17 @@
       </mat-card-content>
       <mat-card-actions align="end">
         <a mat-stroked-button routerLink="/clients">Cancel</a>
-        <button mat-raised-button color="primary" (click)="saveClient()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Next: Add Horse }
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveClient()"
+          [disabled]="saving()"
+        >
+          @if (saving()) {
+            Saving...
+          } @else {
+            Next: Add Horse
+          }
         </button>
       </mat-card-actions>
     </mat-card>
@@ -99,16 +138,18 @@
         <mat-card-title>Add First Horse</mat-card-title>
         <mat-card-subtitle>
           Adding a horse for
-          <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>.
-          You can skip this and add horses later.
+          <strong
+            >{{ createdClient()?.firstName }}
+            {{ createdClient()?.lastName }}</strong
+          >. You can skip this and add horses later.
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="horseForm" (ngSubmit)="saveHorse()">
           <mat-form-field appearance="outline">
-            <mat-label>Name *</mat-label>
-            <input matInput formControlName="name">
-            @if (horseForm.controls.name.errors?.['required']) {
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+            @if (horseForm.controls.name.errors?.["required"]) {
               <mat-error>Horse name is required.</mat-error>
             }
           </mat-form-field>
@@ -120,14 +161,14 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Color</mat-label>
-              <input matInput formControlName="color">
+              <input matInput formControlName="color" />
             </mat-form-field>
           </div>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Age</mat-label>
-              <input matInput type="number" formControlName="age" min="0">
+              <input matInput type="number" formControlName="age" min="0" />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Gender</mat-label>
@@ -140,7 +181,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Weight (lbs)</mat-label>
-              <input matInput type="number" formControlName="weight" min="0">
+              <input matInput type="number" formControlName="weight" min="0" />
             </mat-form-field>
           </div>
 
@@ -152,7 +193,13 @@
                 <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
               }
             </mat-select>
-            <button matSuffix mat-icon-button type="button" (click)="addNewBarn()" title="Create new barn">
+            <button
+              matSuffix
+              mat-icon-button
+              type="button"
+              (click)="addNewBarn()"
+              title="Create new barn"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </mat-form-field>
@@ -164,9 +211,20 @@
         </form>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-stroked-button (click)="skipHorse()" [disabled]="saving()">Skip for now</button>
-        <button mat-raised-button color="primary" (click)="saveHorse()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Next: Schedule Appointment }
+        <button mat-stroked-button (click)="skipHorse()" [disabled]="saving()">
+          Skip for now
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveHorse()"
+          [disabled]="saving()"
+        >
+          @if (saving()) {
+            Saving...
+          } @else {
+            Next: Schedule Appointment
+          }
         </button>
       </mat-card-actions>
     </mat-card>
@@ -179,42 +237,47 @@
         <mat-card-title>Schedule First Appointment</mat-card-title>
         <mat-card-subtitle>
           Book an appointment for
-          <strong>{{ createdHorse()?.name }}</strong>.
-          You can skip this and schedule appointments later.
+          <strong>{{ createdHorse()?.name }}</strong
+          >. You can skip this and schedule appointments later.
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form [formGroup]="appointmentForm" (ngSubmit)="saveAppointment()">
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Date *</mat-label>
-              <input matInput type="date" formControlName="date">
-              @if (appointmentForm.controls.date.errors?.['required']) {
+              <mat-label>Date</mat-label>
+              <input matInput type="date" formControlName="date" />
+              @if (appointmentForm.controls.date.errors?.["required"]) {
                 <mat-error>Date is required.</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Time</mat-label>
-              <input matInput type="time" formControlName="time">
+              <input matInput type="time" formControlName="time" />
             </mat-form-field>
           </div>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Type *</mat-label>
+              <mat-label>Type</mat-label>
               <mat-select formControlName="type">
                 <mat-option value="">Select type</mat-option>
                 @for (t of appointmentTypes; track t) {
                   <mat-option [value]="t">{{ t | titlecase }}</mat-option>
                 }
               </mat-select>
-              @if (appointmentForm.controls.type.errors?.['required']) {
+              @if (appointmentForm.controls.type.errors?.["required"]) {
                 <mat-error>Appointment type is required.</mat-error>
               }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Duration (min)</mat-label>
-              <input matInput type="number" formControlName="duration" min="1">
+              <input
+                matInput
+                type="number"
+                formControlName="duration"
+                min="1"
+              />
             </mat-form-field>
           </div>
 
@@ -225,9 +288,24 @@
         </form>
       </mat-card-content>
       <mat-card-actions align="end">
-        <button mat-stroked-button (click)="skipAppointment()" [disabled]="saving()">Skip for now</button>
-        <button mat-raised-button color="primary" (click)="saveAppointment()" [disabled]="saving()">
-          @if (saving()) { Saving... } @else { Finish }
+        <button
+          mat-stroked-button
+          (click)="skipAppointment()"
+          [disabled]="saving()"
+        >
+          Skip for now
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveAppointment()"
+          [disabled]="saving()"
+        >
+          @if (saving()) {
+            Saving...
+          } @else {
+            Finish
+          }
         </button>
       </mat-card-actions>
     </mat-card>
@@ -242,7 +320,10 @@
         </div>
         <h2>All set!</h2>
         <p class="done-subtitle">
-          <strong>{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</strong>
+          <strong
+            >{{ createdClient()?.firstName }}
+            {{ createdClient()?.lastName }}</strong
+          >
           has been added to your system.
         </p>
 
@@ -251,7 +332,10 @@
             <div class="summary-item-icon client-icon">C</div>
             <div class="summary-item-info">
               <span class="summary-item-label">Client</span>
-              <span class="summary-item-value">{{ createdClient()?.firstName }} {{ createdClient()?.lastName }}</span>
+              <span class="summary-item-value"
+                >{{ createdClient()?.firstName }}
+                {{ createdClient()?.lastName }}</span
+              >
             </div>
           </div>
 
@@ -260,7 +344,9 @@
               <div class="summary-item-icon horse-icon">H</div>
               <div class="summary-item-info">
                 <span class="summary-item-label">Horse</span>
-                <span class="summary-item-value">{{ createdHorse()?.name }}</span>
+                <span class="summary-item-value">{{
+                  createdHorse()?.name
+                }}</span>
               </div>
             </div>
           }
@@ -272,7 +358,7 @@
                 <span class="summary-item-label">Appointment</span>
                 <span class="summary-item-value">
                   {{ createdAppointment()?.type | titlecase }} &mdash;
-                  {{ createdAppointment()?.date | date:'mediumDate' }}
+                  {{ createdAppointment()?.date | date: "mediumDate" }}
                 </span>
               </div>
             </div>
@@ -280,17 +366,22 @@
         </div>
 
         <div class="done-actions">
-          <button mat-raised-button color="primary" (click)="goToClient()">View Client Profile</button>
+          <button mat-raised-button color="primary" (click)="goToClient()">
+            View Client Profile
+          </button>
           @if (!createdHorse()) {
-            <button mat-stroked-button (click)="goToNewHorse()">Add a Horse</button>
+            <button mat-stroked-button (click)="goToNewHorse()">
+              Add a Horse
+            </button>
           }
           @if (createdHorse() && !createdAppointment()) {
-            <button mat-stroked-button (click)="goToNewAppointment()">Schedule Appointment</button>
+            <button mat-stroked-button (click)="goToNewAppointment()">
+              Schedule Appointment
+            </button>
           }
           <a mat-stroked-button routerLink="/clients">Back to Clients</a>
         </div>
       </mat-card-content>
     </mat-card>
   }
-
 </div>

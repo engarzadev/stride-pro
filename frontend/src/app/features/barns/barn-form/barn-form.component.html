@@ -3,39 +3,39 @@
 } @else {
   <div class="form-page">
     <a routerLink="/barns" class="back-link">&larr; Back to Barns</a>
-    <h1>{{ isEdit() ? 'Edit Barn' : 'New Barn' }}</h1>
+    <h1>{{ isEdit() ? "Edit Barn" : "New Barn" }}</h1>
 
     <mat-card>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="outline">
-            <mat-label>Name *</mat-label>
-            <input matInput type="text" formControlName="name">
-            @if (form.controls.name.errors?.['required']) {
+            <mat-label>Name</mat-label>
+            <input matInput type="text" formControlName="name" />
+            @if (form.controls.name.errors?.["required"]) {
               <mat-error>Name is required.</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Contact Name</mat-label>
-            <input matInput type="text" formControlName="contactName">
+            <input matInput type="text" formControlName="contactName" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Address</mat-label>
-            <input matInput type="text" formControlName="address">
+            <input matInput type="text" formControlName="address" />
           </mat-form-field>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Phone</mat-label>
-              <input matInput type="tel" formControlName="phone">
+              <input matInput type="tel" formControlName="phone" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email">
-              @if (form.controls.email.errors?.['email']) {
+              <input matInput type="email" formControlName="email" />
+              @if (form.controls.email.errors?.["email"]) {
                 <mat-error>Please enter a valid email.</mat-error>
               }
             </mat-form-field>
@@ -47,8 +47,17 @@
           </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
-              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Barn' : 'Create Barn' }} }
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              [disabled]="saving()"
+            >
+              @if (saving()) {
+                Saving...
+              } @else {
+                {{ isEdit() ? "Update Barn" : "Create Barn" }}
+              }
             </button>
             <a routerLink="/barns" mat-stroked-button>Cancel</a>
           </div>

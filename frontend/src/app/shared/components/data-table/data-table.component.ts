@@ -2,6 +2,10 @@ import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
@@ -24,7 +28,7 @@ export interface TableAction {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, MatButtonModule, CurrencyFormatPipe, DateFormatPipe],
+  imports: [MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatChipsModule, MatTooltipModule, MatMenuModule, CurrencyFormatPipe, DateFormatPipe],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
@@ -77,6 +81,12 @@ export class DataTableComponent {
   getActionColor(action: TableAction): string {
     if (action.class === 'btn-danger') return 'warn';
     if (action.class === 'btn-primary') return 'primary';
+    return '';
+  }
+
+  getChipColor(badgeClass: string): string {
+    if (badgeClass === 'primary') return 'primary';
+    if (badgeClass === 'danger') return 'warn';
     return '';
   }
 }

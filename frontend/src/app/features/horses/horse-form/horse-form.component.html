@@ -3,15 +3,15 @@
 } @else {
   <div class="form-page">
     <a routerLink="/horses" class="back-link">&larr; Back to Horses</a>
-    <h1>{{ isEdit() ? 'Edit Horse' : 'New Horse' }}</h1>
+    <h1>{{ isEdit() ? "Edit Horse" : "New Horse" }}</h1>
 
     <mat-card>
       <mat-card-content>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <mat-form-field appearance="outline">
-            <mat-label>Name *</mat-label>
-            <input matInput type="text" formControlName="name">
-            @if (form.controls.name.errors?.['required']) {
+            <mat-label>Name</mat-label>
+            <input matInput type="text" formControlName="name" />
+            @if (form.controls.name.errors?.["required"]) {
               <mat-error>Name is required.</mat-error>
             }
           </mat-form-field>
@@ -24,14 +24,14 @@
 
             <mat-form-field appearance="outline">
               <mat-label>Color</mat-label>
-              <input matInput type="text" formControlName="color">
+              <input matInput type="text" formControlName="color" />
             </mat-form-field>
           </div>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>Age</mat-label>
-              <input matInput type="number" formControlName="age" min="0">
+              <input matInput type="number" formControlName="age" min="0" />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
@@ -47,19 +47,27 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Weight (lbs)</mat-label>
-            <input matInput type="number" formControlName="weight" min="0">
+            <input matInput type="number" formControlName="weight" min="0" />
           </mat-form-field>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Client *</mat-label>
+              <mat-label>Client</mat-label>
               <mat-select formControlName="clientId">
                 <mat-option [value]="0">Select a client</mat-option>
                 @for (client of clients(); track client.id) {
-                  <mat-option [value]="client.id">{{ client.firstName }} {{ client.lastName }}</mat-option>
+                  <mat-option [value]="client.id"
+                    >{{ client.firstName }} {{ client.lastName }}</mat-option
+                  >
                 }
               </mat-select>
-              <button matSuffix mat-icon-button type="button" (click)="openCreateClient()" title="Create new client">
+              <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                (click)="openCreateClient()"
+                title="Create new client"
+              >
                 <mat-icon>add</mat-icon>
               </button>
               @if (form.controls.clientId.errors) {
@@ -75,7 +83,13 @@
                   <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
                 }
               </mat-select>
-              <button matSuffix mat-icon-button type="button" (click)="openCreateBarn()" title="Create new barn">
+              <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                (click)="openCreateBarn()"
+                title="Create new barn"
+              >
                 <mat-icon>add</mat-icon>
               </button>
             </mat-form-field>
@@ -87,8 +101,17 @@
           </mat-form-field>
 
           <div class="form-actions">
-            <button type="submit" mat-raised-button color="primary" [disabled]="saving()">
-              @if (saving()) { Saving... } @else { {{ isEdit() ? 'Update Horse' : 'Create Horse' }} }
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              [disabled]="saving()"
+            >
+              @if (saving()) {
+                Saving...
+              } @else {
+                {{ isEdit() ? "Update Horse" : "Create Horse" }}
+              }
             </button>
             <a routerLink="/horses" mat-stroked-button>Cancel</a>
           </div>
