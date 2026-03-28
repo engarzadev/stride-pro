@@ -24,7 +24,7 @@
         @for (row of getSortedData(); track row['id']) {
           <tr [class.clickable]="clickable" (click)="clickable ? rowClick.emit(row) : null">
             @for (col of columns; track col.key) {
-              <td [class.capitalize]="col.capitalize">
+              <td [class.capitalize]="col.capitalize" [attr.data-label]="col.label">
                 @switch (col.type) {
                   @case ('date') {
                     {{ getNestedValue(row, col.key) | dateFormat }}
@@ -44,7 +44,7 @@
               </td>
             }
             @if (actions.length > 0) {
-              <td class="actions-cell" (click)="$event.stopPropagation()">
+              <td class="actions-cell" data-label="Actions" (click)="$event.stopPropagation()">
                 @for (action of actions; track action.action) {
                   <button
                     class="btn btn-sm"

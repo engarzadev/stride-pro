@@ -17,4 +17,8 @@
   overflow-y: auto;
   padding: 1.5rem;
   background-color: #f8fafc;
+
+  @media (max-width: 640px) {
+    padding: 1rem 0.75rem;
+  }
 }
