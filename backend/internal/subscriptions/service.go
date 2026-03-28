@@ -11,6 +11,12 @@ import (
 	"github.com/stride-pro/backend/internal/models"
 )
 
+// ErrLimitExceeded is returned when a user tries to exceed their plan's resource limit.
+var ErrLimitExceeded = errors.New("plan limit exceeded")
+
+// ErrFeatureNotAvailable is returned when a user tries to use a feature not in their plan.
+var ErrFeatureNotAvailable = errors.New("feature not available on current plan")
+
 // Service provides subscription management operations.
 // Currently stubbed for v2; checks are based on the user's subscription_tier.
 type Service struct {
@@ -84,5 +90,55 @@ func (s *Service) ListPlans() []Plan {
 		plans = append(plans, p)
 	}
 	return plans
+}
+
+// GetClientLimit returns the maximum number of clients allowed for the user's plan.
+// Returns -1 for unlimited.
+func (s *Service) GetClientLimit(userID uuid.UUID) (int, error) {
+	plan, err := s.GetCurrentPlan(userID)
+	if err != nil {
+		return 0, err
+	}
+	for _, f := range plan.Features {
+		if f == "clients_unlimited" {
+			return -1, nil
+		}
+		var limit int
+		if _, err := fmt.Sscanf(f, "clients_max_%d", &limit); err == nil {
+			return limit, nil
+		}
+	}
+	return 0, nil
+}
+
+// GetHorseLimit returns the maximum number of horses allowed for the user's plan.
+// Returns -1 for unlimited.
+func (s *Service) GetHorseLimit(userID uuid.UUID) (int, error) {
+	plan, err := s.GetCurrentPlan(userID)
+	if err != nil {
+		return 0, err
+	}
+	for _, f := range plan.Features {
+		if f == "horses_unlimited" {
+			return -1, nil
+		}
+		var limit int
+		if _, err := fmt.Sscanf(f, "horses_max_%d", &limit); err == nil {
+			return limit, nil
+		}
+	}
+	return 0, nil
+}
+
+// RequireFeature returns ErrFeatureNotAvailable if the user's plan does not include the feature.
+func (s *Service) RequireFeature(userID uuid.UUID, feature string) error {
+	ok, err := s.HasFeature(userID, feature)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return ErrFeatureNotAvailable
+	}
+	return nil
 }
 

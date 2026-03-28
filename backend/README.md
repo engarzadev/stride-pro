@@ -66,6 +66,29 @@ go mod download         # Download dependencies
 go run ./cmd/api        # Start the server on :8080
 ```
 
+## Subscription Plans
+
+All new users start on the **Free** plan. Plan limits are enforced at the API layer — requests that exceed a limit return `403 Forbidden`.
+
+| Feature | Free | Base ($29.99) | Trainer Add-on ($49.99) | Enterprise ($99.99) |
+|---------|------|---------------|-------------------------|---------------------|
+| Clients | Max 10 | Unlimited | Unlimited | Unlimited |
+| Horses | Max 20 | Unlimited | Unlimited | Unlimited |
+| Appointments | Basic | Full (with reminders) | Full | Full |
+| Invoices | Basic | Full (with templates) | Full | Full |
+| Session notes | — | Yes | Yes | Yes |
+| Barn management | — | Yes | Yes | Yes |
+| Email notifications | — | Yes | Yes | Yes |
+| SMS notifications | — | — | Yes | Yes |
+| Multi-horse sessions | — | — | Yes | Yes |
+| Advanced reporting | — | — | Yes | Yes |
+| Client portal | — | — | Yes | Yes |
+| API access | — | — | — | Yes |
+| Custom branding | — | — | — | Yes |
+| Priority support | — | — | — | Yes |
+
+A user's plan is stored in `users.subscription_tier`. The `GET /api/subscription` endpoint returns the current plan and live usage counts for enforced resources.
+
 ## Configuration
 
 See `.env.example` for all available environment variables. Required for local development:

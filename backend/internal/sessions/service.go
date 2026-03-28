@@ -6,17 +6,19 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/validator"
 )
 
 // Service contains business logic for session management.
 type Service struct {
-	repo *Repository
+	repo    *Repository
+	subsSvc *subscriptions.Service
 }
 
 // NewService creates a session service.
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
+	return &Service{repo: repo, subsSvc: subsSvc}
 }
 
 // CreateInput holds data for creating or updating a session.
@@ -36,8 +38,12 @@ func (i *CreateInput) Validate() validator.Errors {
 	return errs
 }
 
-// Create validates and creates a new session.
+// Create validates and creates a new session, requiring the session_notes feature.
 func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Session, error) {
+	if err := s.subsSvc.RequireFeature(userID, "session_notes"); err != nil {
+		return nil, err
+	}
+
 	bodyZonesJSON, _ := json.Marshal(input.BodyZones)
 
 	sess := &models.Session{

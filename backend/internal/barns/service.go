@@ -4,17 +4,19 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/validator"
 )
 
 // Service contains business logic for barn management.
 type Service struct {
-	repo *Repository
+	repo    *Repository
+	subsSvc *subscriptions.Service
 }
 
 // NewService creates a barn service.
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
+	return &Service{repo: repo, subsSvc: subsSvc}
 }
 
 // CreateInput holds data for creating or updating a barn.
@@ -35,8 +37,12 @@ func (i *CreateInput) Validate() validator.Errors {
 	return errs
 }
 
-// Create validates and creates a new barn.
+// Create validates and creates a new barn, requiring the barn_management feature.
 func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Barn, error) {
+	if err := s.subsSvc.RequireFeature(userID, "barn_management"); err != nil {
+		return nil, err
+	}
+
 	b := &models.Barn{
 		UserID:      userID,
 		Name:        input.Name,

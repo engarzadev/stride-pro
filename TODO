@@ -1,4 +1,15 @@
-[ ] Subscription enforcement plan limits exist in code but aren't enforced at the API layer
+v1 Release Priorities
+[x] Subscription enforcement - plan limits exist in code but aren't enforced at the API layer
 [ ] Appointment reminders — the notification hook is missing from appointment creation/updates
 [ ] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
 [ ] Invoice templates — no template system built yet
+[ ] Business setting - setting email or invoice receipt messages
+
+
+Future Features
+[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
+[ ] User profile settings - custom color schemes
+[ ] Add horse photo
+[ ] Upload body work map
+[ ] Ability to upload resources to a client profile (e.g. body worker can upload link to a clients profile for supplement recommendations)
+

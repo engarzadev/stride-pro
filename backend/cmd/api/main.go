@@ -20,6 +20,7 @@ import (
 	"github.com/stride-pro/backend/internal/invoices"
 	"github.com/stride-pro/backend/internal/router"
 	"github.com/stride-pro/backend/internal/sessions"
+	"github.com/stride-pro/backend/internal/subscriptions"
 )
 
 func main() {
@@ -47,16 +48,19 @@ func main() {
 	authService := auth.NewService(db, cfg.JWTSecret)
 	authHandler := auth.NewHandler(authService)
 
+	subsService := subscriptions.NewService(db)
+	subsHandler := subscriptions.NewHandler(subsService)
+
 	clientRepo := clients.NewRepository(db)
-	clientService := clients.NewService(clientRepo)
+	clientService := clients.NewService(clientRepo, subsService)
 	clientHandler := clients.NewHandler(clientService)
 
 	horseRepo := horses.NewRepository(db)
-	horseService := horses.NewService(horseRepo)
+	horseService := horses.NewService(horseRepo, subsService)
 	horseHandler := horses.NewHandler(horseService)
 
 	barnRepo := barns.NewRepository(db)
-	barnService := barns.NewService(barnRepo)
+	barnService := barns.NewService(barnRepo, subsService)
 	barnHandler := barns.NewHandler(barnService)
 
 	apptRepo := appointments.NewRepository(db)
@@ -64,7 +68,7 @@ func main() {
 	apptHandler := appointments.NewHandler(apptService)
 
 	sessionRepo := sessions.NewRepository(db)
-	sessionService := sessions.NewService(sessionRepo)
+	sessionService := sessions.NewService(sessionRepo, subsService)
 	sessionHandler := sessions.NewHandler(sessionService)
 
 	invoiceRepo := invoices.NewRepository(db)
@@ -73,15 +77,16 @@ func main() {
 
 	// Set up router
 	handler := router.New(router.Deps{
-		DB:             db,
-		AuthService:    authService,
-		AuthHandler:    authHandler,
-		ClientHandler:  clientHandler,
-		HorseHandler:   horseHandler,
-		BarnHandler:    barnHandler,
-		ApptHandler:    apptHandler,
-		SessionHandler: sessionHandler,
-		InvoiceHandler: invoiceHandler,
+		DB:                  db,
+		AuthService:         authService,
+		AuthHandler:         authHandler,
+		ClientHandler:       clientHandler,
+		HorseHandler:        horseHandler,
+		BarnHandler:         barnHandler,
+		ApptHandler:         apptHandler,
+		SessionHandler:      sessionHandler,
+		InvoiceHandler:      invoiceHandler,
+		SubscriptionHandler: subsHandler,
 	})
 
 	// Configure HTTP server

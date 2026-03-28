@@ -2,6 +2,7 @@ package barns
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/response"
 )
 
@@ -77,6 +79,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	barn, err := h.service.Create(userID, input)
 	if err != nil {
+		if errors.Is(err, subscriptions.ErrFeatureNotAvailable) {
+			response.Error(w, http.StatusForbidden, "Barn management requires a paid plan")
+			return
+		}
 		response.Error(w, http.StatusInternalServerError, "Failed to create barn")
 		return
 	}

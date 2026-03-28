@@ -1,20 +1,24 @@
 package horses
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/validator"
 )
 
 // Service contains business logic for horse management.
 type Service struct {
-	repo *Repository
+	repo    *Repository
+	subsSvc *subscriptions.Service
 }
 
 // NewService creates a horse service.
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
+	return &Service{repo: repo, subsSvc: subsSvc}
 }
 
 // CreateInput holds data for creating or updating a horse.
@@ -40,8 +44,22 @@ func (i *CreateInput) Validate() validator.Errors {
 	return errs
 }
 
-// Create validates and creates a new horse.
+// Create validates and creates a new horse, enforcing plan limits.
 func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Horse, error) {
+	limit, err := s.subsSvc.GetHorseLimit(userID)
+	if err != nil {
+		return nil, fmt.Errorf("checking horse limit: %w", err)
+	}
+	if limit >= 0 {
+		count, err := s.repo.CountByUserID(userID)
+		if err != nil {
+			return nil, fmt.Errorf("counting horses: %w", err)
+		}
+		if count >= limit {
+			return nil, subscriptions.ErrLimitExceeded
+		}
+	}
+
 	h := &models.Horse{
 		UserID:   userID,
 		ClientID: input.ClientID,

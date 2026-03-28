@@ -119,6 +119,16 @@ func (r *Repository) Update(c *models.Client) error {
 	return nil
 }
 
+// CountByUserID returns the number of clients belonging to a user.
+func (r *Repository) CountByUserID(userID uuid.UUID) (int, error) {
+	var count int
+	err := r.db.QueryRow("SELECT COUNT(*) FROM clients WHERE user_id = $1", userID).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("counting clients: %w", err)
+	}
+	return count, nil
+}
+
 // Delete removes a client by ID, scoped to the user.
 func (r *Repository) Delete(userID, clientID uuid.UUID) error {
 	result, err := r.db.Exec("DELETE FROM clients WHERE id = $1 AND user_id = $2", clientID, userID)

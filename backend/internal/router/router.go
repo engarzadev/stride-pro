@@ -15,20 +15,22 @@ import (
 	"github.com/stride-pro/backend/internal/invoices"
 	"github.com/stride-pro/backend/internal/middleware"
 	"github.com/stride-pro/backend/internal/sessions"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/response"
 )
 
 // Deps holds all handler dependencies needed to configure routing.
 type Deps struct {
-	DB            *database.DB
-	AuthService   *auth.Service
-	AuthHandler   *auth.Handler
-	ClientHandler *clients.Handler
-	HorseHandler  *horses.Handler
-	BarnHandler   *barns.Handler
-	ApptHandler   *appointments.Handler
-	SessionHandler *sessions.Handler
-	InvoiceHandler *invoices.Handler
+	DB                  *database.DB
+	AuthService         *auth.Service
+	AuthHandler         *auth.Handler
+	ClientHandler       *clients.Handler
+	HorseHandler        *horses.Handler
+	BarnHandler         *barns.Handler
+	ApptHandler         *appointments.Handler
+	SessionHandler      *sessions.Handler
+	InvoiceHandler      *invoices.Handler
+	SubscriptionHandler *subscriptions.Handler
 }
 
 // New creates and configures the application router with all routes and middleware.
@@ -68,6 +70,9 @@ func New(deps Deps) http.Handler {
 
 	// Auth - protected
 	protected.HandleFunc("/auth/me", deps.AuthHandler.Me).Methods("GET")
+
+	// Subscription
+	protected.HandleFunc("/subscription", deps.SubscriptionHandler.Get).Methods("GET")
 
 	// Clients
 	protected.HandleFunc("/clients", deps.ClientHandler.List).Methods("GET")

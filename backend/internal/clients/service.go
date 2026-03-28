@@ -1,20 +1,24 @@
 package clients
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/validator"
 )
 
 // Service contains business logic for client management.
 type Service struct {
-	repo *Repository
+	repo    *Repository
+	subsSvc *subscriptions.Service
 }
 
 // NewService creates a client service.
-func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
+	return &Service{repo: repo, subsSvc: subsSvc}
 }
 
 // CreateInput holds data for creating a client.
@@ -36,8 +40,22 @@ func (i *CreateInput) Validate() validator.Errors {
 	return errs
 }
 
-// Create validates and creates a new client.
+// Create validates and creates a new client, enforcing plan limits.
 func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Client, error) {
+	limit, err := s.subsSvc.GetClientLimit(userID)
+	if err != nil {
+		return nil, fmt.Errorf("checking client limit: %w", err)
+	}
+	if limit >= 0 {
+		count, err := s.repo.CountByUserID(userID)
+		if err != nil {
+			return nil, fmt.Errorf("counting clients: %w", err)
+		}
+		if count >= limit {
+			return nil, subscriptions.ErrLimitExceeded
+		}
+	}
+
 	c := &models.Client{
 		UserID:    userID,
 		FirstName: input.FirstName,
@@ -52,6 +70,7 @@ func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Client, e
 	}
 	return c, nil
 }
+
 
 // GetByID returns a client by ID for the given user.
 func (s *Service) GetByID(userID, clientID uuid.UUID) (*models.Client, error) {

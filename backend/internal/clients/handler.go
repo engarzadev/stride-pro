@@ -2,6 +2,7 @@ package clients
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/models"
+	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/response"
 )
 
@@ -77,6 +79,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	client, err := h.service.Create(userID, input)
 	if err != nil {
+		if errors.Is(err, subscriptions.ErrLimitExceeded) {
+			response.Error(w, http.StatusForbidden, "Client limit reached for your current plan")
+			return
+		}
 		response.Error(w, http.StatusInternalServerError, "Failed to create client")
 		return
 	}
