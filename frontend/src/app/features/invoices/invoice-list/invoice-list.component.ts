@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { Router } from '@angular/router';
 import { Invoice } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
@@ -18,7 +18,12 @@ import { InvoicesService } from '../invoices.service';
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
+  imports: [
+    PageHeaderComponent,
+    DataTableComponent,
+    LoadingSpinnerComponent,
+    MatCardModule,
+  ],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss'],
 })
@@ -48,7 +53,7 @@ export class InvoiceListComponent implements OnInit {
   readonly columns: TableColumn[] = [
     { key: 'invoiceNumber', label: 'Invoice #', sortable: true },
     { key: 'clientName', label: 'Client', sortable: true },
-    { key: 'date', label: 'Date', sortable: true },
+    { key: 'date', label: 'Invoice Date', sortable: true },
     { key: 'dueDate', label: 'Due Date', sortable: true },
     { key: 'total', label: 'Total', sortable: true },
     {
@@ -71,7 +76,10 @@ export class InvoiceListComponent implements OnInit {
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
 
-  readonly mobileCard: MobileCardConfig = { titleKey: 'invoiceNumber', subtitleKey: 'clientName' };
+  readonly mobileCard: MobileCardConfig = {
+    titleKey: 'invoiceNumber',
+    subtitleKey: 'clientName',
+  };
 
   ngOnInit(): void {
     this.loadInvoices();

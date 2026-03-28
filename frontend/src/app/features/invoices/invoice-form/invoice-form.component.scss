@@ -1,95 +1,219 @@
 .form-page {
   max-width: 100%;
+  margin: 0 auto;
+}
+
+// ── Header ──────────────────────────────────────────────────────────────────
+
+.page-header {
+  margin-bottom: 1.5rem;
 
   h1 {
-    margin: 0.25rem 0 1.5rem;
+    margin: 0.25rem 0 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
   }
 }
 
+.header_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-size: 0.8125rem;
+  font-weight: 500;
   color: #64748b;
+  text-decoration: none;
+  transition: color 0.15s;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
 
   &:hover {
     color: #2563eb;
   }
 }
 
-.select-with-add {
+// ── Layout ───────────────────────────────────────────────────────────────────
+
+.form-layout {
+  display: grid;
+  align-items: start;
+}
+
+.form-main {
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
-
-  select { flex: 1; }
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.btn-add-new {
-  flex-shrink: 0;
-  padding: 0.4rem 0.75rem;
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #2563eb;
-  cursor: pointer;
-  white-space: nowrap;
+// ── Cards ────────────────────────────────────────────────────────────────────
 
-  &:hover { background-color: #e2e8f0; }
-}
+.form-card {
+  border-radius: 12px !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
 
-.line-items-section {
-  margin: 1.5rem 0;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-
-  h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
+  mat-card-content {
+    padding: 1.25rem 1.5rem !important;
   }
 }
 
-.btn-sm {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.8125rem;
+.card-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+// ── Form fields ───────────────────────────────────────────────────────────────
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+.field-grow {
+  flex: 2 !important;
+}
+
+.field-status {
+  flex: 1 !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// ── Line items ────────────────────────────────────────────────────────────────
+
+.line-items-card {
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+
+    .card-section-title {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.add-item-btn {
+  border-radius: 8px !important;
+  font-size: 0.8125rem !important;
+  height: 34px !important;
+  line-height: 34px !important;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.25rem;
+  }
 }
 
 .line-items-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 0 -0.25rem;
 }
 
 .line-items-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1rem;
-
-  th, td {
-    padding: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
 
   th {
-    font-weight: 600;
-    font-size: 0.8125rem;
-    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #94a3b8;
     text-align: left;
-    padding-bottom: 0.75rem;
+    padding: 0 0.5rem 0.75rem;
+    border-bottom: 2px solid #f1f5f9;
   }
 
-  .col-qty { width: 80px; }
-  .col-price { width: 120px; }
-  .col-amount { width: 120px; }
-  .col-action { width: 40px; }
+  td {
+    padding: 0.25rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
 
-  .form-control {
-    margin: 0;
+  .col-qty {
+    width: 80px;
+  }
+  .col-price {
+    width: 130px;
+  }
+  .col-amount {
+    width: 120px;
+  }
+  .col-action {
+    width: 44px;
+  }
+}
+
+.line-item-row {
+  transition: background 0.1s;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &:last-child td {
+    border-bottom: none;
+  }
+}
+
+.td-description {
+  min-width: 200px;
+}
+
+.inline-input {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.9375rem;
+  background: transparent;
+  color: #0f172a;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  outline: none;
+
+  &::placeholder {
+    color: #cbd5e1;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  }
+
+  &:hover:not(:focus) {
+    border-color: #e2e8f0;
+    background: #fff;
   }
 }
 
@@ -98,76 +222,291 @@
 }
 
 .amount-cell {
-  font-weight: 500;
-  vertical-align: middle;
-  padding-right: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+  padding-right: 0.75rem;
 }
 
-.btn-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.25rem;
-  color: #94a3b8;
-  padding: 0.25rem;
-  line-height: 1;
+.td-action {
+  text-align: center;
+}
 
-  &:hover:not(:disabled) {
-    color: #dc2626;
+.remove-btn {
+  color: #cbd5e1 !important;
+  transition: color 0.15s !important;
+
+  &:hover:not([disabled]) {
+    color: #ef4444 !important;
   }
 
-  &:disabled {
+  &[disabled] {
     opacity: 0.3;
-    cursor: not-allowed;
   }
 }
 
-.totals {
+// ── Totals panel ──────────────────────────────────────────────────────────────
+
+.totals-panel {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.375rem;
-  padding: 0.75rem 0;
-  border-top: 1px solid #e2e8f0;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 1rem 1rem 0.25rem;
+  background: #f8fafc;
+  border-radius: 10px;
 }
 
 .totals-row {
   display: flex;
-  gap: 2rem;
-  font-size: 0.9375rem;
+  gap: 2.5rem;
+  width: 280px;
+  justify-content: space-between;
+}
 
-  span:first-child {
-    color: #64748b;
-    min-width: 80px;
-    text-align: right;
-  }
+.totals-label {
+  font-size: 0.9rem;
+  color: #64748b;
+}
 
-  span:last-child {
-    min-width: 100px;
-    text-align: right;
-  }
+.totals-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  text-align: right;
+  min-width: 80px;
+}
+
+.totals-divider {
+  width: 280px;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.25rem 0;
 }
 
 .total-final {
-  font-weight: 700;
-  font-size: 1.0625rem;
-  padding-top: 0.5rem;
-  border-top: 2px solid #e2e8f0;
-  margin-top: 0.25rem;
-
-  span:first-child {
+  .totals-label {
+    font-size: 1rem;
+    font-weight: 700;
     color: #0f172a;
+  }
+
+  .totals-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #2563eb;
   }
 }
 
+// ── Sidebar actions ───────────────────────────────────────────────────────────
+
+.actions-card {
+  mat-card-content {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 1.25rem !important;
+  }
+}
+
+.btn-save {
+  width: 100%;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  height: 42px !important;
+
+  mat-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.25rem;
+  }
+}
+
+.btn-cancel {
+  width: 100%;
+  border-radius: 8px !important;
+  text-align: center;
+  height: 40px !important;
+  line-height: 38px !important;
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
 @media (max-width: 640px) {
+  // Stack form field pairs vertically
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .field-grow,
+  .field-status {
+    flex: 1 !important;
+  }
+
+  // Tighter card padding
+  .form-card mat-card-content {
+    padding: 1rem !important;
+  }
+
+  // Totals panel full width
+  .totals-row,
+  .totals-divider {
+    width: 100%;
+  }
+
+  // ── Line items: table rows → stacked mini-cards ──────────────────────────
+
+  .line-items-scroll {
+    overflow-x: unset;
+    margin: 0;
+  }
+
   .line-items-table {
-    th, td {
-      padding: 0.375rem 0.25rem;
+    // Break table layout so we can use grid/flex on rows
+    &,
+    tbody {
+      display: block;
     }
 
-    .col-qty { width: 60px; }
-    .col-price { width: 90px; }
-    .col-amount { width: 90px; }
+    thead {
+      display: none;
+    }
+
+    tr.line-item-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 40px;
+      grid-template-rows: auto auto;
+      column-gap: 0.5rem;
+      row-gap: 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      margin-bottom: 0.625rem;
+      background: #fff;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      // Reset Material hover since we have card border now
+      &:hover {
+        background: #fff;
+      }
+
+      td {
+        padding: 0;
+        border-bottom: none;
+      }
+    }
+
+    // Description spans full width — row 1
+    .td-description {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      min-width: unset;
+
+      .inline-input {
+        border-color: #e2e8f0;
+        background: #f8fafc;
+        font-size: 0.9rem;
+      }
+    }
+
+    // Qty, Price, Amount — row 2 with inline labels above
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(4) {
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+
+      &::before {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+      }
+    }
+
+    td:nth-child(2) {
+      grid-column: 1;
+
+      &::before {
+        content: "Qty";
+      }
+    }
+
+    td:nth-child(3) {
+      grid-column: 2;
+
+      &::before {
+        content: "Price";
+      }
+    }
+
+    td:nth-child(4) {
+      grid-column: 3;
+      justify-content: flex-start;
+
+      &::before {
+        content: "Amount";
+      }
+    }
+
+    // Delete button — row 2, last column, vertically centered
+    .td-action {
+      grid-column: 4;
+      grid-row: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0.125rem;
+    }
+
+    // Inputs inside the row-2 cells take full cell width
+    td:nth-child(2) .inline-input,
+    td:nth-child(3) .inline-input {
+      width: 100%;
+      font-size: 0.875rem;
+    }
+  }
+
+  // ── Sticky save/cancel footer ────────────────────────────────────────────
+
+  .form-layout {
+    padding-bottom: 5rem;
+  }
+
+  .form-aside {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .actions-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+
+    mat-card-content {
+      padding: 0 !important;
+      flex-direction: row;
+    }
+  }
+
+  .btn-save,
+  .btn-cancel {
+    flex: 1;
   }
 }
