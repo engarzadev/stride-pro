@@ -1,5 +1,4 @@
-[ ] Subscription enforcement — plan limits exist in code but aren't enforced at the API layer
+[ ] Subscription enforcement plan limits exist in code but aren't enforced at the API layer
 [ ] Appointment reminders — the notification hook is missing from appointment creation/updates
 [ ] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
 [ ] Invoice templates — no template system built yet
-[ ] in appointment-form.component use the MatTimepicker component to select the time
