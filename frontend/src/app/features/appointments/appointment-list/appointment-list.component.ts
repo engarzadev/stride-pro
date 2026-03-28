@@ -5,6 +5,7 @@ import { Appointment } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  MobileCardConfig,
   TableAction,
   TableColumn,
 } from '../../../shared/components/data-table/data-table.component';
@@ -69,6 +70,8 @@ export class AppointmentListComponent implements OnInit {
     { label: 'Edit', action: 'edit', class: 'btn-outline' },
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
+
+  readonly mobileCard: MobileCardConfig = { titleKey: 'date', subtitleKey: 'horseName' };
 
   ngOnInit(): void {
     this.loadAppointments();

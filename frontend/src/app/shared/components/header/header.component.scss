@@ -1,3 +1,7 @@
+.app-header {
+  box-shadow: none;
+}
+
 .mobile-menu-btn {
   @media (min-width: 769px) {
     display: none !important;

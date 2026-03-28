@@ -9,6 +9,7 @@
         [columns]="columns"
         [data]="$any(tableAppointments())"
         [actions]="actions"
+        [mobileCard]="mobileCard"
         (rowClick)="onRowClick($event)"
         (actionClick)="onAction($event)" />
     </mat-card-content>

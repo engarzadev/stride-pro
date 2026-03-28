@@ -1,10 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { Router } from '@angular/router';
 import { Client } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  MobileCardConfig,
   TableAction,
   TableColumn,
 } from '../../../shared/components/data-table/data-table.component';
@@ -16,7 +17,12 @@ import { ClientsService } from '../clients.service';
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
+  imports: [
+    PageHeaderComponent,
+    DataTableComponent,
+    LoadingSpinnerComponent,
+    MatCardModule,
+  ],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss'],
 })
@@ -41,6 +47,8 @@ export class ClientListComponent implements OnInit {
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
 
+  readonly mobileCard: MobileCardConfig = { titleKey: 'firstName', subtitleKey: 'lastName' };
+
   ngOnInit(): void {
     this.loadClients();
   }
@@ -48,7 +56,6 @@ export class ClientListComponent implements OnInit {
   loadClients(): void {
     this.clientsService.getAll().subscribe({
       next: (clients) => {
-        console.log('clients', clients);
         this.clients.set(clients);
         this.loading.set(false);
       },

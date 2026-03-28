@@ -1,4 +1,7 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map } from 'rxjs/operators';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +28,13 @@ export interface TableAction {
   action: string;
 }
 
+export interface MobileCardConfig {
+  /** Column key to display as the card's primary heading */
+  titleKey: string;
+  /** Optional column key to display as a secondary line below the title */
+  subtitleKey?: string;
+}
+
 @Component({
   selector: 'app-data-table',
   standalone: true,
@@ -37,8 +47,16 @@ export class DataTableComponent {
   @Input() data: Record<string, unknown>[] = [];
   @Input() actions: TableAction[] = [];
   @Input() clickable = true;
+  @Input() mobileCard?: MobileCardConfig;
   @Output() rowClick = new EventEmitter<Record<string, unknown>>();
   @Output() actionClick = new EventEmitter<{ action: string; row: Record<string, unknown> }>();
+
+  private breakpointObserver = inject(BreakpointObserver);
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 640px)').pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
 
   sortKey = signal('');
   sortDir = signal<'asc' | 'desc'>('asc');
@@ -47,6 +65,20 @@ export class DataTableComponent {
     const cols = this.columns.map((c) => c.key);
     if (this.actions.length > 0) cols.push('_actions');
     return cols;
+  }
+
+  get mobileBodyColumns(): TableColumn[] {
+    if (!this.mobileCard) return this.columns;
+    const exclude = new Set([this.mobileCard.titleKey, this.mobileCard.subtitleKey].filter(Boolean) as string[]);
+    return this.columns.filter(c => !exclude.has(c.key));
+  }
+
+  get mobileTitleColumn(): TableColumn | undefined {
+    return this.columns.find(c => c.key === this.mobileCard?.titleKey);
+  }
+
+  get mobileSubtitleColumn(): TableColumn | undefined {
+    return this.columns.find(c => c.key === this.mobileCard?.subtitleKey);
   }
 
   onSort(sort: Sort): void {
@@ -76,12 +108,6 @@ export class DataTableComponent {
       if (aVal > bVal) return 1 * dir;
       return 0;
     });
-  }
-
-  getActionColor(action: TableAction): string {
-    if (action.class === 'btn-danger') return 'warn';
-    if (action.class === 'btn-primary') return 'primary';
-    return '';
   }
 
   getChipColor(badgeClass: string): string {

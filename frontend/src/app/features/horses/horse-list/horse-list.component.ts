@@ -5,6 +5,7 @@ import { Horse } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  MobileCardConfig,
   TableAction,
   TableColumn,
 } from '../../../shared/components/data-table/data-table.component';
@@ -50,6 +51,8 @@ export class HorseListComponent implements OnInit {
     { label: 'Edit', action: 'edit', class: 'btn-outline' },
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
+
+  readonly mobileCard: MobileCardConfig = { titleKey: 'name', subtitleKey: 'clientName' };
 
   ngOnInit(): void {
     this.loadHorses();

@@ -7,13 +7,15 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <span class="brand-name">🐎 StridePro</span>
+  <span class="brand-name">StridePro</span>
 
   <span class="spacer"></span>
 
   @if (currentUser$ | async; as user) {
     <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
-      <span class="user-avatar">{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span>
+      <span class="user-avatar"
+        >{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span
+      >
     </button>
 
     <mat-menu #userMenu="matMenu">

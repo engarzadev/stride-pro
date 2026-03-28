@@ -1,6 +1,12 @@
 @if (showLayout()) {
   <div class="app-layout">
-    <app-sidebar [collapsed]="sidebarOpen()" (closeSidebar)="sidebarOpen.set(false)" />
+    <app-sidebar
+      [collapsed]="sidebarOpen()"
+      (closeSidebar)="sidebarOpen.set(false)"
+    />
+    @if (sidebarOpen()) {
+      <div class="sidebar-overlay" (click)="sidebarOpen.set(false)"></div>
+    }
     <div class="app-main">
       <app-header (toggleSidebar)="toggleSidebar()" />
       <main class="app-content">

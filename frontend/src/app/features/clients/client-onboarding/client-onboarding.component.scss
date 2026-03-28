@@ -1,5 +1,9 @@
 .onboarding-page {
-  max-width: 680px;
+  max-width: 100%;
+
+  ::ng-deep mat-card-header {
+    padding-bottom: 12px;
+  }
 }
 
 // Step Indicator
@@ -84,6 +88,10 @@
   margin-top: 0.25rem;
   color: #64748b;
   font-size: 0.875rem;
+}
+
+mat-card-actions {
+  gap: 12px;
 }
 
 // Step actions footer
