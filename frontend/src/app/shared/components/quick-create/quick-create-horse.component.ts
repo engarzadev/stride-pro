@@ -69,10 +69,7 @@ export class QuickCreateHorseService {
           }
         </mat-form-field>
         <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Breed</mat-label>
-            <app-breed-autocomplete formControlName="breed" />
-          </mat-form-field>
+          <app-breed-autocomplete formControlName="breed" />
           <mat-form-field appearance="outline">
             <mat-label>Color</mat-label>
             <input matInput formControlName="color" />
