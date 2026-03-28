@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
@@ -38,7 +39,7 @@ export interface MobileCardConfig {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatChipsModule, MatTooltipModule, MatMenuModule, CurrencyFormatPipe, DateFormatPipe],
+  imports: [MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatChipsModule, MatTooltipModule, MatMenuModule, MatPaginatorModule, CurrencyFormatPipe, DateFormatPipe],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
@@ -60,6 +61,8 @@ export class DataTableComponent {
 
   sortKey = signal('');
   sortDir = signal<'asc' | 'desc'>('asc');
+  currentPage = signal(0);
+  pageSize = signal(10);
 
   get displayedColumns(): string[] {
     const cols = this.columns.map((c) => c.key);
@@ -84,6 +87,17 @@ export class DataTableComponent {
   onSort(sort: Sort): void {
     this.sortKey.set(sort.active);
     this.sortDir.set(sort.direction as 'asc' | 'desc' || 'asc');
+    this.currentPage.set(0);
+  }
+
+  onPage(event: PageEvent): void {
+    this.currentPage.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+  }
+
+  getPagedData(): Record<string, unknown>[] {
+    const start = this.currentPage() * this.pageSize();
+    return this.getSortedData().slice(start, start + this.pageSize());
   }
 
   getNestedValue(obj: Record<string, unknown>, path: string): unknown {

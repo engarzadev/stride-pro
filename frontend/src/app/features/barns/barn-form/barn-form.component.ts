@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BarnsService } from '../barns.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -23,6 +24,7 @@ export class BarnFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly barnsService = inject(BarnsService);
   private readonly toast = inject(ToastService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -40,6 +42,15 @@ export class BarnFormComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      // Creating a new barn — check feature access
+      this.subscriptionService.load().subscribe(() => {
+        if (!this.subscriptionService.hasFeature('barn_management')) {
+          this.toast.error('Barn management requires a paid plan');
+          this.router.navigate(['/barns']);
+        }
+      });
+    }
     if (id) {
       this.isEdit.set(true);
       this.barnId = id;

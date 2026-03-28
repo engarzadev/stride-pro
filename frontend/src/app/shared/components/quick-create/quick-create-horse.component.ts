@@ -2,7 +2,6 @@ import {
   Component,
   Injectable,
   OnInit,
-  ViewChild,
   computed,
   effect,
   inject,
@@ -22,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { firstValueFrom } from 'rxjs';
 import { Barn, Client, Horse } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BarnsService } from '../../../features/barns/barns.service';
 import { ClientsService } from '../../../features/clients/clients.service';
 import { HorsesService } from '../../../features/horses/horses.service';
@@ -126,15 +126,20 @@ export class QuickCreateHorseService {
                 <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
               }
             </mat-select>
-            <button
-              matSuffix
-              mat-icon-button
-              type="button"
-              (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()"
-              title="Create new barn"
-            >
-              <mat-icon>add</mat-icon>
-            </button>
+            @if (canManageBarns()) {
+              <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()"
+                title="Create new barn"
+              >
+                <mat-icon>add</mat-icon>
+              </button>
+            }
+            @if (!canManageBarns()) {
+              <mat-hint>Requires a paid plan</mat-hint>
+            }
           </mat-form-field>
         </div>
         <mat-form-field appearance="outline">
@@ -170,9 +175,11 @@ export class QuickCreateHorseComponent implements OnInit {
   private readonly quickCreateBarn = inject(QuickCreateBarnService);
   private readonly fb = inject(FormBuilder);
 
+  private readonly subscriptionService = inject(SubscriptionService);
   readonly saving = signal(false);
   readonly clients = signal<Client[]>([]);
   readonly barns = signal<Barn[]>([]);
+  readonly canManageBarns = signal(false);
   readonly preselectedClient = computed(() => {
     const clientId = this.options?.clientId;
     return clientId
@@ -202,6 +209,13 @@ export class QuickCreateHorseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      const has = this.subscriptionService.hasFeature('barn_management');
+      this.canManageBarns.set(has);
+      if (!has) {
+        this.form.controls.barnId.disable();
+      }
+    });
     this.clientsService.getAll().subscribe((c) => this.clients.set(c));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
   }

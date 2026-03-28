@@ -10,13 +10,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { firstValueFrom } from 'rxjs';
 import { Barn } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BarnsService } from '../../../features/barns/barns.service';
+import { ToastService } from '../toast/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class QuickCreateBarnService {
   private readonly dialog = inject(MatDialog);
+  private readonly subscriptionService = inject(SubscriptionService);
+  private readonly toast = inject(ToastService);
 
   async open(): Promise<Barn | null> {
+    await firstValueFrom(this.subscriptionService.load());
+    if (!this.subscriptionService.hasFeature('barn_management')) {
+      this.toast.error('Barn management requires a paid plan');
+      return null;
+    }
     const ref = this.dialog.open(QuickCreateBarnComponent, { width: '600px' });
     return (await firstValueFrom(ref.afterClosed())) ?? null;
   }

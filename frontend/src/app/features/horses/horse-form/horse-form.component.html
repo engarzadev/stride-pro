@@ -104,9 +104,14 @@
                     <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
                   }
                 </mat-select>
-                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()" title="Create new barn">
-                  <mat-icon>add</mat-icon>
-                </button>
+                @if (canManageBarns()) {
+                  <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()" title="Create new barn">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                }
+                @if (!canManageBarns()) {
+                  <mat-hint>Requires a paid plan</mat-hint>
+                }
               </mat-form-field>
             </div>
           </mat-card-content>

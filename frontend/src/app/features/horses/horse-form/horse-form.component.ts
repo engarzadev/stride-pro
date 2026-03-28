@@ -11,6 +11,7 @@ import { HorsesService } from '../horses.service';
 import { ClientsService } from '../../clients/clients.service';
 import { BarnsService } from '../../barns/barns.service';
 import { Client, Barn } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
@@ -34,12 +35,14 @@ export class HorseFormComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly quickCreateClient = inject(QuickCreateClientService);
   private readonly quickCreateBarn = inject(QuickCreateBarnService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly clients = signal<Client[]>([]);
   readonly barns = signal<Barn[]>([]);
+  readonly canManageBarns = signal(false);
   private horseId = '';
 
   readonly form = this.fb.nonNullable.group({
@@ -55,6 +58,13 @@ export class HorseFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      const has = this.subscriptionService.hasFeature('barn_management');
+      this.canManageBarns.set(has);
+      if (!has) {
+        this.form.controls.barnId.disable();
+      }
+    });
     this.clientsService.getAll().subscribe((c) => this.clients.set(c));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
 

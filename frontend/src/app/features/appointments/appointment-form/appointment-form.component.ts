@@ -14,6 +14,7 @@ import { ClientsService } from '../../clients/clients.service';
 import { HorsesService } from '../../horses/horses.service';
 import { BarnsService } from '../../barns/barns.service';
 import { Client, Horse, Barn } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { QuickCreateClientService } from '../../../shared/components/quick-create/quick-create-client.component';
@@ -39,6 +40,7 @@ export class AppointmentFormComponent implements OnInit {
   private readonly quickCreateClient = inject(QuickCreateClientService);
   private readonly quickCreateHorse = inject(QuickCreateHorseService);
   private readonly quickCreateBarn = inject(QuickCreateBarnService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -46,6 +48,7 @@ export class AppointmentFormComponent implements OnInit {
   readonly clients = signal<Client[]>([]);
   readonly allHorses = signal<Horse[]>([]);
   readonly barns = signal<Barn[]>([]);
+  readonly canManageBarns = signal(false);
   private appointmentId = '';
 
   readonly form = this.fb.nonNullable.group({
@@ -67,6 +70,10 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      const has = this.subscriptionService.hasFeature('barn_management');
+      this.canManageBarns.set(has);
+    });
     this.clientsService.getAll().subscribe((c) => this.clients.set(c));
     this.horsesService.getAll().subscribe((h) => this.allHorses.set(h));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
@@ -87,7 +94,7 @@ export class AppointmentFormComponent implements OnInit {
 
     this.form.controls.horseId.valueChanges.subscribe((horseId) => {
       const horse = this.allHorses().find((h) => h.id === horseId);
-      if (horseId) {
+      if (horseId && this.canManageBarns()) {
         this.form.controls.barnId.enable();
         this.form.controls.barnId.setValue(horse?.barnId ?? null);
       } else {

@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Appointment, Barn, Client, Horse } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
 import { QuickCreateBarnService } from '../../../shared/components/quick-create/quick-create-barn.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
@@ -46,9 +47,11 @@ export class ClientOnboardingComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly quickCreateBarn = inject(QuickCreateBarnService);
 
+  private readonly subscriptionService = inject(SubscriptionService);
   readonly step = signal(1);
   readonly saving = signal(false);
   readonly barns = signal<Barn[]>([]);
+  readonly canManageBarns = signal(false);
 
   readonly createdClient = signal<Client | null>(null);
   readonly createdHorse = signal<Horse | null>(null);
@@ -94,6 +97,13 @@ export class ClientOnboardingComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      const has = this.subscriptionService.hasFeature('barn_management');
+      this.canManageBarns.set(has);
+      if (!has) {
+        this.horseForm.controls.barnId.disable();
+      }
+    });
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
   }
 

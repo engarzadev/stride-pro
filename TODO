@@ -4,6 +4,8 @@ v1 Release Priorities
 [ ] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
 [ ] Invoice templates — no template system built yet
 [ ] Business setting - setting email or invoice receipt messages
+[ ] DO NOT show token in reponse payload
+[ ] allow reset password on login screen
 
 
 Future Features

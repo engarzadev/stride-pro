@@ -1,5 +1,11 @@
 // ── Desktop table ────────────────────────────────────────────────────────────
 
+::ng-deep mat-paginator {
+  background: transparent;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 0.25rem;
+}
+
 .table-container {
   overflow-x: auto;
   background-color: #ffffff;

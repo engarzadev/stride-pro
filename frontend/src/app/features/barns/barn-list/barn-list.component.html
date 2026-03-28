@@ -1,4 +1,14 @@
-<app-page-header title="Barns" buttonText="Add Barn" (buttonClick)="onAdd()" />
+<app-page-header
+  title="Barns"
+  [buttonText]="canManageBarns() ? 'Add Barn' : ''"
+  (buttonClick)="onAdd()" />
+
+@if (!canManageBarns()) {
+  <div class="upgrade-notice">
+    <mat-icon>lock</mat-icon>
+    <span>Barn management requires a paid plan. Upgrade to create and manage barns.</span>
+  </div>
+}
 
 @if (loading()) {
   <app-loading-spinner />

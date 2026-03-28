@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { Barn } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
@@ -17,7 +19,7 @@ import { BarnsService } from '../barns.service';
 @Component({
   selector: 'app-barn-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
+  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule, MatIconModule],
   templateUrl: './barn-list.component.html',
   styleUrls: ['./barn-list.component.scss'],
 })
@@ -26,9 +28,11 @@ export class BarnListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(true);
   readonly barns = signal<Barn[]>([]);
+  readonly canManageBarns = signal(false);
 
   readonly columns: TableColumn[] = [
     { key: 'name', label: 'Name', sortable: true },
@@ -46,6 +50,9 @@ export class BarnListComponent implements OnInit {
   readonly mobileCard: MobileCardConfig = { titleKey: 'name', subtitleKey: 'contactName' };
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      this.canManageBarns.set(this.subscriptionService.hasFeature('barn_management'));
+    });
     this.loadBarns();
   }
 

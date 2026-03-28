@@ -159,3 +159,21 @@ export interface AuthResponse {
   tokens: AuthTokens;
   user: User;
 }
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+}
+
+export interface SubscriptionUsage {
+  clients: { count: number; limit: number };
+  horses: { count: number; limit: number };
+}
+
+export interface SubscriptionResponse {
+  plan: SubscriptionPlan;
+  usage: SubscriptionUsage;
+}
