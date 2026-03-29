@@ -2,20 +2,12 @@
   <app-loading-spinner />
 } @else {
   @if (barn(); as b) {
-  <div class="detail-page">
-    <div class="detail-header">
-      <div>
-        <a routerLink="/barns" class="back-link">
-          <mat-icon>arrow_back</mat-icon>
-          Back to Barns
-        </a>
-        <h1>{{ b.name }}</h1>
-      </div>
-      <div class="detail-actions">
-        <a [routerLink]="['/barns', b.id, 'edit']" mat-stroked-button>Edit</a>
-        <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
-      </div>
-    </div>
+  <app-detail-page
+    [title]="b.name"
+    backRoute="/barns"
+    backLabel="Back to Barns"
+    [editRoute]="['/barns', b.id, 'edit']"
+    (deleteClick)="onDelete()">
 
     <mat-card class="mb-6">
       <mat-card-header>
@@ -63,6 +55,6 @@
         </mat-card-content>
       </mat-card>
     }
-  </div>
+  </app-detail-page>
   }
 }

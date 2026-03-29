@@ -2,20 +2,12 @@
   <app-loading-spinner />
 } @else {
   @if (horse(); as h) {
-    <div class="detail-page">
-      <div class="detail-header">
-        <div>
-          <a routerLink="/horses" class="back-link">
-            <mat-icon>arrow_back</mat-icon>
-            Back to Horses
-          </a>
-          <h1>{{ h.name }}</h1>
-        </div>
-        <div class="detail-actions">
-          <a [routerLink]="['/horses', h.id, 'edit']" mat-stroked-button>Edit</a>
-          <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
-        </div>
-      </div>
+    <app-detail-page
+      [title]="h.name"
+      backRoute="/horses"
+      backLabel="Back to Horses"
+      [editRoute]="['/horses', h.id, 'edit']"
+      (deleteClick)="onDelete()">
 
       <mat-card class="mb-6">
         <mat-card-header>
@@ -72,6 +64,6 @@
           }
         </mat-card-content>
       </mat-card>
-    </div>
+    </app-detail-page>
   }
 }

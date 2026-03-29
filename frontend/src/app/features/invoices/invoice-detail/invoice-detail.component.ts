@@ -3,8 +3,8 @@ import { TitleCasePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
 import { InvoicesService } from '../invoices.service';
 import { Invoice } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -16,7 +16,7 @@ import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 @Component({
   selector: 'app-invoice-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, CurrencyFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, MatIconModule, MatTableModule],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, CurrencyFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, MatTableModule, DetailPageComponent],
   templateUrl: './invoice-detail.component.html',
   styleUrls: ['./invoice-detail.component.scss'],
 })

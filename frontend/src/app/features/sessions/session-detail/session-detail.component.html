@@ -2,20 +2,12 @@
   <app-loading-spinner />
 } @else {
   @if (session(); as s) {
-  <div class="detail-page">
-    <div class="detail-header">
-      <div>
-        <a routerLink="/sessions" class="back-link">
-          <mat-icon>arrow_back</mat-icon>
-          Back to Sessions
-        </a>
-        <h1>Session Details</h1>
-      </div>
-      <div class="detail-actions">
-        <a [routerLink]="['/sessions', s.id, 'edit']" mat-stroked-button>Edit</a>
-        <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
-      </div>
-    </div>
+  <app-detail-page
+    title="Session Details"
+    backRoute="/sessions"
+    backLabel="Back to Sessions"
+    [editRoute]="['/sessions', s.id, 'edit']"
+    (deleteClick)="onDelete()">
 
     <mat-card class="mb-6">
       <mat-card-header>
@@ -87,6 +79,6 @@
         </div>
       </mat-card-content>
     </mat-card>
-  </div>
+  </app-detail-page>
   }
 }

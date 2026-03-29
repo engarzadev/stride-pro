@@ -5,6 +5,7 @@ v1 Release Priorities
 [ ] Invoice templates — no template system built yet
 [ ] Business setting - setting email or invoice receipt messages
 [ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
+[ ] Form Validation - disable save buttons if form is invalid or submitting
 
 Future Features
 [ ] DO NOT show token in reponse payload
@@ -15,6 +16,11 @@ Future Features
 [ ] Ability to upload resources to a client profile (e.g. body worker can upload link to a clients profile for supplement recommendations)
 
 Tech Debt
-[ ] Make a page layout or template for the list, form, and details that way updates are faster
-[ ] See if lazy load modules would be useful
-[ ] fix scroll bar and sidebar overflow
+[x] Make a page layout or template for the list, form, and details that way updates are faster
+[x] See if lazy load modules would be useful
+[x] fix scroll bar and sidebar overflow
+
+
+Not Working
+[ ] Cant create session - (thought: prefill the session type with the appointment type)
+[ ] Cant create invoice

@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { Client } from '../../../core/models';
+import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
 import { DataTableComponent, MobileCardConfig, TableColumn } from '../../../shared/components/data-table/data-table.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -14,7 +14,7 @@ import { ClientsService } from '../clients.service';
 @Component({
   selector: 'app-client-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule, MatIconModule, DataTableComponent],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule, DataTableComponent, DetailPageComponent],
   templateUrl: './client-detail.component.html',
   styleUrls: ['./client-detail.component.scss'],
 })

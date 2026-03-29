@@ -2,8 +2,8 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { BarnsService } from '../barns.service';
+import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
 import { DataTableComponent, MobileCardConfig, TableColumn } from '../../../shared/components/data-table/data-table.component';
 import { Barn } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -14,7 +14,7 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 @Component({
   selector: 'app-barn-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule, MatIconModule, DataTableComponent],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule, DataTableComponent, DetailPageComponent],
   templateUrl: './barn-detail.component.html',
   styleUrls: ['./barn-detail.component.scss'],
 })

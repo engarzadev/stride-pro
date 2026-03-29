@@ -2,20 +2,12 @@
   <app-loading-spinner />
 } @else {
   @if (appointment(); as a) {
-    <div class="detail-page">
-      <div class="detail-header">
-        <div>
-          <a routerLink="/appointments" class="back-link">
-            <mat-icon>arrow_back</mat-icon>
-            Back to Appointments
-          </a>
-          <h1>Appointment Details</h1>
-        </div>
-        <div class="detail-actions">
-          <a [routerLink]="['/appointments', a.id, 'edit']" mat-stroked-button>Edit</a>
-          <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
-        </div>
-      </div>
+    <app-detail-page
+      title="Appointment Details"
+      backRoute="/appointments"
+      backLabel="Back to Appointments"
+      [editRoute]="['/appointments', a.id, 'edit']"
+      (deleteClick)="onDelete()">
 
       <mat-card class="mb-6">
         <mat-card-header>
@@ -98,6 +90,6 @@
           </mat-card-content>
         </mat-card>
       }
-    </div>
+    </app-detail-page>
   }
 }

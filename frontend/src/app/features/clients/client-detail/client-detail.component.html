@@ -2,20 +2,12 @@
   <app-loading-spinner />
 } @else {
   @if (client(); as c) {
-  <div class="detail-page">
-    <div class="detail-header">
-      <div>
-        <a routerLink="/clients" class="back-link">
-          <mat-icon>arrow_back</mat-icon>
-          Back to Clients
-        </a>
-        <h1>{{ c.firstName }} {{ c.lastName }}</h1>
-      </div>
-      <div class="detail-actions">
-        <a [routerLink]="['/clients', c.id, 'edit']" mat-stroked-button>Edit</a>
-        <button mat-raised-button color="warn" (click)="onDelete()">Delete</button>
-      </div>
-    </div>
+    <app-detail-page
+      [title]="c.firstName + ' ' + c.lastName"
+      backRoute="/clients"
+      backLabel="Back to Clients"
+      [editRoute]="['/clients', c.id, 'edit']"
+      (deleteClick)="onDelete()">
 
     <mat-card class="mb-6">
       <mat-card-header>
@@ -63,6 +55,6 @@
         </mat-card-content>
       </mat-card>
     }
-  </div>
+    </app-detail-page>
   }
 }
