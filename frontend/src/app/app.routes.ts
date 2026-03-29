@@ -42,5 +42,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./features/invoices/invoices.routes').then((m) => m.invoicesRoutes),
   },
+  {
+    path: 'billing',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/billing/billing.routes').then((m) => m.billingRoutes),
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];

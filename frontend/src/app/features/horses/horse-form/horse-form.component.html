@@ -96,23 +96,22 @@
                   <mat-error>Please select a client.</mat-error>
                 }
               </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Barn</mat-label>
-                <mat-select #barnSelect formControlName="barnId">
-                  <mat-option [value]="null">No barn assigned</mat-option>
-                  @for (barn of barns(); track barn.id) {
-                    <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
-                  }
-                </mat-select>
-                @if (canManageBarns()) {
+              @if (canManageBarns()) {
+                <mat-form-field appearance="outline">
+                  <mat-label>Barn</mat-label>
+                  <mat-select #barnSelect formControlName="barnId">
+                    <mat-option [value]="null">No barn assigned</mat-option>
+                    @for (barn of barns(); track barn.id) {
+                      <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                    }
+                  </mat-select>
                   <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()" title="Create new barn">
                     <mat-icon>add</mat-icon>
                   </button>
-                }
-                @if (!canManageBarns()) {
-                  <mat-hint>Requires a paid plan</mat-hint>
-                }
-              </mat-form-field>
+                </mat-form-field>
+              } @else {
+                <app-upgrade-field-prompt label="Barn" />
+              }
             </div>
           </mat-card-content>
         </mat-card>

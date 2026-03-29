@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { UpgradeFieldPromptComponent } from '../../../shared/components/upgrade-field-prompt/upgrade-field-prompt.component';
 import { Appointment, Barn, Client, Horse } from '../../../core/models';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BreedAutocompleteComponent } from '../../../shared/components/breed-autocomplete/breed-autocomplete.component';
@@ -33,6 +34,7 @@ import { ClientsService } from '../clients.service';
     MatIconModule,
     MatInputModule,
     MatSelectModule,
+    UpgradeFieldPromptComponent,
   ],
   templateUrl: './client-onboarding.component.html',
   styleUrls: ['./client-onboarding.component.scss'],

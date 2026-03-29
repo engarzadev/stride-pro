@@ -182,15 +182,15 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Barn</mat-label>
-            <mat-select formControlName="barnId">
-              <mat-option [value]="null">No barn assigned</mat-option>
-              @for (barn of barns(); track barn.id) {
-                <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
-              }
-            </mat-select>
-            @if (canManageBarns()) {
+          @if (canManageBarns()) {
+            <mat-form-field appearance="outline">
+              <mat-label>Barn</mat-label>
+              <mat-select formControlName="barnId">
+                <mat-option [value]="null">No barn assigned</mat-option>
+                @for (barn of barns(); track barn.id) {
+                  <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                }
+              </mat-select>
               <button
                 matSuffix
                 mat-icon-button
@@ -200,11 +200,10 @@
               >
                 <mat-icon>add</mat-icon>
               </button>
-            }
-            @if (!canManageBarns()) {
-              <mat-hint>Requires a paid plan</mat-hint>
-            }
-          </mat-form-field>
+            </mat-form-field>
+          } @else {
+            <app-upgrade-field-prompt label="Barn" />
+          }
 
           <mat-form-field appearance="outline">
             <mat-label>Notes</mat-label>

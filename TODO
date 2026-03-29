@@ -4,14 +4,17 @@ v1 Release Priorities
 [ ] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
 [ ] Invoice templates — no template system built yet
 [ ] Business setting - setting email or invoice receipt messages
-[ ] DO NOT show token in reponse payload
-[ ] allow reset password on login screen
-
+[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
 
 Future Features
-[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
+[ ] DO NOT show token in reponse payload
+[ ] allow reset password on login screen
 [ ] User profile settings - custom color schemes
 [ ] Add horse photo
 [ ] Upload body work map
 [ ] Ability to upload resources to a client profile (e.g. body worker can upload link to a clients profile for supplement recommendations)
 
+Tech Debt
+[ ] Make a page layout or template for the list, form, and details that way updates are faster
+[ ] See if lazy load modules would be useful
+[ ] fix scroll bar and sidebar overflow

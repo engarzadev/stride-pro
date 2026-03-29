@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Barn } from '../../../core/models';
@@ -15,11 +15,12 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { BarnsService } from '../barns.service';
+import { UpgradeFieldPromptComponent } from '../../../shared/components/upgrade-field-prompt/upgrade-field-prompt.component';
 
 @Component({
   selector: 'app-barn-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule, MatIconModule],
+  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule, MatIconModule, UpgradeFieldPromptComponent, RouterLink],
   templateUrl: './barn-list.component.html',
   styleUrls: ['./barn-list.component.scss'],
 })

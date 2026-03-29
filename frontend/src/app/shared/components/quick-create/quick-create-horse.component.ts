@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { UpgradeFieldPromptComponent } from '../upgrade-field-prompt/upgrade-field-prompt.component';
 import { firstValueFrom } from 'rxjs';
 import { Barn, Client, Horse } from '../../../core/models';
 import { SubscriptionService } from '../../../core/services/subscription.service';
@@ -57,6 +58,7 @@ export class QuickCreateHorseService {
     MatButtonModule,
     MatIconModule,
     BreedAutocompleteComponent,
+    UpgradeFieldPromptComponent,
   ],
   template: `
     <h2 mat-dialog-title>New Horse</h2>
@@ -118,15 +120,15 @@ export class QuickCreateHorseService {
               }
             }
           </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Barn</mat-label>
-            <mat-select #barnSelect formControlName="barnId">
-              <mat-option [value]="null">No barn assigned</mat-option>
-              @for (barn of barns(); track barn.id) {
-                <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
-              }
-            </mat-select>
-            @if (canManageBarns()) {
+          @if (canManageBarns()) {
+            <mat-form-field appearance="outline">
+              <mat-label>Barn</mat-label>
+              <mat-select #barnSelect formControlName="barnId">
+                <mat-option [value]="null">No barn assigned</mat-option>
+                @for (barn of barns(); track barn.id) {
+                  <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                }
+              </mat-select>
               <button
                 matSuffix
                 mat-icon-button
@@ -136,11 +138,10 @@ export class QuickCreateHorseService {
               >
                 <mat-icon>add</mat-icon>
               </button>
-            }
-            @if (!canManageBarns()) {
-              <mat-hint>Requires a paid plan</mat-hint>
-            }
-          </mat-form-field>
+            </mat-form-field>
+          } @else {
+            <app-upgrade-field-prompt label="Barn" />
+          }
         </div>
         <mat-form-field appearance="outline">
           <mat-label>Notes</mat-label>
@@ -210,11 +211,7 @@ export class QuickCreateHorseComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscriptionService.load().subscribe(() => {
-      const has = this.subscriptionService.hasFeature('barn_management');
-      this.canManageBarns.set(has);
-      if (!has) {
-        this.form.controls.barnId.disable();
-      }
+      this.canManageBarns.set(this.subscriptionService.hasFeature('barn_management'));
     });
     this.clientsService.getAll().subscribe((c) => this.clients.set(c));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));

@@ -21,5 +21,6 @@ export class SidebarComponent {
     { path: '/appointments', label: 'Appointments', icon: 'event' },
     { path: '/sessions', label: 'Sessions', icon: 'medical_services' },
     { path: '/invoices', label: 'Invoices', icon: 'receipt' },
+    { path: '/billing', label: 'Billing', icon: 'payments' },
   ];
 }
