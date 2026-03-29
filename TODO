@@ -5,7 +5,7 @@ v1 Release Priorities
 [ ] Invoice templates — no template system built yet
 [ ] Business setting - setting email or invoice receipt messages
 [ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
-[ ] Form Validation - disable save buttons if form is invalid or submitting
+[x] Form Validation - disable save buttons if form is invalid or submitting
 
 Future Features
 [ ] DO NOT show token in reponse payload
@@ -21,7 +21,6 @@ Tech Debt
 [x] Make a page layout or template for the list, form, and details that way updates are faster
 [x] See if lazy load modules would be useful
 [x] fix scroll bar and sidebar overflow
-
 
 Not Working
 [x] Cant create session - (thought: prefill the session type with the appointment type)

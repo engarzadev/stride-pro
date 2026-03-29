@@ -6,6 +6,7 @@
     backRoute="/clients"
     backLabel="Back to Clients"
     [saving]="saving()"
+    [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     createIcon="person_add"
     (save)="onSubmit()">

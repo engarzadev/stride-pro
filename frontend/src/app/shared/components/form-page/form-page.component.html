@@ -14,7 +14,7 @@
               mat-flat-button
               color="primary"
               class="btn-save"
-              [disabled]="saving"
+              [disabled]="saving || formInvalid"
               (click)="save.emit()"
             >
               <mat-icon>{{ isEdit ? 'save' : createIcon }}</mat-icon>

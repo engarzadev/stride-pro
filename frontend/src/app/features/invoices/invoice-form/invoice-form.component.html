@@ -6,6 +6,7 @@
     backRoute="/invoices"
     backLabel="Back to Invoices"
     [saving]="saving()"
+    [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     createIcon="send"
     (save)="onSubmit()">

@@ -6,6 +6,7 @@
     backRoute="/appointments"
     backLabel="Back to Appointments"
     [saving]="saving()"
+    [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     createIcon="event"
     (save)="onSubmit()">

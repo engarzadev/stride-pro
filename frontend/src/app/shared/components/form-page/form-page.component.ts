@@ -16,6 +16,7 @@ export class FormPageComponent {
   @Input() backRoute: string | string[] = '/';
   @Input() backLabel = 'Back';
   @Input() saving = false;
+  @Input() formInvalid = false;
   @Input() isEdit = false;
   @Input() createIcon = 'add';
   @Output() save = new EventEmitter<void>();

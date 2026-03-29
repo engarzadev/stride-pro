@@ -6,6 +6,7 @@
     backRoute="/sessions"
     backLabel="Back to Sessions"
     [saving]="saving()"
+    [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     (save)="onSubmit()">
     <form [formGroup]="form">

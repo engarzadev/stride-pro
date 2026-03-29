@@ -6,6 +6,7 @@
     backRoute="/horses"
     backLabel="Back to Horses"
     [saving]="saving()"
+    [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     (save)="onSubmit()">
     <form [formGroup]="form">
