@@ -5,7 +5,10 @@
     <div class="detail-page">
       <div class="detail-header">
         <div>
-          <a routerLink="/invoices" class="back-link">&larr; Back to Invoices</a>
+          <a routerLink="/invoices" class="back-link">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Invoices
+          </a>
           <h1>Invoice {{ inv.invoiceNumber }}</h1>
         </div>
         <div class="detail-actions">

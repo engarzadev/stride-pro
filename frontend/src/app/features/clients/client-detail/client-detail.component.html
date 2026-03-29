@@ -5,7 +5,10 @@
   <div class="detail-page">
     <div class="detail-header">
       <div>
-        <a routerLink="/clients" class="back-link">&larr; Back to Clients</a>
+        <a routerLink="/clients" class="back-link">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Clients
+        </a>
         <h1>{{ c.firstName }} {{ c.lastName }}</h1>
       </div>
       <div class="detail-actions">
@@ -52,27 +55,11 @@
           <mat-card-title>Horses</mat-card-title>
         </mat-card-header>
         <mat-card-content class="p-0">
-          <table mat-table [dataSource]="c.horses">
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>Name</th>
-              <td mat-cell *matCellDef="let horse">{{ horse.name }}</td>
-            </ng-container>
-            <ng-container matColumnDef="breed">
-              <th mat-header-cell *matHeaderCellDef>Breed</th>
-              <td mat-cell *matCellDef="let horse">{{ horse.breed }}</td>
-            </ng-container>
-            <ng-container matColumnDef="age">
-              <th mat-header-cell *matHeaderCellDef>Age</th>
-              <td mat-cell *matCellDef="let horse">{{ horse.age }}</td>
-            </ng-container>
-            <ng-container matColumnDef="gender">
-              <th mat-header-cell *matHeaderCellDef>Gender</th>
-              <td mat-cell *matCellDef="let horse">{{ horse.gender }}</td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="['name','breed','age','gender']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['name','breed','age','gender'];"
-                class="clickable" [routerLink]="['/horses', row.id]"></tr>
-          </table>
+          <app-data-table
+            [columns]="horseColumns"
+            [data]="$any(c.horses)"
+            [mobileCard]="horseMobileCard"
+            (rowClick)="onHorseClick($event)" />
         </mat-card-content>
       </mat-card>
     }
