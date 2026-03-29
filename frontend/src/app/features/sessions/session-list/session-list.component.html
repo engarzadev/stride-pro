@@ -1,17 +1,32 @@
-<app-page-header title="Sessions" buttonText="Add Session" (buttonClick)="onAdd()" />
+<app-page-header
+  title="Sessions"
+  [buttonText]="canManageSessions() ? 'Add Session' : ''"
+  (buttonClick)="onAdd()"
+/>
 
-@if (loading()) {
-  <app-loading-spinner />
+@if (!canManageSessions()) {
+  <a routerLink="/billing" class="upgrade-notice">
+    <mat-icon>lock</mat-icon>
+    <span
+      >Sessions require a paid plan. Click here to upgrade on the billing
+      page.</span
+    >
+  </a>
 } @else {
-  <mat-card>
-    <mat-card-content>
-      <app-data-table
-        [columns]="columns"
-        [data]="$any(tableSessions())"
-        [actions]="actions"
-        [mobileCard]="mobileCard"
-        (rowClick)="onRowClick($event)"
-        (actionClick)="onAction($event)" />
-    </mat-card-content>
-  </mat-card>
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <app-data-table
+          [columns]="columns"
+          [data]="$any(tableSessions())"
+          [actions]="actions"
+          [mobileCard]="mobileCard"
+          (rowClick)="onRowClick($event)"
+          (actionClick)="onAction($event)"
+        />
+      </mat-card-content>
+    </mat-card>
+  }
 }

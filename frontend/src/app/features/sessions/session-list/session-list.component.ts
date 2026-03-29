@@ -1,7 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterLink } from '@angular/router';
 import { Session } from '../../../core/models';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
@@ -17,7 +19,14 @@ import { SessionsService } from '../sessions.service';
 @Component({
   selector: 'app-session-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule],
+  imports: [
+    PageHeaderComponent,
+    DataTableComponent,
+    LoadingSpinnerComponent,
+    MatCardModule,
+    MatIconModule,
+    RouterLink
+  ],
   templateUrl: './session-list.component.html',
   styleUrls: ['./session-list.component.scss'],
 })
@@ -26,9 +35,11 @@ export class SessionListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(true);
   readonly sessions = signal<Session[]>([]);
+  readonly canManageSessions = signal(false);
 
   readonly tableSessions = computed(() =>
     this.sessions().map((s) => ({
@@ -52,9 +63,17 @@ export class SessionListComponent implements OnInit {
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
 
-  readonly mobileCard: MobileCardConfig = { titleKey: 'createdAt', subtitleKey: 'horseName' };
+  readonly mobileCard: MobileCardConfig = {
+    titleKey: 'createdAt',
+    subtitleKey: 'horseName',
+  };
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      this.canManageSessions.set(
+        this.subscriptionService.hasFeature('session_notes'),
+      );
+    });
     this.loadSessions();
   }
 

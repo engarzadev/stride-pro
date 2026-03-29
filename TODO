@@ -14,6 +14,8 @@ Future Features
 [ ] Add horse photo
 [ ] Upload body work map
 [ ] Ability to upload resources to a client profile (e.g. body worker can upload link to a clients profile for supplement recommendations)
+[ ] Bulk actions (e.g. bulk delete from list view)
+[ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
 
 Tech Debt
 [x] Make a page layout or template for the list, form, and details that way updates are faster
@@ -22,5 +24,11 @@ Tech Debt
 
 
 Not Working
-[ ] Cant create session - (thought: prefill the session type with the appointment type)
-[ ] Cant create invoice
+[x] Cant create session - (thought: prefill the session type with the appointment type)
+[x] Cant create invoice (** cant reproduce)
+
+Sessions Subscription Gate
+[x] **Frontend - session-list.component.ts**: Inject `SubscriptionService`, add `canManageSessions = signal(false)`, call `subscriptionService.load()` in `ngOnInit` and set signal via `hasFeature('session_notes')`
+[x] **Frontend - session-list.component.html**: Conditionally hide the "Add Session" button (`[buttonText]="canManageSessions() ? 'Add Session' : ''"`) and show an upgrade notice link to `/billing` when `!canManageSessions()`
+[x] **Frontend - session-form.component.ts**: Inject `SubscriptionService`, guard new-session creation (when no `id` param) — redirect to `/sessions` with a toast error if `hasFeature('session_notes')` is false
+[x] **Backend - sessions/service.go**: Add `RequireFeature(userID, "session_notes")` check to `GetAll` (or at minimum to `Update`) to match the barn pattern

@@ -12,21 +12,21 @@
       billing page.</span
     >
   </a>
-}
-
-@if (loading()) {
-  <app-loading-spinner />
 } @else {
-  <mat-card>
-    <mat-card-content>
-      <app-data-table
-        [columns]="columns"
-        [data]="$any(barns())"
-        [actions]="actions"
-        [mobileCard]="mobileCard"
-        (rowClick)="onRowClick($event)"
-        (actionClick)="onAction($event)"
-      />
-    </mat-card-content>
-  </mat-card>
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <app-data-table
+          [columns]="columns"
+          [data]="$any(barns())"
+          [actions]="actions"
+          [mobileCard]="mobileCard"
+          (rowClick)="onRowClick($event)"
+          (actionClick)="onAction($event)"
+        />
+      </mat-card-content>
+    </mat-card>
+  }
 }

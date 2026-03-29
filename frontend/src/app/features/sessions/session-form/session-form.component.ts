@@ -16,6 +16,7 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { QuickCreateAppointmentService } from '../../../shared/components/quick-create/quick-create-appointment.component';
+import { SubscriptionService } from '../../../core/services/subscription.service';
 
 @Component({
   selector: 'app-session-form',
@@ -32,6 +33,7 @@ export class SessionFormComponent implements OnInit {
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly toast = inject(ToastService);
   private readonly quickCreateAppointment = inject(QuickCreateAppointmentService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   @ViewChild('appointmentSelect') appointmentSelect!: MatSelect;
 
@@ -62,6 +64,15 @@ export class SessionFormComponent implements OnInit {
     this.appointmentsService.getAll().subscribe((a) => this.appointments.set(a));
 
     const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      // Creating a new session — check feature access
+      this.subscriptionService.load().subscribe(() => {
+        if (!this.subscriptionService.hasFeature('session_notes')) {
+          this.toast.error('Session management requires a paid plan');
+          this.router.navigate(['/sessions']);
+        }
+      });
+    }
     if (id) {
       this.isEdit.set(true);
       this.sessionId = id;

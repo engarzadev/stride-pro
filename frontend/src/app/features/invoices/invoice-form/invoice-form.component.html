@@ -55,7 +55,7 @@
 
               <div class="form-row">
                 <mat-form-field appearance="outline">
-                  <mat-label>Invoice Date*</mat-label>
+                  <mat-label>Invoice Date</mat-label>
                   <input matInput [matDatepicker]="invoiceDatePicker" formControlName="date" />
                   <mat-datepicker-toggle matIconSuffix [for]="invoiceDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #invoiceDatePicker></mat-datepicker>
@@ -65,7 +65,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
-                  <mat-label>Due Date*</mat-label>
+                  <mat-label>Due Date</mat-label>
                   <input matInput [matDatepicker]="dueDatePicker" formControlName="dueDate" />
                   <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #dueDatePicker></mat-datepicker>

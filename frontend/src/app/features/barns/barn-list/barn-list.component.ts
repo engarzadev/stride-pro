@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterLink } from '@angular/router';
 import { Barn } from '../../../core/models';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -14,13 +14,21 @@ import {
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
-import { BarnsService } from '../barns.service';
 import { UpgradeFieldPromptComponent } from '../../../shared/components/upgrade-field-prompt/upgrade-field-prompt.component';
+import { BarnsService } from '../barns.service';
 
 @Component({
   selector: 'app-barn-list',
   standalone: true,
-  imports: [PageHeaderComponent, DataTableComponent, LoadingSpinnerComponent, MatCardModule, MatIconModule, UpgradeFieldPromptComponent, RouterLink],
+  imports: [
+    PageHeaderComponent,
+    DataTableComponent,
+    LoadingSpinnerComponent,
+    MatCardModule,
+    MatIconModule,
+    UpgradeFieldPromptComponent,
+    RouterLink,
+  ],
   templateUrl: './barn-list.component.html',
   styleUrls: ['./barn-list.component.scss'],
 })
@@ -48,11 +56,16 @@ export class BarnListComponent implements OnInit {
     { label: 'Delete', action: 'delete', class: 'btn-danger' },
   ];
 
-  readonly mobileCard: MobileCardConfig = { titleKey: 'name', subtitleKey: 'contactName' };
+  readonly mobileCard: MobileCardConfig = {
+    titleKey: 'name',
+    subtitleKey: 'contactName',
+  };
 
   ngOnInit(): void {
     this.subscriptionService.load().subscribe(() => {
-      this.canManageBarns.set(this.subscriptionService.hasFeature('barn_management'));
+      this.canManageBarns.set(
+        this.subscriptionService.hasFeature('barn_management'),
+      );
     });
     this.loadBarns();
   }
