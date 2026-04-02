@@ -15,5 +15,9 @@ export class DetailPageComponent {
   @Input() backRoute = '/';
   @Input() backLabel = 'Back';
   @Input() editRoute: string[] = [];
+  @Input() extraActionLabel = '';
+  @Input() extraActionIcon = '';
+  @Input() extraActionDisabled = false;
   @Output() deleteClick = new EventEmitter<void>();
+  @Output() extraActionClick = new EventEmitter<void>();
 }

@@ -8,6 +8,12 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="detail-actions">
+      @if (extraActionLabel) {
+        <button mat-flat-button color="primary" [disabled]="extraActionDisabled" (click)="extraActionClick.emit()">
+          @if (extraActionIcon) { <mat-icon>{{ extraActionIcon }}</mat-icon> }
+          {{ extraActionLabel }}
+        </button>
+      }
       <a [routerLink]="editRoute" mat-stroked-button>Edit</a>
       <button mat-raised-button color="warn" (click)="deleteClick.emit()">Delete</button>
     </div>

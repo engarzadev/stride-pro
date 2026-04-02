@@ -1,7 +1,10 @@
 v1 Release Priorities
 [x] Subscription enforcement - plan limits exist in code but aren't enforced at the API layer
 [x] Appointment reminders — the notification hook is missing from appointment creation/updates
-[ ] Invoice templates — no template system built yet
+[x] Invoice templates — no template system built yet
+    [x] make settings width 100%
+    [] fix double scroll of entire app
+    [x] create invoice - add item: add space between item and price and fix alignment
 [ ] Business setting - setting email or invoice receipt messages
 [ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
 [x] Form Validation - disable save buttons if form is invalid or submitting

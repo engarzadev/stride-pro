@@ -9,28 +9,32 @@ import (
 	"github.com/stride-pro/backend/internal/appointments"
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/barns"
+	biz "github.com/stride-pro/backend/internal/business_settings"
 	"github.com/stride-pro/backend/internal/clients"
 	"github.com/stride-pro/backend/internal/database"
 	"github.com/stride-pro/backend/internal/horses"
 	"github.com/stride-pro/backend/internal/invoices"
 	"github.com/stride-pro/backend/internal/middleware"
 	"github.com/stride-pro/backend/internal/sessions"
+	svc "github.com/stride-pro/backend/internal/service_items"
 	"github.com/stride-pro/backend/internal/subscriptions"
 	"github.com/stride-pro/backend/pkg/response"
 )
 
 // Deps holds all handler dependencies needed to configure routing.
 type Deps struct {
-	DB                  *database.DB
-	AuthService         *auth.Service
-	AuthHandler         *auth.Handler
-	ClientHandler       *clients.Handler
-	HorseHandler        *horses.Handler
-	BarnHandler         *barns.Handler
-	ApptHandler         *appointments.Handler
-	SessionHandler      *sessions.Handler
-	InvoiceHandler      *invoices.Handler
-	SubscriptionHandler *subscriptions.Handler
+	DB                     *database.DB
+	AuthService            *auth.Service
+	AuthHandler            *auth.Handler
+	ClientHandler          *clients.Handler
+	HorseHandler           *horses.Handler
+	BarnHandler            *barns.Handler
+	ApptHandler            *appointments.Handler
+	SessionHandler         *sessions.Handler
+	InvoiceHandler         *invoices.Handler
+	SubscriptionHandler    *subscriptions.Handler
+	BusinessSettingHandler *biz.Handler
+	ServiceItemHandler     *svc.Handler
 }
 
 // New creates and configures the application router with all routes and middleware.
@@ -116,6 +120,15 @@ func New(deps Deps) http.Handler {
 	protected.HandleFunc("/invoices/{id}", deps.InvoiceHandler.Update).Methods("PUT")
 	protected.HandleFunc("/invoices/{id}", deps.InvoiceHandler.Delete).Methods("DELETE")
 	protected.HandleFunc("/invoices/{id}/status", deps.InvoiceHandler.UpdateStatus).Methods("PATCH")
+	protected.HandleFunc("/invoices/{id}/send", deps.InvoiceHandler.Send).Methods("POST")
+
+	// Settings
+	protected.HandleFunc("/settings/business", deps.BusinessSettingHandler.Get).Methods("GET")
+	protected.HandleFunc("/settings/business", deps.BusinessSettingHandler.Upsert).Methods("PUT")
+	protected.HandleFunc("/settings/service-items", deps.ServiceItemHandler.List).Methods("GET")
+	protected.HandleFunc("/settings/service-items", deps.ServiceItemHandler.Create).Methods("POST")
+	protected.HandleFunc("/settings/service-items/{id}", deps.ServiceItemHandler.Update).Methods("PUT")
+	protected.HandleFunc("/settings/service-items/{id}", deps.ServiceItemHandler.Delete).Methods("DELETE")
 
 	return r
 }

@@ -28,6 +28,7 @@ export class InvoiceDetailComponent implements OnInit {
   private readonly toast = inject(ToastService);
 
   readonly loading = signal(true);
+  readonly sending = signal(false);
   readonly invoice = signal<Invoice | null>(null);
 
   ngOnInit(): void {
@@ -52,6 +53,20 @@ export class InvoiceDetailComponent implements OnInit {
       case 'draft': return 'badge-secondary';
       default: return 'badge-secondary';
     }
+  }
+
+  onSend(): void {
+    const inv = this.invoice();
+    if (!inv) return;
+    this.sending.set(true);
+    this.invoicesService.sendInvoice(inv.id).subscribe({
+      next: () => {
+        this.invoice.update((i) => i ? { ...i, status: 'sent' } : i);
+        this.toast.success('Invoice sent successfully');
+        this.sending.set(false);
+      },
+      error: () => this.sending.set(false),
+    });
   }
 
   async onDelete(): Promise<void> {

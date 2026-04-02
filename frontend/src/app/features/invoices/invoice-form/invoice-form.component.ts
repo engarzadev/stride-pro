@@ -1,26 +1,56 @@
-import { Component, ViewChild, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { InvoicesService } from '../invoices.service';
-import { ClientsService } from '../../clients/clients.service';
-import { Client } from '../../../core/models';
-import { ToastService } from '../../../shared/components/toast/toast.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Client, ServiceItem } from '../../../core/models';
+import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
-import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 import { QuickCreateClientService } from '../../../shared/components/quick-create/quick-create-client.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
+import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { ClientsService } from '../../clients/clients.service';
+import { SettingsService } from '../../settings/settings.service';
+import { InvoicesService } from '../invoices.service';
 
 @Component({
   selector: 'app-invoice-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormPageComponent, LoadingSpinnerComponent, CurrencyFormatPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatDatepickerModule],
+  imports: [
+    ReactiveFormsModule,
+    FormPageComponent,
+    LoadingSpinnerComponent,
+    CurrencyFormatPipe,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatDatepickerModule,
+    MatAutocompleteModule,
+  ],
   templateUrl: './invoice-form.component.html',
   styleUrls: ['./invoice-form.component.scss'],
 })
@@ -30,6 +60,7 @@ export class InvoiceFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly invoicesService = inject(InvoicesService);
   private readonly clientsService = inject(ClientsService);
+  private readonly settingsService = inject(SettingsService);
   private readonly toast = inject(ToastService);
   private readonly quickCreateClient = inject(QuickCreateClientService);
 
@@ -39,7 +70,16 @@ export class InvoiceFormComponent implements OnInit {
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly clients = signal<Client[]>([]);
+  readonly serviceItems = signal<ServiceItem[]>([]);
+  readonly descriptionQuery = signal('');
+  activeItemIndex = 0;
   private invoiceId = '';
+
+  readonly filteredServiceItems = computed(() => {
+    const q = this.descriptionQuery().toLowerCase().trim();
+    if (!q) return this.serviceItems();
+    return this.serviceItems().filter((s) => s.name.toLowerCase().includes(q));
+  });
 
   readonly form = this.fb.nonNullable.group({
     clientId: ['', [Validators.required]],
@@ -62,6 +102,9 @@ export class InvoiceFormComponent implements OnInit {
     this.clientsService.getAll().subscribe({
       next: (clients) => this.clients.set(clients),
     });
+    this.settingsService.getServiceItems().subscribe({
+      next: (items) => this.serviceItems.set(items),
+    });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -72,7 +115,7 @@ export class InvoiceFormComponent implements OnInit {
         next: (invoice) => {
           this.form.patchValue({
             clientId: invoice.clientId,
-            date: invoice.date ? new Date(invoice.date) : null,
+            date: invoice.createdAt ? new Date(invoice.createdAt) : null,
             dueDate: invoice.dueDate ? new Date(invoice.dueDate) : null,
             status: invoice.status,
             notes: invoice.notes,
@@ -81,11 +124,20 @@ export class InvoiceFormComponent implements OnInit {
           this.items.clear();
           if (invoice.items && invoice.items.length > 0) {
             invoice.items.forEach((item) => {
-              this.items.push(this.fb.nonNullable.group({
-                description: [item.description, [Validators.required]],
-                quantity: [item.quantity, [Validators.required, Validators.min(1)]],
-                unitPrice: [item.unitPrice, [Validators.required, Validators.min(0)]],
-              }));
+              this.items.push(
+                this.fb.nonNullable.group({
+                  description: [item.description, [Validators.required]],
+                  quantity: [
+                    item.quantity,
+                    [Validators.required, Validators.min(1)],
+                  ],
+                  unitPrice: [
+                    item.unitPrice,
+                    [Validators.required, Validators.min(0)],
+                  ],
+                  notes: [item.notes ?? ''],
+                }),
+              );
             });
           } else {
             this.items.push(this.createItemGroup());
@@ -115,6 +167,7 @@ export class InvoiceFormComponent implements OnInit {
       description: ['', [Validators.required]],
       quantity: [1, [Validators.required, Validators.min(1)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
+      notes: [''],
     });
   }
 
@@ -127,6 +180,26 @@ export class InvoiceFormComponent implements OnInit {
       this.items.removeAt(index);
       this.recalculate();
     }
+  }
+
+  onDescriptionInput(value: string): void {
+    this.descriptionQuery.set(value);
+    this.recalculate();
+  }
+
+  onServiceSelected(event: MatAutocompleteSelectedEvent, index: number): void {
+    const selected = this.serviceItems().find(
+      (s) => s.name === event.option.value,
+    );
+    if (selected) {
+      const item = this.items.at(index);
+      item.patchValue({
+        description: selected.name,
+        unitPrice: selected.defaultPrice,
+      });
+      this.recalculate();
+    }
+    this.descriptionQuery.set('');
   }
 
   recalculate(): void {
@@ -152,10 +225,11 @@ export class InvoiceFormComponent implements OnInit {
     this.recalculate();
 
     const formValue = this.form.getRawValue();
-    const toDateTime = (d: Date | null) => d ? `${d.toISOString().substring(0, 10)}T00:00:00Z` : '';
+    const toDateTime = (d: Date | null) =>
+      d ? `${d.toISOString().substring(0, 10)}T00:00:00Z` : '';
     const data = {
       clientId: formValue.clientId,
-      date: toDateTime(formValue.date),
+      createdAt: toDateTime(formValue.date),
       dueDate: toDateTime(formValue.dueDate),
       status: formValue.status,
       notes: formValue.notes,
@@ -167,6 +241,7 @@ export class InvoiceFormComponent implements OnInit {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         amount: item.quantity * item.unitPrice,
+        notes: item.notes,
       })),
     };
 
@@ -176,7 +251,11 @@ export class InvoiceFormComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.toast.success(this.isEdit() ? 'Invoice updated successfully' : 'Invoice created successfully');
+        this.toast.success(
+          this.isEdit()
+            ? 'Invoice updated successfully'
+            : 'Invoice created successfully',
+        );
         this.router.navigate(['/invoices']);
       },
       error: () => this.saving.set(false),

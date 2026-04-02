@@ -74,10 +74,10 @@ func (r *Repository) Create(inv *models.Invoice) error {
 		inv.Items[i].ID = uuid.New()
 		inv.Items[i].InvoiceID = inv.ID
 		_, err = tx.Exec(`
-			INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, amount)
-			VALUES ($1, $2, $3, $4, $5, $6)`,
+			INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, amount, notes)
+			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 			inv.Items[i].ID, inv.Items[i].InvoiceID, inv.Items[i].Description,
-			inv.Items[i].Quantity, inv.Items[i].UnitPrice, inv.Items[i].Amount,
+			inv.Items[i].Quantity, inv.Items[i].UnitPrice, inv.Items[i].Amount, inv.Items[i].Notes,
 		)
 		if err != nil {
 			_ = tx.Rollback()
@@ -187,10 +187,10 @@ func (r *Repository) Update(inv *models.Invoice) error {
 		inv.Items[i].ID = uuid.New()
 		inv.Items[i].InvoiceID = inv.ID
 		_, err = tx.Exec(`
-			INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, amount)
-			VALUES ($1, $2, $3, $4, $5, $6)`,
+			INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, amount, notes)
+			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 			inv.Items[i].ID, inv.Items[i].InvoiceID, inv.Items[i].Description,
-			inv.Items[i].Quantity, inv.Items[i].UnitPrice, inv.Items[i].Amount,
+			inv.Items[i].Quantity, inv.Items[i].UnitPrice, inv.Items[i].Amount, inv.Items[i].Notes,
 		)
 		if err != nil {
 			_ = tx.Rollback()
@@ -245,7 +245,7 @@ func (r *Repository) Delete(userID, invoiceID uuid.UUID) error {
 
 func (r *Repository) getItems(invoiceID uuid.UUID) ([]models.InvoiceItem, error) {
 	rows, err := r.db.Query(`
-		SELECT id, invoice_id, description, quantity, unit_price, amount
+		SELECT id, invoice_id, description, quantity, unit_price, amount, COALESCE(notes, '')
 		FROM invoice_items WHERE invoice_id = $1 ORDER BY id`,
 		invoiceID,
 	)
@@ -257,7 +257,7 @@ func (r *Repository) getItems(invoiceID uuid.UUID) ([]models.InvoiceItem, error)
 	var items []models.InvoiceItem
 	for rows.Next() {
 		var item models.InvoiceItem
-		if err := rows.Scan(&item.ID, &item.InvoiceID, &item.Description, &item.Quantity, &item.UnitPrice, &item.Amount); err != nil {
+		if err := rows.Scan(&item.ID, &item.InvoiceID, &item.Description, &item.Quantity, &item.UnitPrice, &item.Amount, &item.Notes); err != nil {
 			return nil, fmt.Errorf("scanning invoice item: %w", err)
 		}
 		items = append(items, item)

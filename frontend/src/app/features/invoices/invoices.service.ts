@@ -30,4 +30,12 @@ export class InvoicesService {
   delete(id: string): Observable<void> {
     return this.api.delete<void>(`/invoices/${id}`);
   }
+
+  sendInvoice(id: string): Observable<{ message: string }> {
+    return this.api.post<{ message: string }>(`/invoices/${id}/send`, {});
+  }
+
+  updateStatus(id: string, status: string): Observable<{ message: string }> {
+    return this.api.patch<{ message: string }>(`/invoices/${id}/status`, { status });
+  }
 }

@@ -3,10 +3,16 @@
 } @else {
   @if (invoice(); as inv) {
     <app-detail-page
-      [title]="'Invoice ' + inv.invoiceNumber"
+      [title]="`Invoice #${inv.id.slice(0, 5).toUpperCase()}`"
       backRoute="/invoices"
       backLabel="Back to Invoices"
       [editRoute]="['/invoices', inv.id, 'edit']"
+      [extraActionLabel]="
+        inv.status === 'sent' ? 'Resend Invoice' : 'Send Invoice'
+      "
+      extraActionIcon="send"
+      [extraActionDisabled]="sending()"
+      (extraActionClick)="onSend()"
       (deleteClick)="onDelete()"
     >
       <mat-card class="mb-6">

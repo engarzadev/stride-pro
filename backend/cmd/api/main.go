@@ -13,6 +13,7 @@ import (
 	"github.com/stride-pro/backend/internal/appointments"
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/barns"
+	biz "github.com/stride-pro/backend/internal/business_settings"
 	"github.com/stride-pro/backend/internal/clients"
 	"github.com/stride-pro/backend/internal/config"
 	"github.com/stride-pro/backend/internal/database"
@@ -21,6 +22,7 @@ import (
 	"github.com/stride-pro/backend/internal/notifications"
 	"github.com/stride-pro/backend/internal/router"
 	"github.com/stride-pro/backend/internal/sessions"
+	svc "github.com/stride-pro/backend/internal/service_items"
 	"github.com/stride-pro/backend/internal/subscriptions"
 )
 
@@ -64,7 +66,7 @@ func main() {
 	barnService := barns.NewService(barnRepo, subsService)
 	barnHandler := barns.NewHandler(barnService)
 
-	var emailSender notifications.Sender
+	var emailSender notifications.EmailSender
 	if cfg.SendGridAPIKey != "" {
 		emailSender = notifications.NewSendGridEmailSender(cfg.SendGridAPIKey, cfg.SendGridFromEmail, cfg.SendGridFromName)
 		log.Println("email: using SendGrid")
@@ -82,22 +84,32 @@ func main() {
 	sessionService := sessions.NewService(sessionRepo, subsService)
 	sessionHandler := sessions.NewHandler(sessionService)
 
+	bizRepo := biz.NewRepository(db)
+	bizService := biz.NewService(bizRepo)
+	bizHandler := biz.NewHandler(bizService)
+
+	svcRepo := svc.NewRepository(db)
+	svcService := svc.NewService(svcRepo)
+	svcHandler := svc.NewHandler(svcService)
+
 	invoiceRepo := invoices.NewRepository(db)
-	invoiceService := invoices.NewService(invoiceRepo)
+	invoiceService := invoices.NewService(invoiceRepo, bizService, emailSender)
 	invoiceHandler := invoices.NewHandler(invoiceService)
 
 	// Set up router
 	handler := router.New(router.Deps{
-		DB:                  db,
-		AuthService:         authService,
-		AuthHandler:         authHandler,
-		ClientHandler:       clientHandler,
-		HorseHandler:        horseHandler,
-		BarnHandler:         barnHandler,
-		ApptHandler:         apptHandler,
-		SessionHandler:      sessionHandler,
-		InvoiceHandler:      invoiceHandler,
-		SubscriptionHandler: subsHandler,
+		DB:                     db,
+		AuthService:            authService,
+		AuthHandler:            authHandler,
+		ClientHandler:          clientHandler,
+		HorseHandler:           horseHandler,
+		BarnHandler:            barnHandler,
+		ApptHandler:            apptHandler,
+		SessionHandler:         sessionHandler,
+		InvoiceHandler:         invoiceHandler,
+		SubscriptionHandler:    subsHandler,
+		BusinessSettingHandler: bizHandler,
+		ServiceItemHandler:     svcHandler,
 	})
 
 	// Configure HTTP server

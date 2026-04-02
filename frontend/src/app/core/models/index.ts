@@ -94,6 +94,26 @@ export interface InvoiceItem {
   quantity: number;
   unitPrice: number;
   amount: number;
+  notes?: string;
+}
+
+export interface ServiceItem {
+  id: string;
+  userId: string;
+  name: string;
+  defaultPrice: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BusinessSettings {
+  id?: string;
+  userId?: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  address: string;
+  invoiceMessage: string;
 }
 
 export interface Invoice {

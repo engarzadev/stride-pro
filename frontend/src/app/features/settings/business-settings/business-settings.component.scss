@@ -1,0 +1,42 @@
+.settings-card {
+  margin-bottom: 24px;
+}
+
+.card-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #666);
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .field-grow {
+    flex: 2;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.hint-text {
+  font-size: 13px;
+  color: var(--text-secondary, #666);
+  margin: 0 0 12px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}

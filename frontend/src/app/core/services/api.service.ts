@@ -30,6 +30,10 @@ export class ApiService {
     return this.http.put<{ data: T }>(`${this.baseUrl}${path}`, keysToSnake(body)).pipe(map((r) => keysToCamel<T>(r.data)));
   }
 
+  patch<T>(path: string, body: unknown): Observable<T> {
+    return this.http.patch<{ data: T }>(`${this.baseUrl}${path}`, keysToSnake(body)).pipe(map((r) => keysToCamel<T>(r.data)));
+  }
+
   delete<T>(path: string): Observable<T> {
     return this.http.delete<{ data: T }>(`${this.baseUrl}${path}`).pipe(map((r) => keysToCamel<T>(r.data)));
   }

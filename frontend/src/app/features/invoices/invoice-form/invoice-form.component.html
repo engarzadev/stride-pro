@@ -9,194 +9,236 @@
     [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     createIcon="send"
-    (save)="onSubmit()">
+    (save)="onSubmit()"
+  >
     <form [formGroup]="form">
       <div class="form-main">
-          <!-- Invoice Details -->
-          <mat-card class="form-card">
-            <mat-card-content>
-              <div class="card-section-title">Invoice Details</div>
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="field-grow">
-                  <mat-label>Client</mat-label>
-                  <mat-select #clientSelect formControlName="clientId">
-                    <mat-option [value]="0" disabled
-                      >Select a client</mat-option
-                    >
-                    @for (client of clients(); track client.id) {
-                      <mat-option [value]="client.id">
-                        {{ client.firstName }} {{ client.lastName }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                  <button
-                    matSuffix
-                    mat-icon-button
-                    type="button"
-                    (click)="$event.stopPropagation(); clientSelect.close(); openCreateClient()"
-                    title="Create new client"
-                  >
-                    <mat-icon>add</mat-icon>
-                  </button>
-                  @if (form.controls.clientId.errors?.["required"]) {
-                    <mat-error>Client is required.</mat-error>
+        <!-- Invoice Details -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Invoice Details</div>
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="field-grow">
+                <mat-label>Client</mat-label>
+                <mat-select #clientSelect formControlName="clientId">
+                  <mat-option [value]="0" disabled>Select a client</mat-option>
+                  @for (client of clients(); track client.id) {
+                    <mat-option [value]="client.id">
+                      {{ client.firstName }} {{ client.lastName }}
+                    </mat-option>
                   }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="field-status">
-                  <mat-label>Status</mat-label>
-                  <mat-select formControlName="status">
-                    <mat-option value="draft">Draft</mat-option>
-                    <mat-option value="sent">Sent</mat-option>
-                    <mat-option value="paid">Paid</mat-option>
-                    <mat-option value="overdue">Overdue</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>Invoice Date</mat-label>
-                  <input matInput [matDatepicker]="invoiceDatePicker" formControlName="date" />
-                  <mat-datepicker-toggle matIconSuffix [for]="invoiceDatePicker"></mat-datepicker-toggle>
-                  <mat-datepicker #invoiceDatePicker></mat-datepicker>
-                  @if (form.controls.date.errors?.["required"]) {
-                    <mat-error>Invoice date is required.</mat-error>
-                  }
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                  <mat-label>Due Date</mat-label>
-                  <input matInput [matDatepicker]="dueDatePicker" formControlName="dueDate" />
-                  <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
-                  <mat-datepicker #dueDatePicker></mat-datepicker>
-                  @if (form.controls.dueDate.errors?.["required"]) {
-                    <mat-error>Due date is required.</mat-error>
-                  }
-                </mat-form-field>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Line Items -->
-          <mat-card class="form-card line-items-card">
-            <mat-card-content>
-              <div class="section-header">
-                <div class="card-section-title">Line Items</div>
+                </mat-select>
                 <button
+                  matSuffix
+                  mat-icon-button
                   type="button"
-                  mat-flat-button
-                  color="primary"
-                  class="add-item-btn"
-                  (click)="addItem()"
+                  (click)="
+                    $event.stopPropagation();
+                    clientSelect.close();
+                    openCreateClient()
+                  "
+                  title="Create new client"
                 >
-                  <mat-icon>add</mat-icon> Add Item
+                  <mat-icon>add</mat-icon>
                 </button>
-              </div>
-
-              <div class="line-items-scroll">
-                <table class="line-items-table">
-                  <thead>
-                    <tr>
-                      <th>Description</th>
-                      <th class="col-qty">Qty</th>
-                      <th class="col-price">Unit Price</th>
-                      <th class="col-amount">Amount</th>
-                      <th class="col-action"></th>
-                    </tr>
-                  </thead>
-                  <tbody formArrayName="items">
-                    @for (
-                      item of items.controls;
-                      track $index;
-                      let i = $index
-                    ) {
-                      <tr [formGroupName]="i" class="line-item-row">
-                        <td class="td-description">
-                          <input
-                            type="text"
-                            class="inline-input"
-                            formControlName="description"
-                            placeholder="Item description"
-                            (input)="recalculate()"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            class="inline-input text-right"
-                            formControlName="quantity"
-                            min="1"
-                            (input)="recalculate()"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            class="inline-input text-right"
-                            formControlName="unitPrice"
-                            min="0"
-                            step="0.01"
-                            (input)="recalculate()"
-                          />
-                        </td>
-                        <td class="text-right amount-cell">
-                          {{
-                            (item.get("quantity")?.value || 0) *
-                              (item.get("unitPrice")?.value || 0)
-                              | currencyFormat
-                          }}
-                        </td>
-                        <td class="td-action">
-                          <button
-                            type="button"
-                            mat-icon-button
-                            class="remove-btn"
-                            (click)="removeItem(i)"
-                            [disabled]="items.length === 1"
-                            title="Remove item"
-                          >
-                            <mat-icon>close</mat-icon>
-                          </button>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="totals-panel">
-                <div class="totals-row">
-                  <span class="totals-label">Subtotal</span>
-                  <span class="totals-value">{{
-                    subtotal() | currencyFormat
-                  }}</span>
-                </div>
-                <div class="totals-row">
-                  <span class="totals-label">Tax</span>
-                  <span class="totals-value">{{ tax() | currencyFormat }}</span>
-                </div>
-                <div class="totals-divider"></div>
-                <div class="totals-row total-final">
-                  <span class="totals-label">Total</span>
-                  <span class="totals-value">{{
-                    total() | currencyFormat
-                  }}</span>
-                </div>
-              </div>
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Notes -->
-          <mat-card class="form-card">
-            <mat-card-content>
-              <div class="card-section-title">Notes</div>
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Add a note for your client (optional)</mat-label>
-                <textarea matInput formControlName="notes" rows="4"></textarea>
+                @if (form.controls.clientId.errors?.["required"]) {
+                  <mat-error>Client is required.</mat-error>
+                }
               </mat-form-field>
-            </mat-card-content>
-          </mat-card>
+
+              <mat-form-field appearance="outline" class="field-status">
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option value="draft">Draft</mat-option>
+                  <mat-option value="sent">Sent</mat-option>
+                  <mat-option value="paid">Paid</mat-option>
+                  <mat-option value="overdue">Overdue</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Invoice Date</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="invoiceDatePicker"
+                  formControlName="date"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="invoiceDatePicker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #invoiceDatePicker></mat-datepicker>
+                @if (form.controls.date.errors?.["required"]) {
+                  <mat-error>Invoice date is required.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Due Date</mat-label>
+                <input
+                  matInput
+                  [matDatepicker]="dueDatePicker"
+                  formControlName="dueDate"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="dueDatePicker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #dueDatePicker></mat-datepicker>
+                @if (form.controls.dueDate.errors?.["required"]) {
+                  <mat-error>Due date is required.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Line Items -->
+        <mat-card class="form-card line-items-card">
+          <mat-card-content>
+            <div class="section-header">
+              <div class="card-section-title">Line Items</div>
+              <button
+                type="button"
+                mat-flat-button
+                color="primary"
+                class="add-item-btn"
+                (click)="addItem()"
+              >
+                <mat-icon>add</mat-icon> Add Item
+              </button>
+            </div>
+
+            <div class="line-items-scroll">
+              <table class="line-items-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th class="col-qty">Qty</th>
+                    <th class="col-price">Unit Price</th>
+                    <th class="col-amount">Amount</th>
+                    <th class="col-action"></th>
+                  </tr>
+                </thead>
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="onServiceSelected($event, activeItemIndex)"
+                >
+                  @for (item of filteredServiceItems(); track item.id) {
+                    <mat-option [value]="item.name">
+                      <div class="invoice-form__service-item">
+                        <span>{{ item.name }}</span>
+                        <span class="autocomplete-price">{{
+                          item.defaultPrice | currencyFormat
+                        }}</span>
+                      </div>
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+
+                <tbody formArrayName="items">
+                  @for (item of items.controls; track $index; let i = $index) {
+                    <tr [formGroupName]="i" class="line-item-row">
+                      <td class="td-description">
+                        <input
+                          type="text"
+                          class="inline-input"
+                          formControlName="description"
+                          placeholder="Item description"
+                          [matAutocomplete]="auto"
+                          (focus)="
+                            activeItemIndex = i;
+                            onDescriptionInput(
+                              items.at(i).get('description')?.value || ''
+                            )
+                          "
+                          (input)="
+                            activeItemIndex = i;
+                            onDescriptionInput($any($event.target).value)
+                          "
+                        />
+                        <input
+                          type="text"
+                          class="inline-input notes-input"
+                          formControlName="notes"
+                          placeholder="Internal note (optional)"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="inline-input text-right"
+                          formControlName="quantity"
+                          min="1"
+                          (input)="recalculate()"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="inline-input text-right"
+                          formControlName="unitPrice"
+                          min="0"
+                          step="0.01"
+                          (input)="recalculate()"
+                        />
+                      </td>
+                      <td class="text-right amount-cell">
+                        {{
+                          (item.get("quantity")?.value || 0) *
+                            (item.get("unitPrice")?.value || 0) | currencyFormat
+                        }}
+                      </td>
+                      <td class="td-action">
+                        <button
+                          type="button"
+                          mat-icon-button
+                          class="remove-btn"
+                          (click)="removeItem(i)"
+                          [disabled]="items.length === 1"
+                          title="Remove item"
+                        >
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="totals-panel">
+              <div class="totals-row">
+                <span class="totals-label">Subtotal</span>
+                <span class="totals-value">{{
+                  subtotal() | currencyFormat
+                }}</span>
+              </div>
+              <div class="totals-row">
+                <span class="totals-label">Tax</span>
+                <span class="totals-value">{{ tax() | currencyFormat }}</span>
+              </div>
+              <div class="totals-divider"></div>
+              <div class="totals-row total-final">
+                <span class="totals-label">Total</span>
+                <span class="totals-value">{{ total() | currencyFormat }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Notes -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Notes</div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Add a note for your client (optional)</mat-label>
+              <textarea matInput formControlName="notes" rows="4"></textarea>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
       </div>
     </form>
   </app-form-page>

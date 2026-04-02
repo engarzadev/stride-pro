@@ -131,6 +131,30 @@ type InvoiceItem struct {
 	Quantity    int       `json:"quantity"`
 	UnitPrice   float64   `json:"unit_price"`
 	Amount      float64   `json:"amount"`
+	Notes       string    `json:"notes,omitempty"`
+}
+
+// BusinessSettings holds a user's business profile used for invoicing.
+type BusinessSettings struct {
+	ID             uuid.UUID `json:"id"`
+	UserID         uuid.UUID `json:"user_id"`
+	BusinessName   string    `json:"business_name"`
+	Email          string    `json:"email"`
+	Phone          string    `json:"phone"`
+	Address        string    `json:"address"`
+	InvoiceMessage string    `json:"invoice_message"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+// ServiceItem is a reusable service in the user's price catalog.
+type ServiceItem struct {
+	ID           uuid.UUID `json:"id"`
+	UserID       uuid.UUID `json:"user_id"`
+	Name         string    `json:"name"`
+	DefaultPrice float64   `json:"default_price"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 // Notification represents a message sent to a user or client.

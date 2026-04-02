@@ -9,6 +9,17 @@ import (
 	"net/http"
 )
 
+// HTMLSender is the interface for sending HTML-formatted email.
+type HTMLSender interface {
+	SendHTML(recipient, subject, htmlBody string) error
+}
+
+// EmailSender combines plain-text and HTML email sending.
+type EmailSender interface {
+	Sender
+	HTMLSender
+}
+
 // StubEmailSender logs email sends instead of actually sending them.
 // Use this for development and testing.
 type StubEmailSender struct{}
@@ -21,6 +32,12 @@ func NewStubEmailSender() *StubEmailSender {
 // Send logs the email details rather than sending a real email.
 func (s *StubEmailSender) Send(recipient, subject, body string) error {
 	log.Printf("[EMAIL STUB] To: %s | Subject: %s | Body: %s", recipient, subject, body)
+	return nil
+}
+
+// SendHTML logs the HTML email details rather than sending a real email.
+func (s *StubEmailSender) SendHTML(recipient, subject, htmlBody string) error {
+	log.Printf("[EMAIL STUB HTML] To: %s | Subject: %s | Body: %s", recipient, subject, htmlBody)
 	return nil
 }
 
@@ -42,8 +59,17 @@ func NewSendGridEmailSender(apiKey, fromEmail, fromName string) *SendGridEmailSe
 	}
 }
 
-// Send delivers an email via the SendGrid v3 mail/send endpoint.
+// Send delivers a plain-text email via the SendGrid v3 mail/send endpoint.
 func (s *SendGridEmailSender) Send(recipient, subject, body string) error {
+	return s.send(recipient, subject, "text/plain", body)
+}
+
+// SendHTML delivers an HTML email via the SendGrid v3 mail/send endpoint.
+func (s *SendGridEmailSender) SendHTML(recipient, subject, htmlBody string) error {
+	return s.send(recipient, subject, "text/html", htmlBody)
+}
+
+func (s *SendGridEmailSender) send(recipient, subject, contentType, body string) error {
 	payload := map[string]any{
 		"personalizations": []map[string]any{
 			{"to": []map[string]string{{"email": recipient}}},
@@ -54,7 +80,7 @@ func (s *SendGridEmailSender) Send(recipient, subject, body string) error {
 		},
 		"subject": subject,
 		"content": []map[string]string{
-			{"type": "text/plain", "value": body},
+			{"type": contentType, "value": body},
 		},
 	}
 

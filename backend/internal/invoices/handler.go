@@ -164,6 +164,23 @@ func (h *Handler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]string{"message": "Invoice status updated"})
 }
 
+// Send handles POST /api/invoices/{id}/send — emails the invoice and marks it sent.
+func (h *Handler) Send(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	id, err := uuid.Parse(mux.Vars(r)["id"])
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")
+		return
+	}
+
+	if err := h.service.SendInvoice(userID, id); err != nil {
+		response.Error(w, http.StatusInternalServerError, "Failed to send invoice")
+		return
+	}
+
+	response.JSON(w, http.StatusOK, map[string]string{"message": "Invoice sent"})
+}
+
 // Delete handles DELETE /api/invoices/{id}.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
