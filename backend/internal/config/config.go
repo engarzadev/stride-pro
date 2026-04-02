@@ -14,8 +14,10 @@ type Config struct {
 	Port        string
 	Environment string
 
-	// External service keys (for future use)
+	// External service keys
 	SendGridAPIKey    string
+	SendGridFromEmail string
+	SendGridFromName  string
 	TwilioAccountSID  string
 	TwilioAuthToken   string
 	TwilioPhoneNumber string
@@ -33,6 +35,8 @@ func Load() (*Config, error) {
 		Port:              getEnv("PORT", "8080"),
 		Environment:       getEnv("ENVIRONMENT", "dev"),
 		SendGridAPIKey:    getEnv("SENDGRID_API_KEY", ""),
+		SendGridFromEmail: getEnv("SENDGRID_FROM_EMAIL", ""),
+		SendGridFromName:  getEnv("SENDGRID_FROM_NAME", "Stride Pro"),
 		TwilioAccountSID:  getEnv("TWILIO_ACCOUNT_SID", ""),
 		TwilioAuthToken:   getEnv("TWILIO_AUTH_TOKEN", ""),
 		TwilioPhoneNumber: getEnv("TWILIO_PHONE_NUMBER", ""),

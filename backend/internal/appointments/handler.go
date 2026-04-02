@@ -2,6 +2,7 @@ package appointments
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -103,6 +104,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	appt, err := h.service.Create(userID, input)
+	if errors.Is(err, ErrConflict) {
+		response.Error(w, http.StatusConflict, "This appointment overlaps with an existing one (including travel time)")
+		return
+	}
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, "Failed to create appointment")
 		return
@@ -132,6 +137,10 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	appt, err := h.service.Update(userID, id, input)
+	if errors.Is(err, ErrConflict) {
+		response.Error(w, http.StatusConflict, "This appointment overlaps with an existing one (including travel time)")
+		return
+	}
 	if err != nil {
 		response.Error(w, http.StatusInternalServerError, "Failed to update appointment")
 		return

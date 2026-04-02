@@ -1,11 +1,15 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Client } from '../../../core/models';
-import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
-import { DataTableComponent, MobileCardConfig, TableColumn } from '../../../shared/components/data-table/data-table.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  DataTableComponent,
+  MobileCardConfig,
+  TableColumn,
+} from '../../../shared/components/data-table/data-table.component';
+import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -14,7 +18,14 @@ import { ClientsService } from '../clients.service';
 @Component({
   selector: 'app-client-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, MatCardModule, MatButtonModule, DataTableComponent, DetailPageComponent],
+  imports: [
+    LoadingSpinnerComponent,
+    DateFormatPipe,
+    MatCardModule,
+    MatButtonModule,
+    DataTableComponent,
+    DetailPageComponent,
+  ],
   templateUrl: './client-detail.component.html',
   styleUrls: ['./client-detail.component.scss'],
 })
@@ -35,7 +46,10 @@ export class ClientDetailComponent implements OnInit {
     { key: 'gender', label: 'Gender', capitalize: true },
   ];
 
-  readonly horseMobileCard: MobileCardConfig = { titleKey: 'name', subtitleKey: 'breed' };
+  readonly horseMobileCard: MobileCardConfig = {
+    titleKey: 'name',
+    subtitleKey: 'breed',
+  };
 
   onHorseClick(row: Record<string, unknown>): void {
     this.router.navigate(['/horses', row['id']]);

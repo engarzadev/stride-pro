@@ -18,6 +18,7 @@ import (
 	"github.com/stride-pro/backend/internal/database"
 	"github.com/stride-pro/backend/internal/horses"
 	"github.com/stride-pro/backend/internal/invoices"
+	"github.com/stride-pro/backend/internal/notifications"
 	"github.com/stride-pro/backend/internal/router"
 	"github.com/stride-pro/backend/internal/sessions"
 	"github.com/stride-pro/backend/internal/subscriptions"
@@ -63,8 +64,18 @@ func main() {
 	barnService := barns.NewService(barnRepo, subsService)
 	barnHandler := barns.NewHandler(barnService)
 
+	var emailSender notifications.Sender
+	if cfg.SendGridAPIKey != "" {
+		emailSender = notifications.NewSendGridEmailSender(cfg.SendGridAPIKey, cfg.SendGridFromEmail, cfg.SendGridFromName)
+		log.Println("email: using SendGrid")
+	} else {
+		emailSender = notifications.NewStubEmailSender()
+		log.Println("email: using stub (set SENDGRID_API_KEY to enable real sending)")
+	}
+	notifService := notifications.NewService(db, emailSender, notifications.NewStubSMSSender())
+
 	apptRepo := appointments.NewRepository(db)
-	apptService := appointments.NewService(apptRepo)
+	apptService := appointments.NewService(apptRepo, notifService, authService)
 	apptHandler := appointments.NewHandler(apptService)
 
 	sessionRepo := sessions.NewRepository(db)

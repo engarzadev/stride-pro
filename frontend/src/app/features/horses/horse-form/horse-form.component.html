@@ -8,7 +8,8 @@
     [saving]="saving()"
     [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
-    (save)="onSubmit()">
+    (save)="onSubmit()"
+  >
     <form [formGroup]="form">
       <div class="form-main">
         <mat-card class="form-card">
@@ -64,7 +65,16 @@
                     </mat-option>
                   }
                 </mat-select>
-                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); clientSelect.close(); openCreateClient()" title="Create new client">
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  (click)="
+                    $event.stopPropagation();
+                    clientSelect.close();
+                    openCreateClient()"
+                  title="Create new client"
+                >
                   <mat-icon>add</mat-icon>
                 </button>
                 @if (form.controls.clientId.errors) {
@@ -80,7 +90,17 @@
                       <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
                     }
                   </mat-select>
-                  <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()" title="Create new barn">
+                  <button
+                    matSuffix
+                    mat-icon-button
+                    type="button"
+                    (click)="
+                      $event.stopPropagation();
+                      barnSelect.close();
+                      openCreateBarn()
+                    "
+                    title="Create new barn"
+                  >
                     <mat-icon>add</mat-icon>
                   </button>
                 </mat-form-field>

@@ -82,6 +82,7 @@ type Appointment struct {
 	Date        string        `json:"date"`
 	Time        string        `json:"time"`
 	Duration    int           `json:"duration"`
+	TravelTime  int           `json:"travel_time"`
 	Status      string        `json:"status"`
 	Type        string        `json:"type"`
 	Notes       string        `json:"notes"`

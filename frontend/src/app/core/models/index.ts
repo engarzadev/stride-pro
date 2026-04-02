@@ -62,6 +62,7 @@ export interface Appointment {
   date: string;
   time: string;
   duration: number;
+  travelTime: number;
   type: string;
   status: string;
   notes: string;

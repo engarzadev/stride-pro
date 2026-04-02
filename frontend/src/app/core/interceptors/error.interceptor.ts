@@ -23,6 +23,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         message = 'You do not have permission to perform this action';
       } else if (error.status === 404) {
         message = 'The requested resource was not found';
+      } else if (error.status === 409) {
+        message = error.error?.error?.message || 'Scheduling conflict detected';
       } else if (error.status === 422) {
         message = error.error?.error || 'Validation error';
       } else if (error.status >= 500) {

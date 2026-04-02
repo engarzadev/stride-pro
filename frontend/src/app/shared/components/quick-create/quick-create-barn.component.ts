@@ -1,4 +1,4 @@
-import { Component, Injectable, inject, signal } from '@angular/core';
+import { Component, Injectable, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -8,11 +8,13 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { firstValueFrom } from 'rxjs';
-import { Barn } from '../../../core/models';
+import { Observable, forkJoin, firstValueFrom, of } from 'rxjs';
+import { Barn, Horse } from '../../../core/models';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { BarnsService } from '../../../features/barns/barns.service';
+import { HorsesService } from '../../../features/horses/horses.service';
 import { ToastService } from '../toast/toast.service';
+import { HorseMultiselectAutocompleteComponent } from '../horse-multiselect-autocomplete/horse-multiselect-autocomplete.component';
 
 @Injectable({ providedIn: 'root' })
 export class QuickCreateBarnService {
@@ -40,6 +42,7 @@ export class QuickCreateBarnService {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    HorseMultiselectAutocompleteComponent,
   ],
   template: `
     <h2 mat-dialog-title>New Barn</h2>
@@ -77,6 +80,11 @@ export class QuickCreateBarnService {
           <mat-label>Notes</mat-label>
           <textarea matInput formControlName="notes" rows="2"></textarea>
         </mat-form-field>
+        <app-horse-multiselect-autocomplete
+          [horses]="allHorses()"
+          [selectedHorses]="selectedHorses()"
+          (selectedHorsesChange)="selectedHorses.set($event)"
+        />
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -97,11 +105,14 @@ export class QuickCreateBarnService {
     </mat-dialog-actions>
   `,
 })
-export class QuickCreateBarnComponent {
+export class QuickCreateBarnComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<QuickCreateBarnComponent>);
   private readonly barnsService = inject(BarnsService);
+  private readonly horsesService = inject(HorsesService);
   private readonly fb = inject(FormBuilder);
   readonly saving = signal(false);
+  readonly allHorses = signal<Horse[]>([]);
+  readonly selectedHorses = signal<Horse[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
@@ -112,6 +123,10 @@ export class QuickCreateBarnComponent {
     notes: [''],
   });
 
+  ngOnInit(): void {
+    this.horsesService.getAll().subscribe((horses) => this.allHorses.set(horses));
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -119,7 +134,15 @@ export class QuickCreateBarnComponent {
     }
     this.saving.set(true);
     this.barnsService.create(this.form.getRawValue()).subscribe({
-      next: (barn) => this.dialogRef.close(barn),
+      next: (barn) => {
+        const horses = this.selectedHorses();
+        const updates = horses.map((horse) => this.horsesService.update(horse.id, { ...horse, barnId: barn.id }));
+        const assign$: Observable<unknown> = updates.length > 0 ? forkJoin(updates) : of(null);
+        assign$.subscribe({
+          next: () => this.dialogRef.close(barn),
+          error: () => this.dialogRef.close(barn),
+        });
+      },
       error: () => this.saving.set(false),
     });
   }

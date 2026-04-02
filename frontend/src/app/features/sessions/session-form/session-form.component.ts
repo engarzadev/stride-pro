@@ -1,27 +1,39 @@
-import { Component, ViewChild, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { SessionsService } from '../sessions.service';
-import { AppointmentsService } from '../../appointments/appointments.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Appointment } from '../../../core/models';
-import { ToastService } from '../../../shared/components/toast/toast.service';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
-import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
-import { QuickCreateAppointmentService } from '../../../shared/components/quick-create/quick-create-appointment.component';
 import { SubscriptionService } from '../../../core/services/subscription.service';
+import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { QuickCreateAppointmentService } from '../../../shared/components/quick-create/quick-create-appointment.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
+import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { AppointmentsService } from '../../appointments/appointments.service';
+import { SessionsService } from '../sessions.service';
 
 @Component({
   selector: 'app-session-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormPageComponent, LoadingSpinnerComponent, DateFormatPipe, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatCardModule, MatCheckboxModule],
+  imports: [
+    ReactiveFormsModule,
+    FormPageComponent,
+    LoadingSpinnerComponent,
+    DateFormatPipe,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatCheckboxModule,
+  ],
   templateUrl: './session-form.component.html',
   styleUrls: ['./session-form.component.scss'],
 })
@@ -32,7 +44,9 @@ export class SessionFormComponent implements OnInit {
   private readonly sessionsService = inject(SessionsService);
   private readonly appointmentsService = inject(AppointmentsService);
   private readonly toast = inject(ToastService);
-  private readonly quickCreateAppointment = inject(QuickCreateAppointmentService);
+  private readonly quickCreateAppointment = inject(
+    QuickCreateAppointmentService,
+  );
   private readonly subscriptionService = inject(SubscriptionService);
 
   @ViewChild('appointmentSelect') appointmentSelect!: MatSelect;
@@ -44,10 +58,27 @@ export class SessionFormComponent implements OnInit {
   private sessionId = '';
 
   readonly bodyZoneOptions = [
-    'Head', 'Neck', 'Withers', 'Back', 'Loin', 'Croup',
-    'Shoulder', 'Foreleg', 'Hindleg', 'Hoof', 'Barrel',
-    'Chest', 'Abdomen', 'Hip', 'Stifle', 'Hock', 'Fetlock',
-    'Poll', 'TMJ', 'Pelvis', 'Sacrum',
+    'Head',
+    'Neck',
+    'Withers',
+    'Back',
+    'Loin',
+    'Croup',
+    'Shoulder',
+    'Foreleg',
+    'Hindleg',
+    'Hoof',
+    'Barrel',
+    'Chest',
+    'Abdomen',
+    'Hip',
+    'Stifle',
+    'Hock',
+    'Fetlock',
+    'Poll',
+    'TMJ',
+    'Pelvis',
+    'Sacrum',
   ];
 
   readonly selectedZones = signal<Set<string>>(new Set());
@@ -61,7 +92,9 @@ export class SessionFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.appointmentsService.getAll().subscribe((a) => this.appointments.set(a));
+    this.appointmentsService
+      .getAll()
+      .subscribe((a) => this.appointments.set(a));
 
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
@@ -97,6 +130,18 @@ export class SessionFormComponent implements OnInit {
         },
       });
     }
+
+    this.form.controls.appointmentId.valueChanges.subscribe((appointmentId) => {
+      if (appointmentId) {
+        this.appointmentsService.getById(appointmentId).subscribe({
+          next: (appointment) => {
+            if (appointment) {
+              this.form.patchValue({ type: appointment.type });
+            }
+          },
+        });
+      }
+    });
   }
 
   async openCreateAppointment(): Promise<void> {
@@ -138,7 +183,11 @@ export class SessionFormComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.toast.success(this.isEdit() ? 'Session updated successfully' : 'Session created successfully');
+        this.toast.success(
+          this.isEdit()
+            ? 'Session updated successfully'
+            : 'Session created successfully',
+        );
         this.router.navigate(['/sessions']);
       },
       error: () => this.saving.set(false),

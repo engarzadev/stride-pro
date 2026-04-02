@@ -1,7 +1,12 @@
 package notifications
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"log"
+	"net/http"
 )
 
 // StubEmailSender logs email sends instead of actually sending them.
@@ -19,27 +24,62 @@ func (s *StubEmailSender) Send(recipient, subject, body string) error {
 	return nil
 }
 
-// SendGridEmailSender sends emails via the SendGrid API.
-// TODO: Implement for v2 when SendGrid integration is needed.
-//
-// type SendGridEmailSender struct {
-// 	apiKey    string
-// 	fromEmail string
-// 	fromName  string
-// }
-//
-// func NewSendGridEmailSender(apiKey, fromEmail, fromName string) *SendGridEmailSender {
-// 	return &SendGridEmailSender{
-// 		apiKey:    apiKey,
-// 		fromEmail: fromEmail,
-// 		fromName:  fromName,
-// 	}
-// }
-//
-// func (s *SendGridEmailSender) Send(recipient, subject, body string) error {
-// 	// TODO: Use SendGrid v3 API to send email
-// 	// 1. Build the mail message
-// 	// 2. POST to https://api.sendgrid.com/v3/mail/send
-// 	// 3. Handle response and errors
-// 	return nil
-// }
+// SendGridEmailSender sends emails via the SendGrid v3 API.
+type SendGridEmailSender struct {
+	apiKey    string
+	fromEmail string
+	fromName  string
+	client    *http.Client
+}
+
+// NewSendGridEmailSender creates a SendGrid email sender.
+func NewSendGridEmailSender(apiKey, fromEmail, fromName string) *SendGridEmailSender {
+	return &SendGridEmailSender{
+		apiKey:    apiKey,
+		fromEmail: fromEmail,
+		fromName:  fromName,
+		client:    &http.Client{},
+	}
+}
+
+// Send delivers an email via the SendGrid v3 mail/send endpoint.
+func (s *SendGridEmailSender) Send(recipient, subject, body string) error {
+	payload := map[string]any{
+		"personalizations": []map[string]any{
+			{"to": []map[string]string{{"email": recipient}}},
+		},
+		"from": map[string]string{
+			"email": s.fromEmail,
+			"name":  s.fromName,
+		},
+		"subject": subject,
+		"content": []map[string]string{
+			{"type": "text/plain", "value": body},
+		},
+	}
+
+	b, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("marshalling sendgrid payload: %w", err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, "https://api.sendgrid.com/v3/mail/send", bytes.NewReader(b))
+	if err != nil {
+		return fmt.Errorf("building sendgrid request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+s.apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("sending sendgrid request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		respBody, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("sendgrid returned %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	return nil
+}

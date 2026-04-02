@@ -2,18 +2,98 @@
 @use '@angular/material' as mat;
 
 // === Angular Material Theme ===
-$primary-palette: mat.m2-define-palette(mat.$m2-blue-palette, 600, 300, 800);
-$accent-palette: mat.m2-define-palette(mat.$m2-blue-grey-palette, 500, 200, 700);
-$warn-palette: mat.m2-define-palette(mat.$m2-red-palette, 600, 300, 800);
+// Forest green palette — #3B6255 as primary
+$forest-palette: (
+  50:  #eaf2ef,
+  100: #cbded3, // #CBDED3 — light sage
+  200: #a8c8ba,
+  300: #8ba49a, // #8BA49A — medium sage
+  400: #6b8c7f,
+  500: #4e7568,
+  600: #3b6255, // #3B6255 — forest green (primary)
+  700: #2d4d42,
+  800: #1f3830,
+  900: #0f211c,
+  A100: #cbded3,
+  A200: #8ba49a,
+  A400: #3b6255,
+  A700: #2d4d42,
+  contrast: (
+    50:  rgba(0,0,0,.87),
+    100: rgba(0,0,0,.87),
+    200: rgba(0,0,0,.87),
+    300: rgba(0,0,0,.87),
+    400: #fff,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+    A100: rgba(0,0,0,.87),
+    A200: rgba(0,0,0,.87),
+    A400: #fff,
+    A700: #fff,
+  )
+);
+
+// Sand/tan accent palette — #D2C49E as base
+$sand-palette: (
+  50:  #faf8f3,
+  100: #f0ebe0,
+  200: #e4d9c4,
+  300: #d2c49e, // #D2C49E — warm sand
+  400: #c4af82,
+  500: #b59a67,
+  600: #a08550, // default accent (darker for contrast)
+  700: #836c3e,
+  800: #61502d,
+  900: #3e331c,
+  A100: #f0ebe0,
+  A200: #d2c49e,
+  A400: #a08550,
+  A700: #836c3e,
+  contrast: (
+    50:  rgba(0,0,0,.87),
+    100: rgba(0,0,0,.87),
+    200: rgba(0,0,0,.87),
+    300: rgba(0,0,0,.87),
+    400: rgba(0,0,0,.87),
+    500: rgba(0,0,0,.87),
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+    A100: rgba(0,0,0,.87),
+    A200: rgba(0,0,0,.87),
+    A400: #fff,
+    A700: #fff,
+  )
+);
+
+$primary-palette: mat.m2-define-palette($forest-palette, 600, 100, 800);
+$accent-palette:  mat.m2-define-palette($sand-palette, 600, 300, 800);
+$warn-palette:    mat.m2-define-palette(mat.$m2-red-palette, 600, 300, 800);
 
 $theme: mat.m2-define-light-theme((
   color: (
     primary: $primary-palette,
-    accent: $accent-palette,
-    warn: $warn-palette,
+    accent:  $accent-palette,
+    warn:    $warn-palette,
   ),
   typography: mat.m2-define-typography-config(
-    $font-family: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+    $font-family: 'DM Sans, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+    $headline-1: mat.m2-define-typography-level(96px,  96px,  300, 'Lora'),
+    $headline-2: mat.m2-define-typography-level(60px,  60px,  300, 'Lora'),
+    $headline-3: mat.m2-define-typography-level(48px,  50px,  400, 'Lora'),
+    $headline-4: mat.m2-define-typography-level(34px,  40px,  500, 'Lora'),
+    $headline-5: mat.m2-define-typography-level(24px,  32px,  600, 'Lora'),
+    $headline-6: mat.m2-define-typography-level(20px,  32px,  700, 'Lora'),
+    $subtitle-1: mat.m2-define-typography-level(16px,  28px,  500, 'DM Sans'),
+    $subtitle-2: mat.m2-define-typography-level(14px,  22px,  600, 'DM Sans'),
+    $body-1:     mat.m2-define-typography-level(16px,  24px,  400, 'DM Sans'),
+    $body-2:     mat.m2-define-typography-level(14px,  20px,  400, 'DM Sans'),
+    $button:     mat.m2-define-typography-level(14px,  36px,  600, 'DM Sans'),
+    $caption:    mat.m2-define-typography-level(12px,  20px,  400, 'DM Sans'),
   ),
   density: 0,
 ));
@@ -21,32 +101,35 @@ $theme: mat.m2-define-light-theme((
 @include mat.all-component-themes($theme);
 
 // === Variables ===
-$primary: #2563eb;
-$primary-light: #3b82f6;
-$primary-dark: #1d4ed8;
-$secondary: #64748b;
-$secondary-light: #94a3b8;
-$success: #16a34a;
-$success-light: #22c55e;
-$warning: #d97706;
-$warning-light: #f59e0b;
-$danger: #dc2626;
-$danger-light: #ef4444;
-$background: #f8fafc;
-$surface: #ffffff;
-$text: #0f172a;
-$text-muted: #64748b;
-$border: #e2e8f0;
-$border-light: #f1f5f9;
-$shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-$radius: 8px;
-$radius-sm: 4px;
-$radius-lg: 12px;
-$font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-$sidebar-width: 260px;
-$header-height: 64px;
+$primary:         #3b6255; // Forest Green
+$primary-light:   #8ba49a; // Medium Sage
+$primary-dark:    #2d4d42; // Deep Forest
+$accent:          #a08550; // Warm Sand (darkened for contrast)
+$accent-light:    #d2c49e; // Soft Sand
+$secondary:       #8ba49a; // Sage
+$secondary-light: #cbded3; // Light Mint Sage
+$success:         #3b6255; // Use forest green for success too
+$success-light:   #8ba49a;
+$warning:         #b07d2a; // Muted amber
+$warning-light:   #d2a84e;
+$danger:          #b94040;
+$danger-light:    #d46060;
+$background:      #f4f5f3; // Very light sage-tinted white
+$surface:         #ffffff;
+$text:            #1e3329; // Deep forest — dark but green-tinted, not brown-black
+$text-muted:      #8ba49a; // Sage
+$border:          #cbded3; // Light Mint Sage
+$border-light:    #e2dfda; // Off-white from palette
+$shadow:          0 1px 3px rgba(59, 98, 85, 0.07), 0 1px 2px rgba(59, 98, 85, 0.05);
+$shadow-md:       0 4px 6px -1px rgba(59, 98, 85, 0.08), 0 2px 4px -2px rgba(59, 98, 85, 0.06);
+$shadow-lg:       0 10px 15px -3px rgba(59, 98, 85, 0.09), 0 4px 6px -4px rgba(59, 98, 85, 0.06);
+$radius:          6px;
+$radius-sm:       4px;
+$radius-lg:       10px;
+$font-family:     'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-family-heading: 'Lora', Georgia, serif;
+$sidebar-width:   260px;
+$header-height:   64px;
 
 // === Reset ===
 *,
@@ -94,10 +177,34 @@ input, button, textarea, select {
 }
 
 // === Typography ===
-h1 { font-size: 1.875rem; font-weight: 700; line-height: 1.2; }
-h2 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
-h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
-h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+h1 {
+  font-family: $font-family-heading;
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+h2 {
+  font-family: $font-family-heading;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+
+h3 {
+  font-family: $font-family-heading;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
 
 // === Material overrides ===
 .mat-mdc-form-field {
@@ -138,27 +245,27 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
   line-height: 1.5;
 
   &-success {
-    background-color: rgba($success, 0.1);
+    background-color: rgba($success, 0.12);
     color: $success;
   }
 
   &-warning {
-    background-color: rgba($warning, 0.1);
+    background-color: rgba($warning, 0.12);
     color: $warning;
   }
 
   &-danger {
-    background-color: rgba($danger, 0.1);
+    background-color: rgba($danger, 0.12);
     color: $danger;
   }
 
   &-primary {
-    background-color: rgba($primary, 0.1);
+    background-color: rgba($primary, 0.12);
     color: $primary;
   }
 
   &-secondary {
-    background-color: rgba($secondary, 0.1);
+    background-color: rgba($secondary, 0.12);
     color: $secondary;
   }
 }
@@ -223,9 +330,11 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
 
   h1 {
     margin: 0.25rem 0 0;
+    font-family: $font-family-heading;
     font-size: 1.75rem;
     font-weight: 700;
-    color: #0f172a;
+    letter-spacing: 0.01em;
+    color: $text;
   }
 }
 
@@ -241,7 +350,7 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
   gap: 0.25rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #64748b;
+  color: $text-muted;
   text-decoration: none;
   transition: color 0.15s;
 
@@ -252,7 +361,7 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
   }
 
   &:hover {
-    color: #2563eb;
+    color: $primary;
   }
 }
 
@@ -263,10 +372,8 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
 }
 
 .form-card {
-  border-radius: 12px !important;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  border-radius: $radius-lg !important;
+  box-shadow: $shadow !important;
 
   mat-card-content {
     padding: 1.25rem 1.5rem !important;
@@ -278,7 +385,7 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: $secondary-light;
   margin-bottom: 1rem;
 }
 
@@ -292,7 +399,7 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
 }
 
 .btn-save {
-  border-radius: 8px !important;
+  border-radius: $radius !important;
   font-weight: 600 !important;
   letter-spacing: 0.01em !important;
   height: 42px !important;
@@ -306,7 +413,7 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
 }
 
 .btn-cancel {
-  border-radius: 8px !important;
+  border-radius: $radius !important;
   text-align: center;
   height: 40px !important;
   line-height: 38px !important;
@@ -328,9 +435,9 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
     right: 0;
     z-index: 100;
     padding: 0.75rem 1rem;
-    background: #fff;
-    border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+    background: $surface;
+    border-top: 1px solid $border;
+    box-shadow: 0 -2px 12px rgba(139, 69, 19, 0.08);
   }
 
   .actions-card {
@@ -403,16 +510,16 @@ h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
 
 // === Material snackbar overrides ===
 .snack-success .mdc-snackbar__surface {
-  background-color: #16a34a !important;
+  background-color: $success !important;
 }
 .snack-error .mdc-snackbar__surface {
-  background-color: #dc2626 !important;
+  background-color: $danger !important;
 }
 .snack-warning .mdc-snackbar__surface {
-  background-color: #d97706 !important;
+  background-color: $warning !important;
 }
 .snack-info .mdc-snackbar__surface {
-  background-color: #2563eb !important;
+  background-color: #4e7568 !important;
 }
 .snack-success, .snack-error, .snack-warning, .snack-info {
   .mdc-snackbar__label, .mat-mdc-snack-bar-action {

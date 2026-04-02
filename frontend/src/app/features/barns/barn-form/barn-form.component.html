@@ -46,6 +46,20 @@
             </div>
           </mat-card-content>
         </mat-card>
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Horse Assignments</div>
+            @if (canManageBarns()) {
+              <app-horse-multiselect-autocomplete
+                [horses]="allHorses()"
+                [selectedHorses]="selectedHorse()"
+                (selectedHorsesChange)="selectedHorse.set($event)"
+              />
+            } @else {
+              <app-upgrade-field-prompt label="Assigned Horses" />
+            }
+          </mat-card-content>
+        </mat-card>
 
         <mat-card class="form-card">
           <mat-card-content>

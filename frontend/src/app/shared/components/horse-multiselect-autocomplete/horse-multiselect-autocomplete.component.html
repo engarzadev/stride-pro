@@ -1,0 +1,30 @@
+<mat-form-field appearance="outline" class="full-width">
+  <mat-label>Assigned Horses</mat-label>
+  <mat-chip-grid #chipGrid [disabled]="disabled">
+    @for (horse of displayedSelectedHorses(); track horse.id) {
+      <mat-chip-row (removed)="remove(horse.id)" [disabled]="disabled">
+        {{ horse.name }}
+        <button matChipRemove [disabled]="disabled">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip-row>
+    }
+    <input
+      #searchInput
+      placeholder="Search horses..."
+      autocomplete="off"
+      [matChipInputFor]="chipGrid"
+      [matAutocomplete]="horseAuto"
+      [disabled]="disabled"
+      (input)="onInput($any($event.target).value)"
+    />
+  </mat-chip-grid>
+  <mat-autocomplete #horseAuto="matAutocomplete" (optionSelected)="select($event)">
+    @for (horse of filteredHorses(); track horse.id) {
+      <mat-option [value]="horse">{{ horse.name }}</mat-option>
+    }
+    @if (filteredHorses().length === 0) {
+      <mat-option disabled>No horses found</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

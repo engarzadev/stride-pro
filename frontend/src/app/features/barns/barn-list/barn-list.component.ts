@@ -26,7 +26,6 @@ import { BarnsService } from '../barns.service';
     LoadingSpinnerComponent,
     MatCardModule,
     MatIconModule,
-    UpgradeFieldPromptComponent,
     RouterLink,
   ],
   templateUrl: './barn-list.component.html',

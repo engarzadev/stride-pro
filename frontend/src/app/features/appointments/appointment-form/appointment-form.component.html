@@ -9,7 +9,8 @@
     [formInvalid]="form.invalid"
     [isEdit]="isEdit()"
     createIcon="event"
-    (save)="onSubmit()">
+    (save)="onSubmit()"
+  >
     <form [formGroup]="form">
       <div class="form-main">
         <mat-card class="form-card">
@@ -26,7 +27,17 @@
                     </mat-option>
                   }
                 </mat-select>
-                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); clientSelect.close(); openCreateClient()" title="Create new client">
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  (click)="
+                    $event.stopPropagation();
+                    clientSelect.close();
+                    openCreateClient()
+                  "
+                  title="Create new client"
+                >
                   <mat-icon>add</mat-icon>
                 </button>
                 @if (form.controls.clientId.errors) {
@@ -45,7 +56,11 @@
                   matSuffix
                   mat-icon-button
                   type="button"
-                  (click)="$event.stopPropagation(); horseSelect.close(); openCreateHorse()"
+                  (click)="
+                    $event.stopPropagation();
+                    horseSelect.close();
+                    openCreateHorse()
+                  "
                   [disabled]="form.controls.horseId.disabled"
                   title="Create new horse"
                 >
@@ -69,7 +84,11 @@
                   matSuffix
                   mat-icon-button
                   type="button"
-                  (click)="$event.stopPropagation(); barnSelect.close(); openCreateBarn()"
+                  (click)="
+                    $event.stopPropagation();
+                    barnSelect.close();
+                    openCreateBarn()
+                  "
                   [disabled]="form.controls.barnId.disabled"
                   title="Create new barn"
                 >
@@ -88,8 +107,15 @@
             <div class="form-row">
               <mat-form-field appearance="outline">
                 <mat-label>Date</mat-label>
-                <input matInput [matDatepicker]="datePicker" formControlName="date" />
-                <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+                <input
+                  matInput
+                  [matDatepicker]="datePicker"
+                  formControlName="date"
+                />
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="datePicker"
+                ></mat-datepicker-toggle>
                 <mat-datepicker #datePicker></mat-datepicker>
                 @if (form.controls.date.errors?.["required"]) {
                   <mat-error>Date is required.</mat-error>
@@ -97,8 +123,15 @@
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Time</mat-label>
-                <input matInput [matTimepicker]="timePicker" formControlName="time" />
-                <mat-timepicker-toggle matIconSuffix [for]="timePicker"></mat-timepicker-toggle>
+                <input
+                  matInput
+                  [matTimepicker]="timePicker"
+                  formControlName="time"
+                />
+                <mat-timepicker-toggle
+                  matIconSuffix
+                  [for]="timePicker"
+                ></mat-timepicker-toggle>
                 <mat-timepicker #timePicker></mat-timepicker>
                 @if (form.controls.time.errors?.["required"]) {
                   <mat-error>Time is required.</mat-error>
@@ -108,7 +141,13 @@
             <div class="form-row">
               <mat-form-field appearance="outline">
                 <mat-label>Duration (minutes)</mat-label>
-                <input matInput type="number" formControlName="duration" min="15" step="15" />
+                <input
+                  matInput
+                  type="number"
+                  formControlName="duration"
+                  min="15"
+                  step="15"
+                />
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Type</mat-label>
@@ -128,6 +167,7 @@
                 }
               </mat-form-field>
             </div>
+            <div class="form-row"></div>
             @if (isEdit()) {
               <mat-form-field appearance="outline">
                 <mat-label>Status</mat-label>
@@ -140,6 +180,12 @@
                 </mat-select>
               </mat-form-field>
             }
+            <!-- TODO: Implement travel time field -->
+            <!-- <mat-form-field appearance="outline">
+                <mat-label>Travel time after (minutes)</mat-label>
+                <input matInput type="number" formControlName="travelTime" min="0" step="5" />
+                <mat-hint>Buffer time needed to reach the next appointment</mat-hint>
+              </mat-form-field> -->
           </mat-card-content>
         </mat-card>
 

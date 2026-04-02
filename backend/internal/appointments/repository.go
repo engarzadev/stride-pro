@@ -23,7 +23,7 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const apptSelectCols = `a.id, a.user_id, a.client_id, a.horse_id, a.barn_id, a.scheduled_at, a.duration, a.status, a.type, a.notes, a.created_at, a.updated_at, c.id, c.first_name, c.last_name, h.id, h.name, b.id, b.name`
+const apptSelectCols = `a.id, a.user_id, a.client_id, a.horse_id, a.barn_id, a.scheduled_at, a.duration, a.travel_time, a.status, a.type, a.notes, a.created_at, a.updated_at, c.id, c.first_name, c.last_name, h.id, h.name, b.id, b.name`
 const apptJoins = `FROM appointments a LEFT JOIN clients c ON a.client_id = c.id LEFT JOIN horses h ON a.horse_id = h.id LEFT JOIN barns b ON a.barn_id = b.id`
 
 func scanAppointment(scanner interface{ Scan(...interface{}) error }) (*models.Appointment, error) {
@@ -36,7 +36,7 @@ func scanAppointment(scanner interface{ Scan(...interface{}) error }) (*models.A
 	var barnName sql.NullString
 	err := scanner.Scan(
 		&a.ID, &a.UserID, &a.ClientID, &a.HorseID, &a.BarnID,
-		&a.ScheduledAt, &a.Duration, &a.Status, &a.Type, &a.Notes,
+		&a.ScheduledAt, &a.Duration, &a.TravelTime, &a.Status, &a.Type, &a.Notes,
 		&a.CreatedAt, &a.UpdatedAt,
 		&clientID, &clientFirstName, &clientLastName,
 		&horseID, &horseName,
@@ -74,10 +74,10 @@ func (r *Repository) Create(a *models.Appointment) error {
 	a.UpdatedAt = time.Now()
 
 	_, err := r.db.Exec(`
-		INSERT INTO appointments (id, user_id, client_id, horse_id, barn_id, scheduled_at, duration, status, type, notes, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+		INSERT INTO appointments (id, user_id, client_id, horse_id, barn_id, scheduled_at, duration, travel_time, status, type, notes, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
 		a.ID, a.UserID, a.ClientID, a.HorseID, a.BarnID,
-		a.ScheduledAt, a.Duration, a.Status, a.Type, a.Notes,
+		a.ScheduledAt, a.Duration, a.TravelTime, a.Status, a.Type, a.Notes,
 		a.CreatedAt, a.UpdatedAt,
 	)
 	if err != nil {
@@ -151,10 +151,10 @@ func (r *Repository) Update(a *models.Appointment) error {
 	a.UpdatedAt = time.Now()
 	result, err := r.db.Exec(`
 		UPDATE appointments SET client_id=$1, horse_id=$2, barn_id=$3, scheduled_at=$4,
-		duration=$5, status=$6, type=$7, notes=$8, updated_at=$9
-		WHERE id=$10 AND user_id=$11`,
+		duration=$5, travel_time=$6, status=$7, type=$8, notes=$9, updated_at=$10
+		WHERE id=$11 AND user_id=$12`,
 		a.ClientID, a.HorseID, a.BarnID, a.ScheduledAt,
-		a.Duration, a.Status, a.Type, a.Notes, a.UpdatedAt,
+		a.Duration, a.TravelTime, a.Status, a.Type, a.Notes, a.UpdatedAt,
 		a.ID, a.UserID,
 	)
 	if err != nil {
@@ -165,6 +165,30 @@ func (r *Repository) Update(a *models.Appointment) error {
 		return fmt.Errorf("appointment not found")
 	}
 	return nil
+}
+
+// HasConflict reports whether scheduling an appointment at scheduledAt with the given
+// duration and travelTime would overlap with any existing active appointment for the user.
+// excludeID is used on updates to ignore the appointment being edited (pass uuid.Nil on create).
+func (r *Repository) HasConflict(userID, excludeID uuid.UUID, scheduledAt time.Time, duration, travelTime int) (bool, error) {
+	var id uuid.UUID
+	err := r.db.QueryRow(`
+		SELECT a.id FROM appointments a
+		WHERE a.user_id = $1
+		AND a.id != $2
+		AND a.status NOT IN ('cancelled', 'no-show')
+		AND a.scheduled_at < $3 + ($4 * INTERVAL '1 minute')
+		AND a.scheduled_at + ((a.duration + a.travel_time) * INTERVAL '1 minute') > $3
+		LIMIT 1`,
+		userID, excludeID, scheduledAt, duration+travelTime,
+	).Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("checking appointment conflict: %w", err)
+	}
+	return true, nil
 }
 
 // Delete removes an appointment by ID, scoped to the user.

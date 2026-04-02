@@ -1,11 +1,11 @@
 v1 Release Priorities
 [x] Subscription enforcement - plan limits exist in code but aren't enforced at the API layer
-[ ] Appointment reminders — the notification hook is missing from appointment creation/updates
-[ ] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
+[x] Appointment reminders — the notification hook is missing from appointment creation/updates
 [ ] Invoice templates — no template system built yet
 [ ] Business setting - setting email or invoice receipt messages
 [ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
 [x] Form Validation - disable save buttons if form is invalid or submitting
+[p] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
 
 Future Features
 [ ] DO NOT show token in reponse payload
@@ -21,10 +21,11 @@ Tech Debt
 [x] Make a page layout or template for the list, form, and details that way updates are faster
 [x] See if lazy load modules would be useful
 [x] fix scroll bar and sidebar overflow
+[x] remove barn from the horse form, add horse to the barn form. this the be applied across the app
 
 Not Working
 [x] Cant create session - (thought: prefill the session type with the appointment type)
-[x] Cant create invoice (** cant reproduce)
+[x] Cant create invoice (\*\* cant reproduce)
 
 Sessions Subscription Gate
 [x] **Frontend - session-list.component.ts**: Inject `SubscriptionService`, add `canManageSessions = signal(false)`, call `subscriptionService.load()` in `ngOnInit` and set signal via `hasFeature('session_notes')`

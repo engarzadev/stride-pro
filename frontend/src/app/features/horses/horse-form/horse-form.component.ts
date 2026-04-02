@@ -50,10 +50,10 @@ export class HorseFormComponent implements OnInit {
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     breed: [''],
-    age: [0],
+    age: [null as number | null],
     gender: [''],
     color: [''],
-    weight: [0],
+    weight: [null as number | null],
     notes: [''],
     clientId: ['', [Validators.required]],
     barnId: [null as string | null],
@@ -121,7 +121,8 @@ export class HorseFormComponent implements OnInit {
     }
 
     this.saving.set(true);
-    const data = this.form.getRawValue();
+    const raw = this.form.getRawValue();
+    const data = { ...raw, age: raw.age ?? undefined, weight: raw.weight ?? undefined };
 
     const request$ = this.isEdit()
       ? this.horsesService.update(this.horseId, data)
