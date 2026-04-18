@@ -1,0 +1,33 @@
+<mat-toolbar class="app-header" color="primary">
+  <button
+    mat-icon-button
+    class="mobile-menu-btn"
+    (click)="toggleSidebar.emit()"
+    aria-label="Toggle sidebar"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="brand-name">StridePro</span>
+
+  <span class="spacer"></span>
+
+  @if (currentUser$ | async; as user) {
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+      <span class="user-avatar"
+        >{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}</span
+      >
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <div class="menu-user-info" mat-menu-item disabled>
+        <div class="menu-name">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="menu-email">{{ user.email }}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sign Out</span>
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>

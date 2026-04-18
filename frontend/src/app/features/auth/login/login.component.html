@@ -1,0 +1,39 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-logo">🐎</span>
+      <h1>StridePro</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="you@example.com">
+        @if (form.controls.email.errors?.['required']) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (form.controls.email.errors?.['email']) {
+          <mat-error>Please enter a valid email.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="Enter your password">
+        @if (form.controls.password.errors?.['required']) {
+          <mat-error>Password is required.</mat-error>
+        } @else if (form.controls.password.errors?.['minlength']) {
+          <mat-error>Password must be at least 6 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" class="auth-submit" [disabled]="loading()">
+        @if (loading()) { Signing in... } @else { Sign In }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Don't have an account? <a routerLink="/auth/register">Create one</a>
+    </p>
+  </div>
+</div>

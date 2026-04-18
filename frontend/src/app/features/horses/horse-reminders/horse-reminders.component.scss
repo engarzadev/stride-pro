@@ -1,0 +1,150 @@
+.reminders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .card-section-title {
+    margin-bottom: 0;
+  }
+}
+
+.loading-text {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.reminder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 1rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reminder-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+
+  &.overdue {
+    border-color: #fca5a5;
+    background: #fff5f5;
+  }
+
+  &.soon {
+    border-color: #fcd34d;
+    background: #fffbeb;
+  }
+
+  &.completed {
+    opacity: 0.6;
+  }
+
+  .reminder-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .reminder-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .reminder-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .reminder-due {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    display: block;
+
+    &.overdue { color: #dc2626; font-weight: 500; }
+    &.soon    { color: #d97706; font-weight: 500; }
+  }
+}
+
+.badge {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.badge-auto {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+}
+
+.badge-category {
+  background: rgba(59, 98, 85, 0.12);
+  color: #3b6255;
+}
+
+.done-btn { color: #3b6255; }
+.delete-btn { color: #ef4444; }
+
+.completed-toggle {
+  margin-top: 12px;
+
+  button {
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
+}
+
+.completed-list {
+  margin-top: 6px;
+}
+
+:host-context(html.dark) {
+  .reminder-row {
+    &.overdue {
+      border-color: rgba(248, 113, 113, 0.4);
+      background: rgba(220, 38, 38, 0.08);
+    }
+
+    &.soon {
+      border-color: rgba(252, 211, 77, 0.4);
+      background: rgba(217, 119, 6, 0.08);
+    }
+  }
+
+  .badge-auto     { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+  .badge-category { background: rgba(76, 186, 143, 0.15); color: #4cba8f; }
+  .done-btn  { color: #4cba8f; }
+  .delete-btn { color: #f87171; }
+}

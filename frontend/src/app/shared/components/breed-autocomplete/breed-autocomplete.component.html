@@ -1,0 +1,19 @@
+<mat-form-field>
+  <mat-label>Breed</mat-label>
+  <input
+    matInput
+    type="text"
+    placeholder="Search or enter breed..."
+    autocomplete="off"
+    [value]="inputValue()"
+    [disabled]="isDisabled()"
+    [matAutocomplete]="breedAuto"
+    (input)="onInput($any($event.target).value)"
+    (blur)="onBlur()"
+  />
+  <mat-autocomplete #breedAuto="matAutocomplete" (optionSelected)="selectBreed($event.option.value)">
+    @for (breed of filteredBreeds(); track breed) {
+      <mat-option [value]="breed">{{ breed }}</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

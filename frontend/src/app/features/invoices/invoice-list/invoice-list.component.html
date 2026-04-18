@@ -1,0 +1,18 @@
+<app-page-header title="Invoices" buttonText="Create Invoice" (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <mat-card>
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="$any(tableInvoices())"
+        [actions]="actions"
+        [filterConfig]="filterConfig"
+        [mobileCard]="mobileCard"
+        (rowClick)="onRowClick($event)"
+        (actionClick)="onAction($event)" />
+    </mat-card-content>
+  </mat-card>
+}

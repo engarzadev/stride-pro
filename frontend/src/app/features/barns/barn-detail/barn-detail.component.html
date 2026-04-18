@@ -1,0 +1,60 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  @if (barn(); as b) {
+  <app-detail-page
+    [title]="b.name"
+    backRoute="/barns"
+    backLabel="Back to Barns"
+    [editRoute]="['/barns', b.id, 'edit']"
+    (deleteClick)="onDelete()">
+
+    <mat-card class="mb-6">
+      <mat-card-header>
+        <mat-card-title>Barn Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Address</label>
+            <p>{{ b.address || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Phone</label>
+            <p>{{ b.phone || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Email</label>
+            <p>{{ b.email || '-' }}</p>
+          </div>
+          <div class="detail-field">
+            <label>Created</label>
+            <p>{{ b.createdAt | dateFormat }}</p>
+          </div>
+        </div>
+        @if (b.notes) {
+          <div class="detail-field mt-4">
+            <label>Notes</label>
+            <p>{{ b.notes }}</p>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    @if (b.horses && b.horses.length > 0) {
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Horses at this Barn</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <app-data-table
+            [columns]="horseColumns"
+            [data]="$any(horseRows())"
+            [mobileCard]="horseMobileCard"
+            (rowClick)="onHorseClick($event)" />
+        </mat-card-content>
+      </mat-card>
+    }
+  </app-detail-page>
+  }
+}

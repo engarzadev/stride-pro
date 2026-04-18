@@ -1,0 +1,15 @@
+<div class="page-header">
+  <h1>{{ title }}</h1>
+  <div class="header-actions">
+    @if (secondButtonText) {
+      <button mat-stroked-button (click)="secondButtonClick.emit()">
+        {{ secondButtonText }}
+      </button>
+    }
+    @if (buttonText) {
+      <button mat-raised-button color="primary" (click)="buttonClick.emit()">
+        + {{ buttonText }}
+      </button>
+    }
+  </div>
+</div>

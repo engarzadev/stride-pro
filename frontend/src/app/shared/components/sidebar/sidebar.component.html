@@ -1,0 +1,13 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+<nav class="sidebar-nav">
+    @for (item of navItems; track item.path) {
+      <a class="nav-item"
+         [routerLink]="item.path"
+         routerLinkActive="active"
+         (click)="closeSidebar.emit()">
+        <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+</aside>

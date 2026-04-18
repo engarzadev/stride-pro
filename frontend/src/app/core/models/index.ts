@@ -1,0 +1,228 @@
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Client {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  notes: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  horses?: Horse[];
+}
+
+export interface Horse {
+  id: string;
+  name: string;
+  breed: string;
+  age: number;
+  gender: string;
+  color: string;
+  weight: number;
+  notes: string;
+  vetName: string;
+  vetPhone: string;
+  farrierName: string;
+  farrierPhone: string;
+  clientId: string;
+  barnId: string | null;
+  client?: Client;
+  barn?: Barn;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Barn {
+  id: string;
+  name: string;
+  contactName: string;
+  address: string;
+  phone: string;
+  email: string;
+  notes: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  horses?: Horse[];
+}
+
+export interface Appointment {
+  id: string;
+  clientId: string;
+  horseId: string;
+  barnId: string | null;
+  userId: string;
+  date: string;
+  time: string;
+  duration: number;
+  travelTime: number;
+  type: string;
+  status: string;
+  notes: string;
+  client?: Client;
+  horse?: Horse;
+  barn?: Barn;
+  session?: Session;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Session {
+  id: string;
+  appointmentId: string;
+  type: string;
+  bodyZones: string[];
+  notes: string;
+  findings: string;
+  recommendations: string;
+  appointment?: Appointment;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceItem {
+  id: string;
+  invoiceId: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  amount: number;
+  notes?: string;
+}
+
+export interface ServiceItem {
+  id: string;
+  userId: string;
+  name: string;
+  defaultPrice: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BusinessSettings {
+  id?: string;
+  userId?: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  address: string;
+  invoiceMessage: string;
+}
+
+export interface Invoice {
+  id: string;
+  clientId: string;
+  userId: string;
+  invoiceNumber: string;
+  date: string;
+  dueDate: string;
+  status: string;
+  subtotal: number;
+  tax: number;
+  total: number;
+  notes: string;
+  client?: Client;
+  items?: InvoiceItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Reminder {
+  id: string;
+  horseId: string;
+  userId: string;
+  title: string;
+  dueDate: string;
+  category: string;
+  source: 'manual' | 'auto';
+  isComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CareLog {
+  id: string;
+  horseId: string;
+  userId: string;
+  date: string;
+  category: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  error?: string;
+  meta?: Record<string, unknown>;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+}
+
+export interface AuthResponse {
+  tokens: AuthTokens;
+  user: User;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+}
+
+export interface SubscriptionUsage {
+  clients: { count: number; limit: number };
+  horses: { count: number; limit: number };
+}
+
+export interface SubscriptionResponse {
+  plan: SubscriptionPlan;
+  usage: SubscriptionUsage;
+}

@@ -1,0 +1,53 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <form [formGroup]="form">
+    <mat-card class="settings-card">
+      <mat-card-content>
+        <div class="card-section-title">Business Information</div>
+        <div class="form-row">
+          <mat-form-field class="field-grow">
+            <mat-label>Business Name</mat-label>
+            <input matInput formControlName="businessName" />
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+            @if (form.controls.email.errors?.['email']) {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone" />
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field class="field-grow">
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address" />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="settings-card">
+      <mat-card-content>
+        <div class="card-section-title">Invoice Email Message</div>
+        <p class="hint-text">This message appears at the bottom of every invoice email you send.</p>
+        <mat-form-field class="full-width">
+          <mat-label>Message (optional)</mat-label>
+          <textarea matInput formControlName="invoiceMessage" rows="3" placeholder="e.g. Thank you for your business! Payment is due within 14 days."></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="button" [disabled]="saving() || form.invalid" (click)="onSave()">
+        {{ saving() ? 'Saving...' : 'Save Settings' }}
+      </button>
+    </div>
+  </form>
+}

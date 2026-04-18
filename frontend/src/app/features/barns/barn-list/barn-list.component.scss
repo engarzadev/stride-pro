@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.upgrade-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 4px;
+  color: #5d4037;
+  font-size: 14px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #f9a825;
+    overflow: visible;
+  }
+}
+
+:host-context(html.dark) .upgrade-notice {
+  background: rgba(249, 168, 37, 0.1);
+  border-color: rgba(249, 168, 37, 0.3);
+  color: #fbbf24;
+}

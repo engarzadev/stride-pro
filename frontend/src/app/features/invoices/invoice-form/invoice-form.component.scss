@@ -1,0 +1,368 @@
+// ── Form fields ───────────────────────────────────────────────────────────────
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+.field-grow {
+  flex: 2 !important;
+}
+
+.field-status {
+  flex: 1 !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// ── Line items ────────────────────────────────────────────────────────────────
+
+.line-items-card {
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+
+    .card-section-title {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.add-item-btn {
+  border-radius: 8px !important;
+  font-size: 0.8125rem !important;
+  height: 34px !important;
+  line-height: 34px !important;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.25rem;
+  }
+}
+
+.line-items-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -0.25rem;
+}
+
+.line-items-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    text-align: left;
+    padding: 0 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--color-border-light);
+  }
+
+  td {
+    padding: 0.25rem 0.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+  }
+
+  .col-qty {
+    width: 80px;
+  }
+  .col-price {
+    width: 130px;
+  }
+  .col-amount {
+    width: 120px;
+  }
+  .col-action {
+    width: 44px;
+  }
+}
+
+.line-item-row {
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--color-surface-alt);
+  }
+
+  &:last-child td {
+    border-bottom: none;
+  }
+}
+
+.td-description {
+  min-width: 200px;
+
+  .notes-input {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+  }
+}
+
+.autocomplete-price {
+  float: right;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.inline-input {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.9375rem;
+  background: transparent;
+  color: var(--color-title);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    background: var(--color-surface);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  }
+
+  &:hover:not(:focus) {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.amount-cell {
+  font-weight: 600;
+  color: var(--color-title);
+  padding-right: 0.75rem;
+}
+
+.td-action {
+  text-align: center;
+}
+
+.remove-btn {
+  color: #cbd5e1 !important;
+  transition: color 0.15s !important;
+
+  &:hover:not([disabled]) {
+    color: #ef4444 !important;
+  }
+
+  &[disabled] {
+    opacity: 0.3;
+  }
+}
+
+.invoice-form__service-item {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
+}
+// ── Totals panel ──────────────────────────────────────────────────────────────
+
+.totals-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 1rem 1rem 0.25rem;
+  background: var(--color-surface-alt);
+  border-radius: 10px;
+}
+
+.totals-row {
+  display: flex;
+  gap: 2.5rem;
+  width: 280px;
+  justify-content: space-between;
+}
+
+.totals-label {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.totals-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-field-value);
+  text-align: right;
+  min-width: 80px;
+}
+
+.totals-divider {
+  width: 280px;
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.25rem 0;
+}
+
+.total-final {
+  .totals-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-title);
+  }
+
+  .totals-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .field-grow,
+  .field-status {
+    flex: 1 !important;
+  }
+
+  .totals-row,
+  .totals-divider {
+    width: 100%;
+  }
+
+  .line-items-scroll {
+    overflow-x: unset;
+    margin: 0;
+  }
+
+  .line-items-table {
+    &,
+    tbody {
+      display: block;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tr.line-item-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 40px;
+      grid-template-rows: auto auto;
+      column-gap: 0.5rem;
+      row-gap: 0.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.625rem 0.75rem;
+      margin-bottom: 0.625rem;
+      background: var(--color-surface);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:hover {
+        background: var(--color-surface);
+      }
+
+      td {
+        padding: 0;
+        border-bottom: none;
+      }
+    }
+
+    .td-description {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      min-width: unset;
+
+      .inline-input {
+        border-color: var(--color-border);
+        background: var(--color-surface-alt);
+        font-size: 0.9rem;
+      }
+    }
+
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(4) {
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+
+      &::before {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+      }
+    }
+
+    td:nth-child(2) {
+      grid-column: 1;
+      &::before {
+        content: "Qty";
+      }
+    }
+    td:nth-child(3) {
+      grid-column: 2;
+      &::before {
+        content: "Price";
+      }
+    }
+    td:nth-child(4) {
+      grid-column: 3;
+      justify-content: flex-start;
+      &::before {
+        content: "Amount";
+      }
+    }
+
+    .td-action {
+      grid-column: 4;
+      grid-row: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0.125rem;
+    }
+
+    td:nth-child(2) .inline-input,
+    td:nth-child(3) .inline-input {
+      width: 100%;
+      font-size: 0.875rem;
+    }
+  }
+}

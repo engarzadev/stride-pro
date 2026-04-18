@@ -1,0 +1,20 @@
+<app-page-header
+  title="Clients"
+  buttonText="Add Client"
+  (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <mat-card>
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="$any(clients())"
+        [actions]="actions"
+        [mobileCard]="mobileCard"
+        (rowClick)="onRowClick($event)"
+        (actionClick)="onAction($event)" />
+    </mat-card-content>
+  </mat-card>
+}

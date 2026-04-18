@@ -1,0 +1,57 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-logo">🐎</span>
+      <h1>StridePro</h1>
+      <p>Create your account</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>First Name</mat-label>
+          <input matInput type="text" formControlName="firstName" placeholder="John">
+          @if (form.controls.firstName.errors?.['required']) {
+            <mat-error>First name is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Last Name</mat-label>
+          <input matInput type="text" formControlName="lastName" placeholder="Doe">
+          @if (form.controls.lastName.errors?.['required']) {
+            <mat-error>Last name is required.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="you@example.com">
+        @if (form.controls.email.errors?.['required']) {
+          <mat-error>Email is required.</mat-error>
+        } @else if (form.controls.email.errors?.['email']) {
+          <mat-error>Please enter a valid email.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" placeholder="At least 6 characters">
+        @if (form.controls.password.errors?.['required']) {
+          <mat-error>Password is required.</mat-error>
+        } @else if (form.controls.password.errors?.['minlength']) {
+          <mat-error>Password must be at least 6 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" class="auth-submit" [disabled]="loading()">
+        @if (loading()) { Creating account... } @else { Create Account }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account? <a routerLink="/auth/login">Sign in</a>
+    </p>
+  </div>
+</div>

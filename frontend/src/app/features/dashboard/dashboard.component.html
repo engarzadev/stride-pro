@@ -1,0 +1,118 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="dashboard">
+    <h1 class="dashboard-title">Dashboard</h1>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card" (click)="navigateTo('/clients')">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon clients-icon">
+              <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-value">{{ clients().length }}</div>
+            <div class="stat-label">Clients</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" (click)="navigateTo('/horses')">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon horses-icon">
+              <mat-icon>pets</mat-icon>
+            </div>
+            <div class="stat-value">{{ horses().length }}</div>
+            <div class="stat-label">Horses</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" (click)="navigateTo('/appointments')">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon appointments-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <div class="stat-value">{{ upcomingAppointments.length }}</div>
+            <div class="stat-label">Upcoming Appointments</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" (click)="navigateTo('/invoices')">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon invoices-icon">
+              <mat-icon>receipt_long</mat-icon>
+            </div>
+            <div class="stat-value">{{ pendingInvoices.length }}</div>
+            <div class="stat-label">Pending Invoices</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="dashboard-grid">
+      <mat-card>
+        <mat-card-content>
+          <div class="section-header">
+            <h3 class="section-title">Recent Appointments</h3>
+            <a class="view-all-link" (click)="navigateTo('/appointments')">View all</a>
+          </div>
+          @if (appointments().length === 0) {
+            <p class="text-muted">No appointments yet.</p>
+          } @else {
+            <div class="appointment-list">
+              @for (apt of appointments().slice(0, 5); track apt.id) {
+                <div class="appointment-item" (click)="navigateTo('/appointments/' + apt.id)">
+                  <div class="appointment-info">
+                    <div class="appointment-title">
+                      {{ apt.horse?.name || 'Horse #' + apt.horseId }}
+                    </div>
+                    <div class="appointment-sub">
+                      {{ apt.client?.firstName }} {{ apt.client?.lastName }} &middot; {{ apt.type }}
+                    </div>
+                  </div>
+                  <div class="appointment-meta">
+                    <div class="appointment-date">{{ apt.date | dateFormat }}</div>
+                    <span class="badge" [class]="apt.status === 'completed' ? 'badge-success' : apt.status === 'cancelled' ? 'badge-danger' : apt.status === 'no-show' ? 'badge-warning' : 'badge-secondary'">
+                      {{ apt.status }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="section-header">
+            <h3 class="section-title">Quick Actions</h3>
+          </div>
+          <div class="quick-actions">
+            <button mat-flat-button color="primary" class="quick-action" (click)="navigateTo('/clients/onboard')">
+              <mat-icon>person_add</mat-icon>
+              New Client Setup
+            </button>
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/horses/new')">
+              <mat-icon>add</mat-icon>
+              New Horse
+            </button>
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/appointments/new')">
+              <mat-icon>event</mat-icon>
+              New Appointment
+            </button>
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/invoices/new')">
+              <mat-icon>receipt_long</mat-icon>
+              New Invoice
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+}

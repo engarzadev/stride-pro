@@ -1,0 +1,19 @@
+@if (dialogService.visible()) {
+  <div class="dialog-overlay" (click)="dialogService.cancel()">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <h3 class="dialog-title">{{ dialogService.data().title }}</h3>
+      <p class="dialog-message">{{ dialogService.data().message }}</p>
+      <div class="dialog-actions">
+        <button class="btn btn-outline" (click)="dialogService.cancel()">
+          {{ dialogService.data().cancelText || 'Cancel' }}
+        </button>
+        <button
+          class="btn"
+          [class]="'btn ' + (dialogService.data().confirmClass || 'btn-danger')"
+          (click)="dialogService.accept()">
+          {{ dialogService.data().confirmText || 'Confirm' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

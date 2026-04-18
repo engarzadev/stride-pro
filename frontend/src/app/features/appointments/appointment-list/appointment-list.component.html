@@ -1,0 +1,18 @@
+<app-page-header title="Appointments" buttonText="Add Appointment" (buttonClick)="onAdd()" />
+
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <mat-card>
+    <mat-card-content>
+      <app-data-table
+        [columns]="columns"
+        [data]="$any(tableAppointments())"
+        [actions]="actions"
+        [filterConfig]="filterConfig"
+        [mobileCard]="mobileCard"
+        (rowClick)="onRowClick($event)"
+        (actionClick)="onAction($event)" />
+    </mat-card-content>
+  </mat-card>
+}

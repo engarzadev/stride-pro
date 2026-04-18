@@ -1,0 +1,67 @@
+.app-header {
+  box-shadow: none;
+}
+
+.mobile-menu-btn {
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}
+
+.brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  line-height: 1;
+
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-button-ripple,
+  .mat-ripple {
+    display: none;
+  }
+
+  &:hover {
+    background: none;
+  }
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.menu-user-info {
+  padding: 0.5rem 1rem;
+  opacity: 1 !important;
+  cursor: default;
+}
+
+.menu-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.menu-email {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}

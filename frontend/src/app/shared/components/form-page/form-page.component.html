@@ -1,0 +1,30 @@
+<div class="form-page">
+  <div class="page-header">
+    <a [routerLink]="backRoute" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      {{ backLabel }}
+    </a>
+    <div class="header_container">
+      <h1>{{ title }}</h1>
+      <div class="form-aside">
+        <mat-card class="form-card actions-card">
+          <mat-card-content>
+            <button
+              type="button"
+              mat-flat-button
+              color="primary"
+              class="btn-save"
+              [disabled]="saving || formInvalid"
+              (click)="save.emit()"
+            >
+              <mat-icon>{{ isEdit ? 'save' : createIcon }}</mat-icon>
+              {{ saving ? 'Saving...' : (isEdit ? 'Update' : 'Create') }}
+            </button>
+            <a [routerLink]="backRoute" mat-stroked-button class="btn-cancel">Cancel</a>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <ng-content />
+</div>

@@ -1,0 +1,95 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  @if (appointment(); as a) {
+    <app-detail-page
+      title="Appointment Details"
+      backRoute="/appointments"
+      backLabel="Back to Appointments"
+      [editRoute]="['/appointments', a.id, 'edit']"
+      (deleteClick)="onDelete()">
+
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title>
+            Appointment Information
+            <span class="badge" [class]="getStatusClass(a.status)">{{ a.status | titlecase }}</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label>Date</label>
+              <p>{{ a.date | dateFormat }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Time</label>
+              <p>{{ a.time || '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Duration</label>
+              <p>{{ a.duration ? a.duration + ' minutes' : '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Type</label>
+              <p>{{ a.type || '-' | titlecase }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Client</label>
+              @if (a.client) {
+                <p><a [routerLink]="['/clients', a.clientId]">{{ a.client.firstName }} {{ a.client.lastName }}</a></p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+            <div class="detail-field">
+              <label>Horse</label>
+              @if (a.horse) {
+                <p><a [routerLink]="['/horses', a.horseId]">{{ a.horse.name }}</a></p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+            <div class="detail-field">
+              <label>Barn</label>
+              @if (a.barn) {
+                <p><a [routerLink]="['/barns', a.barnId]">{{ a.barn.name }}</a></p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+          </div>
+          @if (a.notes) {
+            <div class="detail-field mt-4">
+              <label>Notes</label>
+              <p>{{ a.notes }}</p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      @if (a.session) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Linked Session</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>Type</label>
+                <p>{{ a.session.type }}</p>
+              </div>
+              <div class="detail-field">
+                <label>Body Zones</label>
+                <p>{{ a.session.bodyZones.join(', ') || '-' }}</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a [routerLink]="['/sessions', a.session.id]" mat-stroked-button>View Session Details</a>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </app-detail-page>
+  }
+}

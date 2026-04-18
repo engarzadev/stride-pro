@@ -1,0 +1,94 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <app-form-page
+    [title]="isEdit() ? 'Edit Session' : 'New Session'"
+    backRoute="/sessions"
+    backLabel="Back to Sessions"
+    [saving]="saving()"
+    [formInvalid]="form.invalid"
+    [isEdit]="isEdit()"
+    (save)="onSubmit()">
+    <form [formGroup]="form">
+      <div class="form-main">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Session Details</div>
+            <div class="form-row">
+              <mat-form-field>
+                <mat-label>Appointment</mat-label>
+                <mat-select #appointmentSelect formControlName="appointmentId">
+                  <mat-option [value]="0">Select an appointment</mat-option>
+                  @for (apt of appointments(); track apt.id) {
+                    <mat-option [value]="apt.id">
+                      {{ apt.date | dateFormat }} -
+                      {{ apt.horse?.name || "Horse #" + apt.horseId }}
+                      ({{ apt.client?.firstName }} {{ apt.client?.lastName }})
+                    </mat-option>
+                  }
+                </mat-select>
+                <button matSuffix mat-icon-button type="button" (click)="$event.stopPropagation(); appointmentSelect.close(); openCreateAppointment()" title="Create new appointment">
+                  <mat-icon>add</mat-icon>
+                </button>
+                @if (form.controls.appointmentId.errors) {
+                  <mat-error>Please select an appointment.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option value="">Select type</mat-option>
+                  <mat-option value="massage">Massage</mat-option>
+                  <mat-option value="chiropractic">Chiropractic</mat-option>
+                  <mat-option value="acupuncture">Acupuncture</mat-option>
+                  <mat-option value="rehabilitation">Rehabilitation</mat-option>
+                  <mat-option value="evaluation">Evaluation</mat-option>
+                  <mat-option value="treatment">Treatment</mat-option>
+                  <mat-option value="pemf">PEMF</mat-option>
+                  <mat-option value="other">Other</mat-option>
+                </mat-select>
+                @if (form.controls.type.errors?.["required"]) {
+                  <mat-error>Type is required.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Body Zones</div>
+            <div class="zone-grid">
+              @for (zone of bodyZoneOptions; track zone) {
+                <mat-checkbox
+                  [checked]="selectedZones().has(zone)"
+                  (change)="toggleZone(zone)"
+                >
+                  {{ zone }}
+                </mat-checkbox>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card">
+          <mat-card-content>
+            <div class="card-section-title">Clinical Notes</div>
+            <mat-form-field class="full-width">
+              <mat-label>Notes</mat-label>
+              <textarea matInput formControlName="notes" rows="3" placeholder="General session notes..."></textarea>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <mat-label>Findings</mat-label>
+              <textarea matInput formControlName="findings" rows="3" placeholder="Clinical findings..."></textarea>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+              <mat-label>Recommendations</mat-label>
+              <textarea matInput formControlName="recommendations" rows="3" placeholder="Follow-up recommendations..."></textarea>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
+  </app-form-page>
+}

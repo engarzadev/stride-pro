@@ -1,0 +1,237 @@
+.onboarding-page {
+  max-width: 100%;
+
+  ::ng-deep mat-card-header {
+    padding-bottom: 12px;
+  }
+}
+
+// Step Indicator
+.step-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+
+  .step-circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid #e2e8f0;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  &.active {
+    .step-circle {
+      border-color: #2563eb;
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .step-label {
+      color: #2563eb;
+    }
+  }
+
+  &.done {
+    .step-circle {
+      border-color: #16a34a;
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .step-label {
+      color: #16a34a;
+    }
+  }
+}
+
+.checkmark {
+  font-size: 0.875rem;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 0.5rem;
+  margin-bottom: 1.25rem;
+  transition: background 0.2s;
+
+  &.done {
+    background: #16a34a;
+  }
+}
+
+// Card header text
+.step-subtitle {
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+mat-card-actions {
+  gap: 12px;
+}
+
+// Step actions footer
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+// Barn select row
+.select-with-add {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  select {
+    flex: 1;
+  }
+}
+
+.btn-add-new {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #e2e8f0;
+  }
+}
+
+// Done step
+.done-card {
+  text-align: center;
+
+  .card-body {
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.done-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.done-subtitle {
+  color: #64748b;
+  margin-top: 0.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.summary-items {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.summary-item-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &.client-icon {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  &.horse-icon {
+    background: #fef9c3;
+    color: #a16207;
+  }
+
+  &.appt-icon {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+}
+
+.summary-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.summary-item-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-item-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.done-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}

@@ -1,0 +1,32 @@
+<app-page-header
+  title="Barns"
+  [buttonText]="canManageBarns() ? 'Add Barn' : ''"
+  (buttonClick)="onAdd()"
+/>
+
+@if (!canManageBarns()) {
+  <a routerLink="/billing" class="upgrade-notice">
+    <mat-icon>lock</mat-icon>
+    <span
+      >Barn management requires a paid plan. Click here to upgrade on the
+      billing page.</span
+    >
+  </a>
+} @else {
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <app-data-table
+          [columns]="columns"
+          [data]="$any(barns())"
+          [actions]="actions"
+          [mobileCard]="mobileCard"
+          (rowClick)="onRowClick($event)"
+          (actionClick)="onAction($event)"
+        />
+      </mat-card-content>
+    </mat-card>
+  }
+}

@@ -1,0 +1,91 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  @if (horse(); as h) {
+    <app-detail-page
+      [title]="h.name"
+      backRoute="/horses"
+      backLabel="Back to Horses"
+      [editRoute]="['/horses', h.id, 'edit']"
+      (deleteClick)="onDelete()">
+
+      <mat-card class="mb-6">
+        <mat-card-header>
+          <mat-card-title>Horse Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label>Breed</label>
+              <p>{{ h.breed || '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Age</label>
+              <p>{{ h.age || '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Gender</label>
+              <p>{{ h.gender || '-' | titlecase }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Color</label>
+              <p>{{ h.color || '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Weight</label>
+              <p>{{ h.weight ? h.weight + ' lbs' : '-' }}</p>
+            </div>
+            <div class="detail-field">
+              <label>Client</label>
+              @if (h.client) {
+                <p><a [routerLink]="['/clients', h.clientId]">{{ h.client.firstName }} {{ h.client.lastName }}</a></p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+            <div class="detail-field">
+              <label>Barn</label>
+              @if (h.barn) {
+                <p><a [routerLink]="['/barns', h.barnId]">{{ h.barn.name }}</a></p>
+              } @else {
+                <p>-</p>
+              }
+            </div>
+            <div class="detail-field">
+              <label>Created</label>
+              <p>{{ h.createdAt | dateFormat }}</p>
+            </div>
+          </div>
+          @if (h.vetName || h.vetPhone) {
+            <div class="detail-field">
+              <label>Vet</label>
+              <p>{{ h.vetName }}{{ h.vetName && h.vetPhone ? ' · ' : '' }}{{ h.vetPhone }}</p>
+            </div>
+          }
+          @if (h.farrierName || h.farrierPhone) {
+            <div class="detail-field">
+              <label>Farrier</label>
+              <p>{{ h.farrierName }}{{ h.farrierName && h.farrierPhone ? ' · ' : '' }}{{ h.farrierPhone }}</p>
+            </div>
+          }
+          @if (h.notes) {
+            <div class="detail-field mt-4">
+              <label>Notes</label>
+              <p>{{ h.notes }}</p>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="mb-6">
+        <mat-card-content>
+          <app-horse-reminders [horseId]="h.id" />
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <app-care-log [horseId]="h.id" />
+        </mat-card-content>
+      </mat-card>
+    </app-detail-page>
+  }
+}

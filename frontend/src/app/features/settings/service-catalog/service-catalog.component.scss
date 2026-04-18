@@ -1,0 +1,59 @@
+.settings-card {
+  margin-bottom: 24px;
+}
+
+.card-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #666);
+  margin-bottom: 16px;
+}
+
+.service-table {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.inline-field {
+  margin-bottom: -22px;
+
+  &.price-field {
+    width: 100px;
+  }
+}
+
+.add-form {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  .field-grow {
+    flex: 2;
+    min-width: 180px;
+  }
+
+  .price-field {
+    width: 130px;
+  }
+
+  button {
+    margin-top: 4px;
+  }
+}
+
+.empty-text {
+  color: var(--text-secondary, #888);
+  font-size: 14px;
+  margin: 8px 0 16px;
+}

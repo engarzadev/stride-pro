@@ -1,0 +1,33 @@
+<app-page-header
+  title="Sessions"
+  [buttonText]="canManageSessions() ? 'Add Session' : ''"
+  (buttonClick)="onAdd()"
+/>
+
+@if (!canManageSessions()) {
+  <a routerLink="/billing" class="upgrade-notice">
+    <mat-icon>lock</mat-icon>
+    <span
+      >Sessions require a paid plan. Click here to upgrade on the billing
+      page.</span
+    >
+  </a>
+} @else {
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <app-data-table
+          [columns]="columns"
+          [data]="$any(tableSessions())"
+          [actions]="actions"
+          [filterConfig]="filterConfig"
+          [mobileCard]="mobileCard"
+          (rowClick)="onRowClick($event)"
+          (actionClick)="onAction($event)"
+        />
+      </mat-card-content>
+    </mat-card>
+  }
+}
