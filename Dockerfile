@@ -3,11 +3,11 @@ WORKDIR /app
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 COPY backend/ .
-RUN go build -o server ./cmd/api
+RUN go build -o api ./cmd/api
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /root/
-COPY --from=builder /app/server .
+COPY --from=builder /app/api .
 COPY --from=builder /app/migrations ./migrations
-CMD ["./server"]
+CMD ["./api"]
