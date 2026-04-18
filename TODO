@@ -3,7 +3,7 @@ v1 Release Priorities
 [x] Appointment reminders — the notification hook is missing from appointment creation/updates
 [x] Invoice templates — no template system built yet
     [x] make settings width 100%
-    [] fix double scroll of entire app
+    [ ] fix double scroll of entire app
     [x] create invoice - add item: add space between item and price and fix alignment
 [ ] Business setting - setting email or invoice receipt messages
 [ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment

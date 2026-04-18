@@ -1,0 +1,16 @@
+<mat-card class="settings-card">
+  <mat-card-content>
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-label">Dark Mode</div>
+        <div class="setting-description">Switch between light and dark theme</div>
+      </div>
+      <mat-slide-toggle
+        [checked]="isDark()"
+        (change)="onToggle()"
+        color="primary"
+        aria-label="Toggle dark mode"
+      />
+    </div>
+  </mat-card-content>
+</mat-card>

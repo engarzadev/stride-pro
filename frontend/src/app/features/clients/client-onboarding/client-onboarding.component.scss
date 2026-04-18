@@ -24,8 +24,8 @@
     height: 2rem;
     border-radius: 50%;
     border: 2px solid #e2e8f0;
-    background: #fff;
-    color: #94a3b8;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
     font-size: 0.8125rem;
     font-weight: 600;
     display: flex;
@@ -177,8 +177,8 @@ mat-card-actions {
   align-items: center;
   gap: 0.875rem;
   padding: 0.875rem 1rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
@@ -226,7 +226,7 @@ mat-card-actions {
 .summary-item-value {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-title);
 }
 
 .done-actions {

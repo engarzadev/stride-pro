@@ -66,15 +66,15 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #94a3b8;
+    color: var(--color-text-muted);
     text-align: left;
     padding: 0 0.5rem 0.75rem;
-    border-bottom: 2px solid #f1f5f9;
+    border-bottom: 2px solid var(--color-border-light);
   }
 
   td {
     padding: 0.25rem 0.5rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--color-border-light);
     vertical-align: middle;
   }
 
@@ -96,7 +96,7 @@
   transition: background 0.1s;
 
   &:hover {
-    background: #f8fafc;
+    background: var(--color-surface-alt);
   }
 
   &:last-child td {
@@ -109,11 +109,11 @@
 
   .notes-input {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--color-text-muted);
     margin-top: 2px;
 
     &::placeholder {
-      color: #cbd5e1;
+      color: var(--color-text-muted);
       font-style: italic;
     }
   }
@@ -121,7 +121,7 @@
 
 .autocomplete-price {
   float: right;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
 }
 
@@ -132,25 +132,25 @@
   padding: 0.375rem 0.5rem;
   font-size: 0.9375rem;
   background: transparent;
-  color: #0f172a;
+  color: var(--color-title);
   transition:
     border-color 0.15s,
     background 0.15s;
   outline: none;
 
   &::placeholder {
-    color: #cbd5e1;
+    color: var(--color-text-muted);
   }
 
   &:focus {
     border-color: #3b82f6;
-    background: #fff;
+    background: var(--color-surface);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
   }
 
   &:hover:not(:focus) {
-    border-color: #e2e8f0;
-    background: #fff;
+    border-color: var(--color-border);
+    background: var(--color-surface);
   }
 }
 
@@ -160,7 +160,7 @@
 
 .amount-cell {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-title);
   padding-right: 0.75rem;
 }
 
@@ -196,7 +196,7 @@
   gap: 0.5rem;
   margin-top: 1rem;
   padding: 1rem 1rem 0.25rem;
-  background: #f8fafc;
+  background: var(--color-surface-alt);
   border-radius: 10px;
 }
 
@@ -209,13 +209,13 @@
 
 .totals-label {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .totals-value {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #334155;
+  color: var(--color-field-value);
   text-align: right;
   min-width: 80px;
 }
@@ -223,7 +223,7 @@
 .totals-divider {
   width: 280px;
   height: 1px;
-  background: #e2e8f0;
+  background: var(--color-border);
   margin: 0.25rem 0;
 }
 
@@ -231,7 +231,7 @@
   .totals-label {
     font-size: 1rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--color-title);
   }
 
   .totals-value {
@@ -281,18 +281,18 @@
       grid-template-rows: auto auto;
       column-gap: 0.5rem;
       row-gap: 0.5rem;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--color-border);
       border-radius: 8px;
       padding: 0.625rem 0.75rem;
       margin-bottom: 0.625rem;
-      background: #fff;
+      background: var(--color-surface);
 
       &:last-child {
         margin-bottom: 0;
       }
 
       &:hover {
-        background: #fff;
+        background: var(--color-surface);
       }
 
       td {
@@ -307,8 +307,8 @@
       min-width: unset;
 
       .inline-input {
-        border-color: #e2e8f0;
-        background: #f8fafc;
+        border-color: var(--color-border);
+        background: var(--color-surface-alt);
         font-size: 0.9rem;
       }
     }
@@ -326,7 +326,7 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #94a3b8;
+        color: var(--color-text-muted);
       }
     }
 

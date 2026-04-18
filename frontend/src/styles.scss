@@ -131,6 +131,43 @@ $font-family-heading: 'Lora', Georgia, serif;
 $sidebar-width:   260px;
 $header-height:   64px;
 
+// === CSS Custom Properties (runtime theming) ===
+:root {
+  --color-bg: #f4f5f3;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-text: #1e3329;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-sidebar-bg: #ffffff;
+  --color-nav-text: #64748b;
+  --color-nav-hover-bg: #f1f5f9;
+  --color-nav-hover-text: #0f172a;
+  --color-nav-active-bg: #eff6ff;
+  --color-nav-active-text: #2563eb;
+  --color-title: #0f172a;
+  --color-field-value: #1e293b;
+}
+
+html.dark {
+  --color-bg: #101a16;
+  --color-surface: #1a2d26;
+  --color-surface-alt: #152720;
+  --color-text: #dceae4;
+  --color-text-muted: #94b8ac;
+  --color-border: #2b4538;
+  --color-border-light: #1e3329;
+  --color-sidebar-bg: #162520;
+  --color-nav-text: #8fb3a8;
+  --color-nav-hover-bg: #1e3329;
+  --color-nav-hover-text: #dceae4;
+  --color-nav-active-bg: rgba(72, 179, 130, 0.12);
+  --color-nav-active-text: #4cba8f;
+  --color-title: #dceae4;
+  --color-field-value: #dceae4;
+}
+
 // === Reset ===
 *,
 *::before,
@@ -524,5 +561,145 @@ h4 {
 .snack-success, .snack-error, .snack-warning, .snack-info {
   .mdc-snackbar__label, .mat-mdc-snack-bar-action {
     color: #fff !important;
+  }
+}
+
+// === Dark Mode — global selector overrides ===
+// These fix global styles that use compiled SCSS variables instead of CSS custom properties
+html.dark {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .text-muted { color: var(--color-text-muted); }
+
+  .page-header h1 { color: var(--color-text); }
+
+  .back-link {
+    color: var(--color-text-muted);
+    &:hover { color: #4cba8f; }
+  }
+
+  .form-actions { border-color: var(--color-border); }
+
+  .detail-field {
+    label { color: var(--color-text-muted); }
+    p { color: var(--color-text); }
+  }
+
+  .badge-success  { background-color: rgba(76, 186, 143, 0.15); color: #4cba8f; }
+  .badge-primary  { background-color: rgba(76, 186, 143, 0.15); color: #4cba8f; }
+  .badge-secondary { background-color: rgba(143, 179, 168, 0.15); color: #8fb3a8; }
+  .badge-warning  { background-color: rgba(217, 119, 6, 0.15); color: #fbbf24; }
+  .badge-danger   { background-color: rgba(248, 113, 113, 0.15); color: #f87171; }
+
+  a { color: #4cba8f; &:hover { color: #6dd4a8; } }
+}
+
+// === Dark Mode Material overrides ===
+html.dark {
+  color-scheme: dark;
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  // Cards
+  --mdc-elevated-card-container-color: #1a2d26;
+
+  .mat-mdc-card {
+    --mdc-elevated-card-container-color: #1a2d26;
+  }
+
+  // Tables
+  --mat-table-background-color: #1a2d26;
+  --mat-table-row-item-outline-color: #2b4538;
+  --mat-table-header-headline-color: #dceae4;
+  --mat-table-row-item-label-text-color: #dceae4;
+  --mat-table-header-container-height: 56px;
+
+  .mat-mdc-header-row {
+    background-color: #152720;
+  }
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background-color: #1e3329;
+  }
+
+  // Form fields
+  --mdc-filled-text-field-container-color: #1e3329;
+  --mdc-filled-text-field-label-text-color: #7da090;
+  --mdc-filled-text-field-input-text-color: #dceae4;
+  --mdc-filled-text-field-active-indicator-color: #2b4538;
+  --mdc-outlined-text-field-outline-color: #2b4538;
+  --mdc-outlined-text-field-label-text-color: #7da090;
+  --mdc-outlined-text-field-input-text-color: #dceae4;
+
+  // Select / Option panels
+  --mat-select-panel-background-color: #1a2d26;
+  --mat-option-background-color: #1a2d26;
+  --mat-option-label-text-color: #dceae4;
+  --mat-select-trigger-text-color: #dceae4;
+
+  // Dialogs
+  --mdc-dialog-container-color: #1a2d26;
+  --mat-dialog-headline-padding: 24px 24px 0;
+
+  // Menus
+  --mat-menu-container-color: #1a2d26;
+  --mat-menu-item-label-text-color: #dceae4;
+  --mat-menu-item-icon-color: #7da090;
+
+  // Paginator
+  --mat-paginator-container-background-color: transparent;
+  --mat-paginator-container-text-color: #7da090;
+
+  // Tabs — inactive label was too low contrast; raised to #b8d4ca
+  --mat-tab-header-active-label-text-color: #ffffff;
+  --mat-tab-header-inactive-label-text-color: #b8d4ca;
+  --mat-tab-header-active-ripple-color: #4cba8f;
+  --mat-tab-header-active-focus-indicator-color: #4cba8f;
+  --mat-tab-header-divider-color: #2b4538;
+  --mat-tab-header-pagination-icon-color: #b8d4ca;
+
+  // Paginator icons
+  --mat-paginator-enabled-icon-color: #8fb3a8;
+  --mat-paginator-disabled-icon-color: rgba(143, 179, 168, 0.38);
+
+  // Select
+  --mat-select-enabled-trigger-text-color: #dceae4;
+  --mat-option-label-text-color: #dceae4;
+
+  // Outlined (stroked) buttons without a color attribute
+  --mdc-outlined-button-label-text-color: #dceae4;
+  --mdc-outlined-button-outline-color: #2b4538;
+  --mat-outlined-button-state-layer-color: #dceae4;
+
+  // Icon buttons without a color attribute
+  --mat-icon-button-icon-color: #94b8ac;
+  --mat-icon-button-state-layer-color: #94b8ac;
+
+  // Chips in dark mode
+  .chip-success {
+    --mdc-chip-elevated-container-color: rgba(59, 98, 85, 0.25);
+    --mdc-chip-label-text-color: #4cba8f;
+  }
+
+  .chip-secondary {
+    --mdc-chip-elevated-container-color: #1e3329;
+    --mdc-chip-label-text-color: #8fb3a8;
+  }
+
+  // Mobile form aside bar
+  .form-aside {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  // Scrollbar
+  ::-webkit-scrollbar-thumb {
+    background: #2b4538;
   }
 }

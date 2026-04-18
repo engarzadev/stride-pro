@@ -10,7 +10,7 @@
 }
 
 .dialog {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
@@ -21,13 +21,13 @@
 .dialog-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-title);
   margin-bottom: 0.5rem;
 }
 
 .dialog-message {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   line-height: 1.5;
   margin-bottom: 1.5rem;
 }

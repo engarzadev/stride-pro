@@ -1,8 +1,8 @@
 .sidebar {
   width: 260px;
   height: 100%;
-  background-color: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--color-sidebar-bg);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -24,18 +24,18 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--color-nav-text);
   text-decoration: none;
   transition: all 0.15s ease;
 
   &:hover {
-    background-color: #f1f5f9;
-    color: #0f172a;
+    background-color: var(--color-nav-hover-bg);
+    color: var(--color-nav-hover-text);
   }
 
   &.active {
-    background-color: #eff6ff;
-    color: #2563eb;
+    background-color: var(--color-nav-active-bg);
+    color: var(--color-nav-active-text);
     font-weight: 600;
   }
 }

@@ -2,20 +2,20 @@
 
 ::ng-deep mat-paginator {
   background: transparent;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
   margin-top: 0.25rem;
 }
 
 .table-container {
   overflow-x: auto;
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border-radius: 8px;
 }
 
 .empty-state {
   padding: 3rem 1.5rem;
   text-align: center;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
 }
 
@@ -55,8 +55,8 @@ td.capitalize {
 }
 
 .mobile-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   overflow: hidden;
 
@@ -64,7 +64,7 @@ td.capitalize {
     cursor: pointer;
 
     &:active {
-      background-color: #f8fafc;
+      background-color: var(--color-surface-alt);
     }
   }
 }
@@ -74,7 +74,7 @@ td.capitalize {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 0.5rem 0.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
   gap: 0.5rem;
 }
 
@@ -88,7 +88,7 @@ td.capitalize {
 .title-primary {
   font-weight: 600;
   font-size: 1rem;
-  color: #0f172a;
+  color: var(--color-title);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -96,7 +96,7 @@ td.capitalize {
 
 .title-secondary {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -113,7 +113,7 @@ td.capitalize {
   align-items: center;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-border-light);
 
   &:last-child {
     border-bottom: none;
@@ -123,7 +123,7 @@ td.capitalize {
 .field-label {
   font-weight: 600;
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.025em;
   flex-shrink: 0;
@@ -131,7 +131,7 @@ td.capitalize {
 }
 
 .field-value {
-  color: #1e293b;
+  color: var(--color-field-value);
   text-align: right;
 
   &.capitalize {

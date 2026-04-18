@@ -20,13 +20,13 @@
 .stat-card {
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
-    border-color: #cbd5e1;
+    border-color: var(--color-border);
   }
 }
 
@@ -79,12 +79,12 @@
   font-size: 2rem;
   font-weight: 700;
   line-height: 1;
-  color: #0f172a;
+  color: var(--color-title);
 }
 
 .stat-label {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-top: 0.125rem;
 }
 
@@ -108,7 +108,7 @@
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-title);
   margin: 0;
 }
 
@@ -133,7 +133,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-border-light);
   cursor: pointer;
   gap: 1rem;
 
@@ -142,7 +142,7 @@
   }
 
   &:hover {
-    background-color: #f8fafc;
+    background-color: var(--color-surface-alt);
     margin: 0 -1rem;
     padding-left: 1rem;
     padding-right: 1rem;
@@ -152,12 +152,12 @@
 .appointment-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-title);
 }
 
 .appointment-sub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-top: 0.125rem;
 }
 
@@ -168,7 +168,7 @@
 
 .appointment-date {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-bottom: 0.25rem;
 }
 
