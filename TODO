@@ -20,8 +20,8 @@ Future Features
 [ ] Bulk actions (e.g. bulk delete from list view)
 [ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
 
-[ ] Add vet and farrier information to the horse information section and add fields to the entry and edit forms
-[ ] On all the table, add a search, filter and sort options so finding information is faster
+[x] Add vet and farrier information to the horse information section and add fields to the entry and edit forms
+[x] On all the table, add a search, filter and sort options so finding information is faster
 
 Care Log
 [x] Edit reminders
