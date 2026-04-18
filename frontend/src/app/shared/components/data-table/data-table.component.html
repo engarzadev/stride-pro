@@ -1,7 +1,42 @@
+<!-- ── Search / Filter toolbar ── -->
+<div class="table-toolbar">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>Search</mat-label>
+    <input matInput [value]="searchQuery()" (input)="onSearchChange($any($event.target).value)" />
+    @if (searchQuery()) {
+      <button matSuffix mat-icon-button (click)="onSearchChange('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  @for (fc of filterConfig; track fc.key) {
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter-field">
+      <mat-label>{{ fc.label }}</mat-label>
+      <mat-select [value]="activeFilters()[fc.key] || ''" (valueChange)="setFilter(fc.key, $event)">
+        <mat-option value="">All</mat-option>
+        @for (opt of fc.options; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  @if (hasActiveSearch) {
+    <button mat-stroked-button (click)="clearAllFilters()" class="clear-btn">
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear
+    </button>
+  }
+</div>
+
 @if (isMobile() && mobileCard) {
   <!-- ── Mobile card list ── -->
-  @if (data.length === 0) {
-    <div class="empty-state"><p>No records found.</p></div>
+  @if (filteredCount === 0) {
+    <div class="empty-state">
+      <p>{{ hasActiveSearch ? 'No results match your search.' : 'No records found.' }}</p>
+    </div>
   } @else {
     <div class="card-list">
       @for (row of getPagedData(); track $index) {
@@ -133,7 +168,7 @@
       }
     </div>
     <mat-paginator
-      [length]="data.length"
+      [length]="filteredCount"
       [pageSize]="pageSize()"
       [pageIndex]="currentPage()"
       [pageSizeOptions]="[10, 25, 50]"
@@ -143,8 +178,10 @@
   }
 } @else {
   <!-- ── Desktop table ── -->
-  @if (data.length === 0) {
-    <div class="empty-state"><p>No records found.</p></div>
+  @if (filteredCount === 0) {
+    <div class="empty-state">
+      <p>{{ hasActiveSearch ? 'No results match your search.' : 'No records found.' }}</p>
+    </div>
   } @else {
     <div class="table-container">
       <table
@@ -248,7 +285,7 @@
       </table>
     </div>
     <mat-paginator
-      [length]="data.length"
+      [length]="filteredCount"
       [pageSize]="pageSize()"
       [pageIndex]="currentPage()"
       [pageSizeOptions]="[10, 25, 50]"

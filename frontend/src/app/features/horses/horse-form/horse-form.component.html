@@ -113,6 +113,32 @@
 
         <mat-card class="form-card">
           <mat-card-content>
+            <div class="card-section-title">Vet & Farrier</div>
+            <div class="form-row">
+              <mat-form-field>
+                <mat-label>Vet Name</mat-label>
+                <input matInput type="text" formControlName="vetName" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Vet Phone</mat-label>
+                <input matInput type="tel" formControlName="vetPhone" />
+              </mat-form-field>
+            </div>
+            <div class="form-row">
+              <mat-form-field>
+                <mat-label>Farrier Name</mat-label>
+                <input matInput type="text" formControlName="farrierName" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Farrier Phone</mat-label>
+                <input matInput type="tel" formControlName="farrierPhone" />
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card">
+          <mat-card-content>
             <div class="card-section-title">Notes</div>
             <mat-form-field class="full-width">
               <mat-label>Notes (optional)</mat-label>

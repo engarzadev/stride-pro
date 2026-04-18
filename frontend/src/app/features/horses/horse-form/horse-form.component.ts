@@ -55,6 +55,10 @@ export class HorseFormComponent implements OnInit {
     color: [''],
     weight: [null as number | null],
     notes: [''],
+    vetName: [''],
+    vetPhone: [''],
+    farrierName: [''],
+    farrierPhone: [''],
     clientId: ['', [Validators.required]],
     barnId: [null as string | null],
   });
@@ -85,6 +89,10 @@ export class HorseFormComponent implements OnInit {
             color: horse.color,
             weight: horse.weight,
             notes: horse.notes,
+            vetName: horse.vetName,
+            vetPhone: horse.vetPhone,
+            farrierName: horse.farrierName,
+            farrierPhone: horse.farrierPhone,
             clientId: horse.clientId,
             barnId: horse.barnId,
           });

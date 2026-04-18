@@ -31,6 +31,10 @@ export interface Horse {
   color: string;
   weight: number;
   notes: string;
+  vetName: string;
+  vetPhone: string;
+  farrierName: string;
+  farrierPhone: string;
   clientId: string;
   barnId: string | null;
   client?: Client;

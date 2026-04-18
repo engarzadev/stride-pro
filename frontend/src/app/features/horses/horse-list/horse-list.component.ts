@@ -5,6 +5,7 @@ import { Horse } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  FilterConfig,
   MobileCardConfig,
   TableAction,
   TableColumn,
@@ -53,6 +54,18 @@ export class HorseListComponent implements OnInit {
   ];
 
   readonly mobileCard: MobileCardConfig = { titleKey: 'name', subtitleKey: 'clientName' };
+
+  readonly filterConfig: FilterConfig[] = [
+    {
+      key: 'gender',
+      label: 'Gender',
+      options: [
+        { value: 'mare', label: 'Mare' },
+        { value: 'stallion', label: 'Stallion' },
+        { value: 'gelding', label: 'Gelding' },
+      ],
+    },
+  ];
 
   ngOnInit(): void {
     this.loadHorses();

@@ -6,6 +6,7 @@ import { Invoice } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  FilterConfig,
   MobileCardConfig,
   TableAction,
   TableColumn,
@@ -80,6 +81,19 @@ export class InvoiceListComponent implements OnInit {
     titleKey: 'invoiceNumber',
     subtitleKey: 'clientName',
   };
+
+  readonly filterConfig: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'draft', label: 'Draft' },
+        { value: 'sent', label: 'Sent' },
+        { value: 'paid', label: 'Paid' },
+        { value: 'overdue', label: 'Overdue' },
+      ],
+    },
+  ];
 
   ngOnInit(): void {
     this.loadInvoices();

@@ -83,7 +83,7 @@ export class CareLogComponent implements OnInit {
   );
 
   readonly viewportHeight = computed(() =>
-    Math.min(this.visibleLogs().length * 88, 440)
+    Math.min(this.visibleLogs().length * 96, 480)
   );
 
   trackLog(_: number, log: CareLog): string { return log.id; }

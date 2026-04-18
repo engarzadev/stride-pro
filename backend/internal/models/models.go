@@ -49,9 +49,13 @@ type Horse struct {
 	Gender    string         `json:"gender"`
 	Color     string         `json:"color"`
 	Weight    float64        `json:"weight"`
-	Notes     string         `json:"notes"`
-	Client    *Client        `json:"client,omitempty"`
-	Barn      *Barn          `json:"barn,omitempty"`
+	Notes       string         `json:"notes"`
+	VetName     string         `json:"vet_name"`
+	VetPhone    string         `json:"vet_phone"`
+	FarrierName string         `json:"farrier_name"`
+	FarrierPhone string        `json:"farrier_phone"`
+	Client      *Client        `json:"client,omitempty"`
+	Barn        *Barn          `json:"barn,omitempty"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 }

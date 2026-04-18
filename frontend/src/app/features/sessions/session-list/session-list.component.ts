@@ -7,6 +7,7 @@ import { SubscriptionService } from '../../../core/services/subscription.service
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  FilterConfig,
   MobileCardConfig,
   TableAction,
   TableColumn,
@@ -67,6 +68,23 @@ export class SessionListComponent implements OnInit {
     titleKey: 'createdAt',
     subtitleKey: 'horseName',
   };
+
+  readonly filterConfig: FilterConfig[] = [
+    {
+      key: 'type',
+      label: 'Type',
+      options: [
+        { value: 'massage', label: 'Massage' },
+        { value: 'chiropractic', label: 'Chiropractic' },
+        { value: 'acupuncture', label: 'Acupuncture' },
+        { value: 'rehabilitation', label: 'Rehabilitation' },
+        { value: 'evaluation', label: 'Evaluation' },
+        { value: 'treatment', label: 'Treatment' },
+        { value: 'pemf', label: 'PEMF' },
+        { value: 'other', label: 'Other' },
+      ],
+    },
+  ];
 
   ngOnInit(): void {
     this.subscriptionService.load().subscribe(() => {

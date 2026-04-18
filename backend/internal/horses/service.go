@@ -23,15 +23,19 @@ func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
 
 // CreateInput holds data for creating or updating a horse.
 type CreateInput struct {
-	ClientID uuid.UUID  `json:"client_id"`
-	BarnID   *uuid.UUID `json:"barn_id"`
-	Name     string     `json:"name"`
-	Breed    string     `json:"breed"`
-	Age      int        `json:"age"`
-	Gender   string     `json:"gender"`
-	Color    string     `json:"color"`
-	Weight   float64    `json:"weight"`
-	Notes    string     `json:"notes"`
+	ClientID    uuid.UUID  `json:"client_id"`
+	BarnID      *uuid.UUID `json:"barn_id"`
+	Name        string     `json:"name"`
+	Breed       string     `json:"breed"`
+	Age         int        `json:"age"`
+	Gender      string     `json:"gender"`
+	Color       string     `json:"color"`
+	Weight      float64    `json:"weight"`
+	Notes       string     `json:"notes"`
+	VetName     string     `json:"vet_name"`
+	VetPhone    string     `json:"vet_phone"`
+	FarrierName string     `json:"farrier_name"`
+	FarrierPhone string    `json:"farrier_phone"`
 }
 
 // Validate checks the input for errors.
@@ -61,16 +65,20 @@ func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Horse, er
 	}
 
 	h := &models.Horse{
-		UserID:   userID,
-		ClientID: input.ClientID,
-		BarnID:   models.PtrToNullUUID(input.BarnID),
-		Name:     input.Name,
-		Breed:    input.Breed,
-		Age:      input.Age,
-		Gender:   input.Gender,
-		Color:    input.Color,
-		Weight:   input.Weight,
-		Notes:    input.Notes,
+		UserID:       userID,
+		ClientID:     input.ClientID,
+		BarnID:       models.PtrToNullUUID(input.BarnID),
+		Name:         input.Name,
+		Breed:        input.Breed,
+		Age:          input.Age,
+		Gender:       input.Gender,
+		Color:        input.Color,
+		Weight:       input.Weight,
+		Notes:        input.Notes,
+		VetName:      input.VetName,
+		VetPhone:     input.VetPhone,
+		FarrierName:  input.FarrierName,
+		FarrierPhone: input.FarrierPhone,
 	}
 	if err := s.repo.Create(h); err != nil {
 		return nil, err
@@ -101,17 +109,21 @@ func (s *Service) GetByBarnID(userID, barnID uuid.UUID) ([]models.Horse, error) 
 // Update modifies an existing horse.
 func (s *Service) Update(userID, horseID uuid.UUID, input CreateInput) (*models.Horse, error) {
 	h := &models.Horse{
-		ID:       horseID,
-		UserID:   userID,
-		ClientID: input.ClientID,
-		BarnID:   models.PtrToNullUUID(input.BarnID),
-		Name:     input.Name,
-		Breed:    input.Breed,
-		Age:      input.Age,
-		Gender:   input.Gender,
-		Color:    input.Color,
-		Weight:   input.Weight,
-		Notes:    input.Notes,
+		ID:           horseID,
+		UserID:       userID,
+		ClientID:     input.ClientID,
+		BarnID:       models.PtrToNullUUID(input.BarnID),
+		Name:         input.Name,
+		Breed:        input.Breed,
+		Age:          input.Age,
+		Gender:       input.Gender,
+		Color:        input.Color,
+		Weight:       input.Weight,
+		Notes:        input.Notes,
+		VetName:      input.VetName,
+		VetPhone:     input.VetPhone,
+		FarrierName:  input.FarrierName,
+		FarrierPhone: input.FarrierPhone,
 	}
 	if err := s.repo.Update(h); err != nil {
 		return nil, err

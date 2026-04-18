@@ -56,6 +56,18 @@
               <p>{{ h.createdAt | dateFormat }}</p>
             </div>
           </div>
+          @if (h.vetName || h.vetPhone) {
+            <div class="detail-field">
+              <label>Vet</label>
+              <p>{{ h.vetName }}{{ h.vetName && h.vetPhone ? ' · ' : '' }}{{ h.vetPhone }}</p>
+            </div>
+          }
+          @if (h.farrierName || h.farrierPhone) {
+            <div class="detail-field">
+              <label>Farrier</label>
+              <p>{{ h.farrierName }}{{ h.farrierName && h.farrierPhone ? ' · ' : '' }}{{ h.farrierPhone }}</p>
+            </div>
+          }
           @if (h.notes) {
             <div class="detail-field mt-4">
               <label>Notes</label>

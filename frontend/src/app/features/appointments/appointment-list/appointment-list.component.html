@@ -9,6 +9,7 @@
         [columns]="columns"
         [data]="$any(tableAppointments())"
         [actions]="actions"
+        [filterConfig]="filterConfig"
         [mobileCard]="mobileCard"
         (rowClick)="onRowClick($event)"
         (actionClick)="onAction($event)" />

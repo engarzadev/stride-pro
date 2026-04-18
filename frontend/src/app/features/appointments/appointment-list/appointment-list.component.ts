@@ -5,6 +5,7 @@ import { Appointment } from '../../../core/models';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   DataTableComponent,
+  FilterConfig,
   MobileCardConfig,
   TableAction,
   TableColumn,
@@ -72,6 +73,34 @@ export class AppointmentListComponent implements OnInit {
   ];
 
   readonly mobileCard: MobileCardConfig = { titleKey: 'date', subtitleKey: 'horseName' };
+
+  readonly filterConfig: FilterConfig[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { value: 'scheduled', label: 'Scheduled' },
+        { value: 'confirmed', label: 'Confirmed' },
+        { value: 'completed', label: 'Completed' },
+        { value: 'cancelled', label: 'Cancelled' },
+        { value: 'no-show', label: 'No Show' },
+      ],
+    },
+    {
+      key: 'type',
+      label: 'Type',
+      options: [
+        { value: 'checkup', label: 'Checkup' },
+        { value: 'treatment', label: 'Treatment' },
+        { value: 'massage', label: 'Massage' },
+        { value: 'chiropractic', label: 'Chiropractic' },
+        { value: 'acupuncture', label: 'Acupuncture' },
+        { value: 'rehabilitation', label: 'Rehabilitation' },
+        { value: 'evaluation', label: 'Evaluation' },
+        { value: 'other', label: 'Other' },
+      ],
+    },
+  ];
 
   ngOnInit(): void {
     this.loadAppointments();

@@ -81,7 +81,7 @@
     @if (filteredLogs().length === 0) {
       <p class="empty-state">No entries match the selected filter.</p>
     } @else {
-      <cdk-virtual-scroll-viewport itemSize="88" class="log-viewport" [style.height.px]="viewportHeight()">
+      <cdk-virtual-scroll-viewport itemSize="96" class="log-viewport" [style.height.px]="viewportHeight()">
         <div *cdkVirtualFor="let log of visibleLogs(); trackBy: trackLog" class="log-entry">
           <div class="log-meta">
             <span class="log-date">{{ log.date | dateFormat:'numeric' }}</span>

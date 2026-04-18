@@ -1,3 +1,26 @@
+// ── Toolbar ──────────────────────────────────────────────────────────────────
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-field {
+  min-width: 140px;
+}
+
+.clear-btn {
+  white-space: nowrap;
+}
+
 // ── Desktop table ────────────────────────────────────────────────────────────
 
 ::ng-deep mat-paginator {

@@ -10,6 +10,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
@@ -36,10 +39,16 @@ export interface MobileCardConfig {
   subtitleKey?: string;
 }
 
+export interface FilterConfig {
+  key: string;
+  label: string;
+  options: { value: string; label: string }[];
+}
+
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatChipsModule, MatTooltipModule, MatMenuModule, MatPaginatorModule, CurrencyFormatPipe, DateFormatPipe],
+  imports: [MatTableModule, MatSortModule, MatButtonModule, MatIconModule, MatChipsModule, MatTooltipModule, MatMenuModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatSelectModule, CurrencyFormatPipe, DateFormatPipe],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
@@ -47,6 +56,7 @@ export class DataTableComponent {
   @Input() columns: TableColumn[] = [];
   @Input() data: Record<string, unknown>[] = [];
   @Input() actions: TableAction[] = [];
+  @Input() filterConfig: FilterConfig[] = [];
   @Input() clickable = true;
   @Input() mobileCard?: MobileCardConfig;
   @Output() rowClick = new EventEmitter<Record<string, unknown>>();
@@ -63,6 +73,53 @@ export class DataTableComponent {
   sortDir = signal<'asc' | 'desc'>('asc');
   currentPage = signal(0);
   pageSize = signal(10);
+  searchQuery = signal('');
+  activeFilters = signal<Record<string, string>>({});
+
+  get hasActiveSearch(): boolean {
+    return !!this.searchQuery() || Object.values(this.activeFilters()).some(v => !!v);
+  }
+
+  get filteredCount(): number {
+    return this.getFilteredData().length;
+  }
+
+  onSearchChange(query: string): void {
+    this.searchQuery.set(query);
+    this.currentPage.set(0);
+  }
+
+  setFilter(key: string, value: string): void {
+    this.activeFilters.update(f => ({ ...f, [key]: value }));
+    this.currentPage.set(0);
+  }
+
+  clearAllFilters(): void {
+    this.searchQuery.set('');
+    this.activeFilters.set({});
+    this.currentPage.set(0);
+  }
+
+  getFilteredData(): Record<string, unknown>[] {
+    let result = this.data;
+    const query = this.searchQuery().toLowerCase().trim();
+    if (query) {
+      result = result.filter(row =>
+        this.columns.some(col => {
+          const val = this.getNestedValue(row, col.key);
+          return val != null && String(val).toLowerCase().includes(query);
+        })
+      );
+    }
+    const filters = this.activeFilters();
+    for (const [key, value] of Object.entries(filters)) {
+      if (!value) continue;
+      result = result.filter(row =>
+        String(this.getNestedValue(row, key)).toLowerCase() === value.toLowerCase()
+      );
+    }
+    return result;
+  }
 
   get displayedColumns(): string[] {
     const cols = this.columns.map((c) => c.key);
@@ -111,9 +168,10 @@ export class DataTableComponent {
 
   getSortedData(): Record<string, unknown>[] {
     const key = this.sortKey();
-    if (!key) return this.data;
+    const filtered = this.getFilteredData();
+    if (!key) return filtered;
     const dir = this.sortDir() === 'asc' ? 1 : -1;
-    return [...this.data].sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       const aVal = this.getNestedValue(a, key);
       const bVal = this.getNestedValue(b, key);
       if (aVal == null) return 1;

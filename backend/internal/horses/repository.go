@@ -23,7 +23,7 @@ func NewRepository(db *database.DB) *Repository {
 	return &Repository{db: db}
 }
 
-const horseSelectCols = `h.id, h.user_id, h.client_id, h.barn_id, h.name, h.breed, h.age, h.gender, h.color, h.weight, h.notes, h.created_at, h.updated_at, c.id, c.first_name, c.last_name, b.id, b.name`
+const horseSelectCols = `h.id, h.user_id, h.client_id, h.barn_id, h.name, h.breed, h.age, h.gender, h.color, h.weight, h.notes, h.vet_name, h.vet_phone, h.farrier_name, h.farrier_phone, h.created_at, h.updated_at, c.id, c.first_name, c.last_name, b.id, b.name`
 const horseJoins = `FROM horses h LEFT JOIN clients c ON h.client_id = c.id LEFT JOIN barns b ON h.barn_id = b.id`
 
 func scanHorse(scanner interface{ Scan(...interface{}) error }) (*models.Horse, error) {
@@ -34,7 +34,9 @@ func scanHorse(scanner interface{ Scan(...interface{}) error }) (*models.Horse, 
 	var barnName sql.NullString
 	err := scanner.Scan(
 		&h.ID, &h.UserID, &h.ClientID, &h.BarnID, &h.Name, &h.Breed,
-		&h.Age, &h.Gender, &h.Color, &h.Weight, &h.Notes, &h.CreatedAt, &h.UpdatedAt,
+		&h.Age, &h.Gender, &h.Color, &h.Weight, &h.Notes,
+		&h.VetName, &h.VetPhone, &h.FarrierName, &h.FarrierPhone,
+		&h.CreatedAt, &h.UpdatedAt,
 		&clientID, &clientFirstName, &clientLastName,
 		&barnID, &barnName,
 	)
@@ -64,10 +66,12 @@ func (r *Repository) Create(h *models.Horse) error {
 	h.UpdatedAt = time.Now()
 
 	_, err := r.db.Exec(`
-		INSERT INTO horses (id, user_id, client_id, barn_id, name, breed, age, gender, color, weight, notes, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+		INSERT INTO horses (id, user_id, client_id, barn_id, name, breed, age, gender, color, weight, notes, vet_name, vet_phone, farrier_name, farrier_phone, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
 		h.ID, h.UserID, h.ClientID, h.BarnID, h.Name, h.Breed,
-		h.Age, h.Gender, h.Color, h.Weight, h.Notes, h.CreatedAt, h.UpdatedAt,
+		h.Age, h.Gender, h.Color, h.Weight, h.Notes,
+		h.VetName, h.VetPhone, h.FarrierName, h.FarrierPhone,
+		h.CreatedAt, h.UpdatedAt,
 	)
 	if err != nil {
 		return fmt.Errorf("inserting horse: %w", err)
@@ -160,10 +164,12 @@ func (r *Repository) Update(h *models.Horse) error {
 	h.UpdatedAt = time.Now()
 	result, err := r.db.Exec(`
 		UPDATE horses SET client_id=$1, barn_id=$2, name=$3, breed=$4, age=$5, gender=$6,
-		color=$7, weight=$8, notes=$9, updated_at=$10
-		WHERE id=$11 AND user_id=$12`,
+		color=$7, weight=$8, notes=$9, vet_name=$10, vet_phone=$11, farrier_name=$12, farrier_phone=$13, updated_at=$14
+		WHERE id=$15 AND user_id=$16`,
 		h.ClientID, h.BarnID, h.Name, h.Breed, h.Age, h.Gender,
-		h.Color, h.Weight, h.Notes, h.UpdatedAt, h.ID, h.UserID,
+		h.Color, h.Weight, h.Notes,
+		h.VetName, h.VetPhone, h.FarrierName, h.FarrierPhone,
+		h.UpdatedAt, h.ID, h.UserID,
 	)
 	if err != nil {
 		return fmt.Errorf("updating horse: %w", err)
