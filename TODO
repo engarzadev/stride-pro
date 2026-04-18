@@ -20,18 +20,12 @@ Future Features
 [ ] Bulk actions (e.g. bulk delete from list view)
 [ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
 
+[ ] Add vet and farrier information to the horse information section and add fields to the entry and edit forms
+[ ] On all the table, add a search, filter and sort options so finding information is faster
+
+Care Log
+[x] Edit reminders
+[x] Add virtual scroll to the logs section
+
 Tech Debt
-[x] Make a page layout or template for the list, form, and details that way updates are faster
-[x] See if lazy load modules would be useful
-[x] fix scroll bar and sidebar overflow
-[x] remove barn from the horse form, add horse to the barn form. this the be applied across the app
 
-Not Working
-[x] Cant create session - (thought: prefill the session type with the appointment type)
-[x] Cant create invoice (\*\* cant reproduce)
-
-Sessions Subscription Gate
-[x] **Frontend - session-list.component.ts**: Inject `SubscriptionService`, add `canManageSessions = signal(false)`, call `subscriptionService.load()` in `ngOnInit` and set signal via `hasFeature('session_notes')`
-[x] **Frontend - session-list.component.html**: Conditionally hide the "Add Session" button (`[buttonText]="canManageSessions() ? 'Add Session' : ''"`) and show an upgrade notice link to `/billing` when `!canManageSessions()`
-[x] **Frontend - session-form.component.ts**: Inject `SubscriptionService`, guard new-session creation (when no `id` param) — redirect to `/sessions` with a toast error if `hasFeature('session_notes')` is false
-[x] **Backend - sessions/service.go**: Add `RequireFeature(userID, "session_notes")` check to `GetAll` (or at minimum to `Update`) to match the barn pattern

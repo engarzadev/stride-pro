@@ -22,6 +22,7 @@ var Plans = map[string]Plan{
 			"horses_max_20",
 			"appointments_basic",
 			"invoices_basic",
+			"care_log_reminders",
 		},
 	},
 	"base": {
@@ -37,6 +38,7 @@ var Plans = map[string]Plan{
 			"session_notes",
 			"barn_management",
 			"email_notifications",
+			"care_logs",
 		},
 	},
 	"trainer_addon": {
@@ -56,6 +58,8 @@ var Plans = map[string]Plan{
 			"multi_horse_sessions",
 			"advanced_reporting",
 			"client_portal",
+			"care_logs",
+			"care_log_reminders",
 		},
 	},
 	"enterprise": {
@@ -78,6 +82,8 @@ var Plans = map[string]Plan{
 			"api_access",
 			"custom_branding",
 			"priority_support",
+			"care_logs",
+			"care_log_reminders",
 		},
 	},
 }
@@ -102,4 +108,6 @@ var FeatureDescriptions = map[string]string{
 	"api_access":           "REST API access",
 	"custom_branding":      "Custom branding",
 	"priority_support":     "Priority support",
+	"care_logs":            "Horse care log (farrier, vet, diet, and more)",
+	"care_log_reminders":   "Automated reminders for recurring care",
 }

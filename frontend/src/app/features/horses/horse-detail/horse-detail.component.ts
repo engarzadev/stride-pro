@@ -10,11 +10,13 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { HorsesService } from '../horses.service';
+import { CareLogComponent } from '../care-log/care-log.component';
+import { HorseRemindersComponent } from '../horse-reminders/horse-reminders.component';
 
 @Component({
   selector: 'app-horse-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, DetailPageComponent],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, DetailPageComponent, CareLogComponent, HorseRemindersComponent],
   templateUrl: './horse-detail.component.html',
   styleUrls: ['./horse-detail.component.scss'],
 })

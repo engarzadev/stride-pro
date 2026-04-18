@@ -15,28 +15,28 @@
           <mat-card-content>
             <div class="card-section-title">Barn Information</div>
             <div class="form-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Name</mat-label>
                 <input matInput type="text" formControlName="name" />
                 @if (form.controls.name.errors?.["required"]) {
                   <mat-error>Name is required.</mat-error>
                 }
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Contact Name</mat-label>
                 <input matInput type="text" formControlName="contactName" />
               </mat-form-field>
             </div>
-            <mat-form-field appearance="outline">
+            <mat-form-field>
               <mat-label>Address</mat-label>
               <input matInput type="text" formControlName="address" />
             </mat-form-field>
             <div class="form-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Phone</mat-label>
                 <input matInput type="tel" formControlName="phone" />
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Email</mat-label>
                 <input matInput type="email" formControlName="email" />
                 @if (form.controls.email.errors?.["email"]) {
@@ -64,7 +64,7 @@
         <mat-card class="form-card">
           <mat-card-content>
             <div class="card-section-title">Notes</div>
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field class="full-width">
               <mat-label>Notes (optional)</mat-label>
               <textarea matInput formControlName="notes" rows="4"></textarea>
             </mat-form-field>

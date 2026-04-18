@@ -14,6 +14,8 @@ import (
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/barns"
 	biz "github.com/stride-pro/backend/internal/business_settings"
+	carelogs "github.com/stride-pro/backend/internal/care_logs"
+	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/clients"
 	"github.com/stride-pro/backend/internal/config"
 	"github.com/stride-pro/backend/internal/database"
@@ -96,6 +98,14 @@ func main() {
 	invoiceService := invoices.NewService(invoiceRepo, bizService, emailSender)
 	invoiceHandler := invoices.NewHandler(invoiceService)
 
+	careLogRepo := carelogs.NewRepository(db)
+	careLogService := carelogs.NewService(careLogRepo, subsService)
+	careLogHandler := carelogs.NewHandler(careLogService)
+
+	reminderRepo := reminders.NewRepository(db)
+	reminderService := reminders.NewService(reminderRepo)
+	reminderHandler := reminders.NewHandler(reminderService)
+
 	// Set up router
 	handler := router.New(router.Deps{
 		DB:                     db,
@@ -110,6 +120,8 @@ func main() {
 		SubscriptionHandler:    subsHandler,
 		BusinessSettingHandler: bizHandler,
 		ServiceItemHandler:     svcHandler,
+		CareLogHandler:         careLogHandler,
+		ReminderHandler:        reminderHandler,
 	})
 
 	// Configure HTTP server

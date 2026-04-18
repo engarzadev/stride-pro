@@ -10,6 +10,8 @@ import (
 	"github.com/stride-pro/backend/internal/auth"
 	"github.com/stride-pro/backend/internal/barns"
 	biz "github.com/stride-pro/backend/internal/business_settings"
+	carelogs "github.com/stride-pro/backend/internal/care_logs"
+	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/clients"
 	"github.com/stride-pro/backend/internal/database"
 	"github.com/stride-pro/backend/internal/horses"
@@ -35,6 +37,8 @@ type Deps struct {
 	SubscriptionHandler    *subscriptions.Handler
 	BusinessSettingHandler *biz.Handler
 	ServiceItemHandler     *svc.Handler
+	CareLogHandler         *carelogs.Handler
+	ReminderHandler        *reminders.Handler
 }
 
 // New creates and configures the application router with all routes and middleware.
@@ -121,6 +125,19 @@ func New(deps Deps) http.Handler {
 	protected.HandleFunc("/invoices/{id}", deps.InvoiceHandler.Delete).Methods("DELETE")
 	protected.HandleFunc("/invoices/{id}/status", deps.InvoiceHandler.UpdateStatus).Methods("PATCH")
 	protected.HandleFunc("/invoices/{id}/send", deps.InvoiceHandler.Send).Methods("POST")
+
+	// Care logs
+	protected.HandleFunc("/horses/{horseId}/care-logs", deps.CareLogHandler.List).Methods("GET")
+	protected.HandleFunc("/horses/{horseId}/care-logs", deps.CareLogHandler.Create).Methods("POST")
+	protected.HandleFunc("/care-logs/{id}", deps.CareLogHandler.Update).Methods("PUT")
+	protected.HandleFunc("/care-logs/{id}", deps.CareLogHandler.Delete).Methods("DELETE")
+
+	// Reminders
+	protected.HandleFunc("/horses/{horseId}/reminders", deps.ReminderHandler.List).Methods("GET")
+	protected.HandleFunc("/horses/{horseId}/reminders", deps.ReminderHandler.Create).Methods("POST")
+	protected.HandleFunc("/reminders/{id}", deps.ReminderHandler.Update).Methods("PUT")
+	protected.HandleFunc("/reminders/{id}", deps.ReminderHandler.Patch).Methods("PATCH")
+	protected.HandleFunc("/reminders/{id}", deps.ReminderHandler.Delete).Methods("DELETE")
 
 	// Settings
 	protected.HandleFunc("/settings/business", deps.BusinessSettingHandler.Get).Methods("GET")

@@ -18,7 +18,7 @@
           <mat-card-content>
             <div class="card-section-title">Invoice Details</div>
             <div class="form-row">
-              <mat-form-field appearance="outline" class="field-grow">
+              <mat-form-field class="field-grow">
                 <mat-label>Client</mat-label>
                 <mat-select #clientSelect formControlName="clientId">
                   <mat-option [value]="0" disabled>Select a client</mat-option>
@@ -46,7 +46,7 @@
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="field-status">
+              <mat-form-field class="field-status">
                 <mat-label>Status</mat-label>
                 <mat-select formControlName="status">
                   <mat-option value="draft">Draft</mat-option>
@@ -58,7 +58,7 @@
             </div>
 
             <div class="form-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Invoice Date</mat-label>
                 <input
                   matInput
@@ -75,7 +75,7 @@
                 }
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Due Date</mat-label>
                 <input
                   matInput
@@ -233,7 +233,7 @@
         <mat-card class="form-card">
           <mat-card-content>
             <div class="card-section-title">Notes</div>
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field class="full-width">
               <mat-label>Add a note for your client (optional)</mat-label>
               <textarea matInput formControlName="notes" rows="4"></textarea>
             </mat-form-field>

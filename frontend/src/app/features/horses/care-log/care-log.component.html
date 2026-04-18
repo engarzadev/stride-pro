@@ -1,0 +1,105 @@
+<div class="care-log-section-header">
+  <div class="card-section-title">Care Log</div>
+  @if (canUseCareLog() && !showForm()) {
+    <button mat-stroked-button (click)="onAdd()">
+      <mat-icon>add</mat-icon> Add Entry
+    </button>
+  }
+</div>
+
+@if (!canUseCareLog()) {
+  <a routerLink="/billing" class="upgrade-notice">
+    <mat-icon>lock</mat-icon>
+    <span>Care log tracking requires a Base plan or higher. Click here to upgrade.</span>
+  </a>
+} @else {
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="form-row">
+        <mat-form-field>
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="datePicker" formControlName="date" />
+          <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+          <mat-datepicker #datePicker />
+          @if (form.controls.date.errors?.['required']) {
+            <mat-error>Date is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category">
+            @for (cat of categories; track cat.value) {
+              <mat-option [value]="cat.value">{{ cat.label }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls.category.errors?.['required']) {
+            <mat-error>Category is required.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="full-width">
+        <mat-label>Notes (optional)</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+          {{ editingId() ? 'Save Changes' : 'Add Entry' }}
+        </button>
+        <button mat-button type="button" (click)="onCancelForm()">Cancel</button>
+      </div>
+    </form>
+  }
+
+  @if (loading()) {
+    <app-loading-spinner />
+  } @else if (logs().length === 0 && !showForm()) {
+    <p class="empty-state">No care log entries yet. Add the first one above.</p>
+  } @else {
+    @if (!showForm()) {
+      <div class="log-controls">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Category</mat-label>
+          <mat-select [value]="filterCategory()" (valueChange)="filterCategory.set($event)">
+            <mat-option value="">All categories</mat-option>
+            @for (cat of categories; track cat.value) {
+              <mat-option [value]="cat.value">{{ cat.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="sortDir.set(sortDir() === 'desc' ? 'asc' : 'desc')">
+          <mat-icon>{{ sortDir() === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          {{ sortDir() === 'desc' ? 'Newest first' : 'Oldest first' }}
+        </button>
+      </div>
+    }
+
+    @if (filteredLogs().length === 0) {
+      <p class="empty-state">No entries match the selected filter.</p>
+    } @else {
+      <cdk-virtual-scroll-viewport itemSize="88" class="log-viewport" [style.height.px]="viewportHeight()">
+        <div *cdkVirtualFor="let log of visibleLogs(); trackBy: trackLog" class="log-entry">
+          <div class="log-meta">
+            <span class="log-date">{{ log.date | dateFormat:'numeric' }}</span>
+            <span class="log-category">{{ categoryLabel(log.category) }}</span>
+          </div>
+          @if (log.notes) {
+            <p class="log-notes">{{ log.notes }}</p>
+          }
+          <div class="log-actions">
+            <button mat-icon-button (click)="onEdit(log)" title="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="onDelete(log)" title="Delete" class="delete-btn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    }
+  }
+}

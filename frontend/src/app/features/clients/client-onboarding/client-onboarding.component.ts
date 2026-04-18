@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { UpgradeFieldPromptComponent } from '../../../shared/components/upgrade-field-prompt/upgrade-field-prompt.component';
 import { Appointment, Barn, Client, Horse } from '../../../core/models';
@@ -33,6 +34,7 @@ import { ClientsService } from '../clients.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatDatepickerModule,
     MatSelectModule,
     UpgradeFieldPromptComponent,
   ],

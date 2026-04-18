@@ -1,0 +1,125 @@
+<div class="reminders-header">
+  <div class="card-section-title">Upcoming Reminders</div>
+  @if (!showForm()) {
+    <button mat-stroked-button (click)="onAdd()">
+      <mat-icon>add</mat-icon> Add Reminder
+    </button>
+  }
+</div>
+
+@if (showForm()) {
+  <form [formGroup]="form" (ngSubmit)="onSave()" class="reminder-form">
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" placeholder="e.g. Schedule farrier" />
+      @if (form.controls.title.errors?.['required']) {
+        <mat-error>Title is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Due Date</mat-label>
+      <input matInput [matDatepicker]="duePicker" formControlName="dueDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="duePicker" />
+      <mat-datepicker #duePicker />
+      @if (form.controls.dueDate.errors?.['required']) {
+        <mat-error>Due date is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Category (optional)</mat-label>
+      <mat-select formControlName="category">
+        <mat-option value="">None</mat-option>
+        @for (cat of categories; track cat.value) {
+          <mat-option [value]="cat.value">{{ cat.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+        {{ editingId() ? 'Save Changes' : 'Add Reminder' }}
+      </button>
+      <button mat-button type="button" (click)="onCancelForm()">Cancel</button>
+    </div>
+  </form>
+}
+
+@if (loading()) {
+  <p class="loading-text">Loading reminders...</p>
+} @else {
+  @if (activeReminders().length === 0 && !showForm()) {
+    <p class="empty-state">No upcoming reminders. Add one or they'll appear automatically based on care log history.</p>
+  } @else {
+    <div class="reminder-list">
+      @for (item of activeReminders(); track item.id) {
+        <div class="reminder-row" [class]="item.urgency">
+          <div class="reminder-info">
+            <div class="reminder-top">
+              <span class="reminder-title">{{ item.title }}</span>
+              @if (item.source === 'auto') {
+                <span class="badge badge-auto">Auto</span>
+              }
+              @if (item.category) {
+                <span class="badge badge-category">{{ categoryLabel(item.category) }}</span>
+              }
+            </div>
+            <span class="reminder-due" [class]="item.urgency">
+              @if (item.urgency === 'overdue') { Overdue · }
+              @else if (item.urgency === 'soon') { Due soon · }
+              {{ item.dueDate | dateFormat:'numeric' }}
+            </span>
+          </div>
+          <button mat-icon-button class="done-btn" title="Mark done" (click)="onMarkComplete(item)">
+            <mat-icon>check_circle_outline</mat-icon>
+          </button>
+          <button mat-icon-button title="Edit" (click)="onEdit(item)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="delete-btn" title="Delete" (click)="onDelete(item)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (completedReminders().length > 0) {
+    <div class="completed-toggle">
+      <button mat-button (click)="showCompleted.set(!showCompleted())">
+        <mat-icon>{{ showCompleted() ? 'expand_less' : 'expand_more' }}</mat-icon>
+        Completed ({{ completedReminders().length }})
+      </button>
+    </div>
+
+    @if (showCompleted()) {
+      <div class="reminder-list completed-list">
+        @for (item of completedReminders(); track item.id) {
+          <div class="reminder-row completed">
+            <div class="reminder-info">
+              <div class="reminder-top">
+                <span class="reminder-title">{{ item.title }}</span>
+                @if (item.source === 'auto') {
+                  <span class="badge badge-auto">Auto</span>
+                }
+                @if (item.category) {
+                  <span class="badge badge-category">{{ categoryLabel(item.category) }}</span>
+                }
+              </div>
+              <span class="reminder-due">{{ item.dueDate | dateFormat:'numeric' }}</span>
+            </div>
+            @if (item.source === 'manual') {
+              <button mat-icon-button title="Reopen" (click)="onReopen(item)">
+                <mat-icon>undo</mat-icon>
+              </button>
+              <button mat-icon-button class="delete-btn" title="Delete" (click)="onDelete(item)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+}

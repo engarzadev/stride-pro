@@ -171,6 +171,32 @@ type Notification struct {
 	CreatedAt time.Time    `json:"created_at"`
 }
 
+// Reminder represents an upcoming health or maintenance task for a horse.
+type Reminder struct {
+	ID         uuid.UUID `json:"id"`
+	UserID     uuid.UUID `json:"user_id"`
+	HorseID    uuid.UUID `json:"horse_id"`
+	Title      string    `json:"title"`
+	DueDate    string    `json:"due_date"`
+	Category   string    `json:"category"`
+	Source     string    `json:"source"`
+	IsComplete bool      `json:"is_complete"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+// CareLog records a care event for a horse (e.g. farrier, vet, diet change).
+type CareLog struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	HorseID   uuid.UUID `json:"horse_id"`
+	Date      string    `json:"date"`
+	Category  string    `json:"category"`
+	Notes     string    `json:"notes"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 // Subscription represents a user's billing plan.
 type Subscription struct {
 	ID        uuid.UUID       `json:"id"`

@@ -64,6 +64,16 @@
           }
         </mat-card-content>
       </mat-card>
+      <mat-card class="mb-6">
+        <mat-card-content>
+          <app-horse-reminders [horseId]="h.id" />
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <app-care-log [horseId]="h.id" />
+        </mat-card-content>
+      </mat-card>
     </app-detail-page>
   }
 }

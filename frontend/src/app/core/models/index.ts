@@ -134,6 +134,30 @@ export interface Invoice {
   updatedAt: string;
 }
 
+export interface Reminder {
+  id: string;
+  horseId: string;
+  userId: string;
+  title: string;
+  dueDate: string;
+  category: string;
+  source: 'manual' | 'auto';
+  isComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CareLog {
+  id: string;
+  horseId: string;
+  userId: string;
+  date: string;
+  category: string;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ApiResponse<T> {
   data: T;
   error?: string;

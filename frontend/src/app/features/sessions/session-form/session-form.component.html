@@ -15,7 +15,7 @@
           <mat-card-content>
             <div class="card-section-title">Session Details</div>
             <div class="form-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Appointment</mat-label>
                 <mat-select #appointmentSelect formControlName="appointmentId">
                   <mat-option [value]="0">Select an appointment</mat-option>
@@ -34,7 +34,7 @@
                   <mat-error>Please select an appointment.</mat-error>
                 }
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field>
                 <mat-label>Type</mat-label>
                 <mat-select formControlName="type">
                   <mat-option value="">Select type</mat-option>
@@ -74,15 +74,15 @@
         <mat-card class="form-card">
           <mat-card-content>
             <div class="card-section-title">Clinical Notes</div>
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field class="full-width">
               <mat-label>Notes</mat-label>
               <textarea matInput formControlName="notes" rows="3" placeholder="General session notes..."></textarea>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field class="full-width">
               <mat-label>Findings</mat-label>
               <textarea matInput formControlName="findings" rows="3" placeholder="Clinical findings..."></textarea>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="full-width">
+            <mat-form-field class="full-width">
               <mat-label>Recommendations</mat-label>
               <textarea matInput formControlName="recommendations" rows="3" placeholder="Follow-up recommendations..."></textarea>
             </mat-form-field>
