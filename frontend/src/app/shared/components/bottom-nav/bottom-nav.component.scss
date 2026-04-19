@@ -1,3 +1,86 @@
+// === Add Menu ===
+.add-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+}
+
+.add-menu {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(280px, calc(100vw - 2rem));
+  animation: menu-in 0.18s ease;
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.add-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--shadow-lg);
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background-color: var(--color-surface-alt);
+  }
+}
+
+.add-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: rgba(59, 98, 85, 0.1);
+  color: var(--color-primary);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.add-menu-label {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.add-menu-arrow {
+  color: var(--color-text-muted);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+// === Bottom Nav ===
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -24,6 +107,9 @@
   height: 100%;
   text-decoration: none;
   color: var(--color-nav-text);
+  background: none;
+  border: none;
+  cursor: pointer;
   transition: color 0.15s ease;
 
   &.active {
@@ -51,17 +137,18 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(59, 98, 85, 0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 98, 85, 0.55);
-  }
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 
   mat-icon {
     font-size: 26px;
     width: 26px;
     height: 26px;
+    transition: transform 0.2s ease;
+  }
+
+  .center-item.open & {
+    background-color: var(--color-text);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -77,13 +164,21 @@
   line-height: 1;
 }
 
+// === Dark mode ===
 :host-context(html.dark) {
   .bottom-nav {
     box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
   }
 
   .center-btn {
-    background-color: var(--color-primary);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .add-menu-item {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .add-menu-icon {
+    background-color: rgba(76, 186, 143, 0.15);
   }
 }

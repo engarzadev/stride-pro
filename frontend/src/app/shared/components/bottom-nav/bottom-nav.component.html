@@ -1,11 +1,31 @@
+@if (addMenuOpen()) {
+  <div class="add-menu-backdrop" (click)="addMenuOpen.set(false)"></div>
+  <div class="add-menu">
+    @for (action of quickActions; track action.path) {
+      <button class="add-menu-item" (click)="navigateTo(action.path)">
+        <span class="add-menu-icon">
+          <mat-icon>{{ action.icon }}</mat-icon>
+        </span>
+        <span class="add-menu-label">{{ action.label }}</span>
+        <mat-icon class="add-menu-arrow">chevron_right</mat-icon>
+      </button>
+    }
+  </div>
+}
+
 <nav class="bottom-nav">
-  @for (item of navItems(); track item.path) {
+  @for (item of navItems(); track item.label) {
     @if (item.isCenter) {
-      <a class="nav-item center-item" [routerLink]="item.path">
+      <button
+        class="nav-item center-item"
+        [class.open]="addMenuOpen()"
+        (click)="toggleAddMenu($event)"
+        aria-label="Quick add"
+      >
         <div class="center-btn">
-          <mat-icon>{{ item.icon }}</mat-icon>
+          <mat-icon>{{ addMenuOpen() ? 'close' : item.icon }}</mat-icon>
         </div>
-      </a>
+      </button>
     } @else {
       <a
         class="nav-item"
