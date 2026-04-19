@@ -4,12 +4,15 @@
 }
 
 .page-header {
-  margin-bottom: 24px;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border-light);
 
   h1 {
     margin: 0;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-title);
   }
 }
 

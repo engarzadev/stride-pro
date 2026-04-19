@@ -32,8 +32,12 @@
 .app-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 2rem 2.5rem;
   background-color: var(--color-surface-alt);
+
+  @media (max-width: 1024px) {
+    padding: 1.5rem;
+  }
 
   @media (max-width: 640px) {
     padding: 1rem 0.75rem;

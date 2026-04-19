@@ -5,7 +5,9 @@
         <div class="setting-label">Dark Mode</div>
         <div class="setting-description">Switch between light and dark theme</div>
       </div>
+      <!-- disabled for now -->
       <mat-slide-toggle
+        [disabled]="true" 
         [checked]="isDark()"
         (change)="onToggle()"
         color="primary"
