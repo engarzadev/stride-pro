@@ -7,7 +7,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary, #666);
+  color: var(--color-text-muted);
   margin-bottom: 16px;
 }
 
@@ -32,7 +32,7 @@
 
 .hint-text {
   font-size: 13px;
-  color: var(--text-secondary, #666);
+  color: var(--color-text-muted);
   margin: 0 0 12px;
 }
 

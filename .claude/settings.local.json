@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git add:*)",
       "Bash(go build:*)",
-      "Bash(npx ng *)"
+      "Bash(npx ng *)",
+      "Bash(npm install *)",
+      "Bash(npm list *)"
     ]
   }
 }

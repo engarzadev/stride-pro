@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MarkdownComponent } from 'ngx-markdown';
 import { Horse } from '../../../core/models';
 import { DetailPageComponent } from '../../../shared/components/detail-page/detail-page.component';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -16,7 +17,7 @@ import { HorseRemindersComponent } from '../horse-reminders/horse-reminders.comp
 @Component({
   selector: 'app-horse-detail',
   standalone: true,
-  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, DetailPageComponent, CareLogComponent, HorseRemindersComponent],
+  imports: [RouterLink, LoadingSpinnerComponent, DateFormatPipe, TitleCasePipe, MatCardModule, MatButtonModule, DetailPageComponent, CareLogComponent, HorseRemindersComponent, MarkdownComponent],
   templateUrl: './horse-detail.component.html',
   styleUrls: ['./horse-detail.component.scss'],
 })

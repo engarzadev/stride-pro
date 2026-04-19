@@ -71,7 +71,7 @@
           @if (h.notes) {
             <div class="detail-field mt-4">
               <label>Notes</label>
-              <p>{{ h.notes }}</p>
+              <markdown class="notes-markdown" [data]="h.notes" />
             </div>
           }
         </mat-card-content>
