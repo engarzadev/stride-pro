@@ -143,7 +143,10 @@
 
   > .mat-mdc-card {
     box-shadow: var(--shadow-sm);
-    min-width: 0;
+
+    @media (max-width: 640px) {
+      min-width: 0;
+    }
   }
 }
 
