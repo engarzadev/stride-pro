@@ -6,6 +6,28 @@
       <p>Create your account</p>
     </div>
 
+    <div class="account-type-selector">
+      <div
+        class="account-type-card"
+        [class.selected]="selectedAccountType() === 'owner'"
+        (click)="selectAccountType('owner')">
+        <mat-icon class="account-type-icon">pets</mat-icon>
+        <div class="account-type-label">Horse Owner</div>
+        <div class="account-type-desc">Track your horse's care, health records, and reminders</div>
+      </div>
+      <div
+        class="account-type-card"
+        [class.selected]="selectedAccountType() === 'professional'"
+        (click)="selectAccountType('professional')">
+        <mat-icon class="account-type-icon">work</mat-icon>
+        <div class="account-type-label">Professional</div>
+        <div class="account-type-desc">Manage your clients, schedule, and business</div>
+      </div>
+    </div>
+    @if (showAccountTypeError()) {
+      <div class="account-type-error">Please select an account type.</div>
+    }
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-row">
         <mat-form-field>

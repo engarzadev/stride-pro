@@ -4,13 +4,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
@@ -21,6 +22,8 @@ export class RegisterComponent {
   private readonly toast = inject(ToastService);
 
   readonly loading = signal(false);
+  readonly selectedAccountType = signal<'owner' | 'professional' | null>(null);
+  readonly showAccountTypeError = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     firstName: ['', [Validators.required]],
@@ -29,7 +32,17 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  selectAccountType(type: 'owner' | 'professional'): void {
+    this.selectedAccountType.set(type);
+    this.showAccountTypeError.set(false);
+  }
+
   onSubmit(): void {
+    if (!this.selectedAccountType()) {
+      this.showAccountTypeError.set(true);
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -37,7 +50,7 @@ export class RegisterComponent {
 
     this.loading.set(true);
     const { email, password, firstName, lastName } = this.form.getRawValue();
-    this.authService.register(email, password, firstName, lastName).subscribe({
+    this.authService.register(email, password, firstName, lastName, this.selectedAccountType()!).subscribe({
       next: () => {
         this.toast.success('Account created successfully!');
         this.router.navigate(['/dashboard']);

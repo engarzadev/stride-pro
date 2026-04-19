@@ -11,10 +11,10 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   padding: 2.5rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 540px;
 }
 
 .auth-header {
@@ -38,6 +38,79 @@
     font-size: 0.875rem;
     color: var(--color-text-muted);
   }
+}
+
+// === Account type selector ===
+.account-type-selector {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.account-type-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--color-surface);
+
+  &:hover {
+    border-color: var(--color-text-muted);
+  }
+
+  &.selected {
+    border-color: var(--color-primary);
+    background-color: rgba(59, 98, 85, 0.06);
+  }
+}
+
+:host-context(html.dark) .account-type-card.selected {
+  background-color: rgba(76, 186, 143, 0.08);
+}
+
+.account-type-icon {
+  font-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+
+  .selected & {
+    color: var(--color-primary);
+  }
+}
+
+.account-type-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-title);
+  margin-bottom: 0.25rem;
+}
+
+.account-type-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.account-type-error {
+  font-size: 0.75rem;
+  color: #b94040;
+  margin: -0.75rem 0 1rem;
+  text-align: center;
+}
+
+// === Form ===
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
 mat-form-field {

@@ -37,10 +37,11 @@ func NewService(db *database.DB, jwtSecret string) *Service {
 
 // RegisterInput holds the data needed to create a new user.
 type RegisterInput struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	AccountType string `json:"account_type"`
 }
 
 // LoginInput holds login credentials.
@@ -73,13 +74,18 @@ func (s *Service) Register(input RegisterInput) (*models.User, *TokenPair, error
 		return nil, nil, fmt.Errorf("hashing password: %w", err)
 	}
 
+	role := "professional"
+	if input.AccountType == "owner" {
+		role = "owner"
+	}
+
 	user := &models.User{
 		ID:               uuid.New(),
 		Email:            input.Email,
 		PasswordHash:     string(hash),
 		FirstName:        input.FirstName,
 		LastName:         input.LastName,
-		Role:             "user",
+		Role:             role,
 		SubscriptionTier: "free",
 		CreatedAt:        time.Now(),
 		UpdatedAt:        time.Now(),

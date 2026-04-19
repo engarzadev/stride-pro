@@ -35,12 +35,14 @@ export class AuthService {
     password: string,
     firstName: string,
     lastName: string,
+    accountType: string,
   ): Observable<AuthResponse> {
     const body: RegisterRequest = {
       email,
       password,
       first_name: firstName,
       last_name: lastName,
+      account_type: accountType,
     };
     return this.api
       .post<AuthResponse>('/auth/register', body)

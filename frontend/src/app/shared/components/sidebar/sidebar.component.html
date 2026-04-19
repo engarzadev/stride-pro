@@ -1,6 +1,6 @@
 <aside class="sidebar" [class.collapsed]="collapsed">
 <nav class="sidebar-nav">
-    @for (item of navItems; track item.path) {
+    @for (item of navItems(); track item.path) {
       <a class="nav-item"
          [routerLink]="item.path"
          routerLinkActive="active"

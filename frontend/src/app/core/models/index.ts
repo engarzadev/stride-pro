@@ -196,6 +196,7 @@ export interface RegisterRequest {
   password: string;
   first_name: string;
   last_name: string;
+  account_type: string;
 }
 
 export interface AuthTokens {
