@@ -143,10 +143,7 @@
 
   > .mat-mdc-card {
     box-shadow: var(--shadow-sm);
-
-    @media (max-width: 640px) {
-      min-width: 0;
-    }
+    min-width: 0;
   }
 }
 
@@ -478,10 +475,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-title);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
+  white-space: normal;
 
   @media (max-width: 640px) {
     white-space: break-spaces;
