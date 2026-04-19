@@ -189,6 +189,170 @@
   justify-content: flex-start !important;
 }
 
+// === Owner-specific layouts ===
+.stats-grid--owner {
+  grid-template-columns: repeat(3, 1fr);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-grid--owner {
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-icon {
+  &.reminders-icon {
+    background-color: #eff6ff;
+    color: #2563eb;
+  }
+
+  &.overdue-icon {
+    background-color: #fef2f2;
+    color: #dc2626;
+  }
+}
+
+.quick-actions--owner {
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .quick-action {
+    width: auto;
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+.quick-actions-card {
+  margin-top: 1.5rem;
+
+  > .mat-mdc-card-content {
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// === Reminder list ===
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.reminder-urgency {
+  flex-shrink: 0;
+}
+
+.urgency-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.urgency-overdue {
+    background-color: #dc2626;
+  }
+
+  &.urgency-soon {
+    background-color: #d97706;
+  }
+
+  &.urgency-upcoming {
+    background-color: #16a34a;
+  }
+}
+
+.reminder-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminder-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.reminder-sub {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.125rem;
+}
+
+.reminder-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+// === Care list ===
+.care-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.care-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.care-category {
+  flex-shrink: 0;
+}
+
+.care-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.care-horse {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.care-notes {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.care-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
 // === Dark mode — stat icon backgrounds ===
 :host-context(html.dark) {
   .stat-icon {
@@ -210,6 +374,16 @@
     &.invoices-icon {
       background-color: rgba(147, 51, 234, 0.15);
       color: #c084fc;
+    }
+
+    &.reminders-icon {
+      background-color: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+    }
+
+    &.overdue-icon {
+      background-color: rgba(220, 38, 38, 0.15);
+      color: #f87171;
     }
   }
 }

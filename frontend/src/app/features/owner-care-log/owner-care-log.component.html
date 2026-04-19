@@ -1,0 +1,29 @@
+@if (loading()) {
+  <app-loading-spinner />
+} @else {
+  <div class="owner-page">
+    <div class="page-header">
+      <h1>Care Log</h1>
+      @if (horses().length > 1) {
+        <mat-form-field class="horse-selector" appearance="outline">
+          <mat-label>Horse</mat-label>
+          <mat-select [value]="selectedHorseId()" (selectionChange)="onHorseChange($event.value)">
+            @for (horse of horses(); track horse.id) {
+              <mat-option [value]="horse.id">{{ horse.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+
+    @if (horses().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">pets</mat-icon>
+        <p class="empty-title">No horses yet</p>
+        <p class="empty-desc">Add a horse to start tracking care logs.</p>
+      </div>
+    } @else if (selectedHorseId()) {
+      <app-care-log [horseId]="selectedHorseId()!" />
+    }
+  </div>
+}

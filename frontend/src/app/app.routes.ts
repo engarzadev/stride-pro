@@ -23,6 +23,16 @@ export const routes: Routes = [
     loadChildren: () => import('./features/horses/horses.routes').then((m) => m.horsesRoutes),
   },
   {
+    path: 'care-log',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/owner-care-log/owner-care-log.component').then((m) => m.OwnerCareLogComponent),
+  },
+  {
+    path: 'reminders',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/owner-reminders/owner-reminders.component').then((m) => m.OwnerRemindersComponent),
+  },
+  {
     path: 'barns',
     canActivate: [authGuard],
     loadChildren: () => import('./features/barns/barns.routes').then((m) => m.barnsRoutes),

@@ -9,15 +9,17 @@
         <app-general-settings />
       </div>
     </mat-tab>
-    <mat-tab class="tab-label" label="Business">
-      <div class="tab-content">
-        <app-business-settings />
-      </div>
-    </mat-tab>
-    <mat-tab class="tab-label" label="Service Catalog">
-      <div class="tab-content">
-        <app-service-catalog />
-      </div>
-    </mat-tab>
+    @if (isProfessional()) {
+      <mat-tab class="tab-label" label="Business">
+        <div class="tab-content">
+          <app-business-settings />
+        </div>
+      </mat-tab>
+      <mat-tab class="tab-label" label="Service Catalog">
+        <div class="tab-content">
+          <app-service-catalog />
+        </div>
+      </mat-tab>
+    }
   </mat-tab-group>
 </div>

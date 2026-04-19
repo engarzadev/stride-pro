@@ -29,6 +29,8 @@ export class SidebarComponent {
     { path: '/dashboard', label: 'Dashboard', icon: 'home', roles: ['owner', 'professional'] },
     { path: '/clients', label: 'Clients', icon: 'people', roles: ['professional'] },
     { path: '/horses', label: 'Horses', icon: 'pets', roles: ['owner', 'professional'] },
+    { path: '/care-log', label: 'Care Log', icon: 'monitor_heart', roles: ['owner'] },
+    { path: '/reminders', label: 'Reminders', icon: 'notifications_active', roles: ['owner'] },
     { path: '/barns', label: 'Barns', icon: 'warehouse', roles: ['professional'] },
     { path: '/appointments', label: 'Appointments', icon: 'event', roles: ['professional'] },
     { path: '/sessions', label: 'Sessions', icon: 'medical_services', roles: ['professional'] },

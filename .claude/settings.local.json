@@ -7,7 +7,8 @@
       "Bash(npm install *)",
       "Bash(npm list *)",
       "Bash(find /Users/dev/stride-pro/backend -type f -name *care* -o -name *reminder*)",
-      "Bash(grep -E \"\\\\.\\(ts|tsx|html\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|tsx|html\\)$\")",
+      "Bash(npm run:*)"
     ]
   }
 }
