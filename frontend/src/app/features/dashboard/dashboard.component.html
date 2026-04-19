@@ -124,6 +124,26 @@
         </mat-card>
       </div>
 
+        <!-- Quick actions for owner -->
+      <mat-card class="quick-actions-card">
+        <mat-card-content>
+          <div class="quick-actions quick-actions--owner">
+            <button mat-flat-button color="primary" class="quick-action" (click)="navigateTo('/horses/new')">
+              <mat-icon>add</mat-icon>
+              Add Horse
+            </button>
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/care-log')">
+              <mat-icon>monitor_heart</mat-icon>
+              Log Care Entry
+            </button>
+            <button mat-stroked-button class="quick-action" (click)="navigateTo('/reminders')">
+              <mat-icon>notification_add</mat-icon>
+              Add Reminder
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
     } @else {
       <!-- ===== PROFESSIONAL DASHBOARD ===== -->
       <div class="stats-grid">
