@@ -352,12 +352,9 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-title);
-
-  @media (max-width: 480px) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .reminder-sub {
@@ -383,7 +380,7 @@
 
 .care-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.625rem 0;
   border-bottom: 1px solid var(--color-border-light);
@@ -395,7 +392,8 @@
 
 .care-category {
   flex-shrink: 0;
-  width: 120px;
+  width: 110px;
+  padding-top: 0.125rem;
 }
 
 .care-info {
@@ -403,28 +401,27 @@
   min-width: 0;
 }
 
-.care-horse {
+.care-notes {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-title);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.care-notes {
+.care-horse {
   font-size: 0.75rem;
   color: var(--color-text-muted);
-  margin-top: 0.125rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 0.1875rem;
 }
 
 .care-date {
   font-size: 0.75rem;
   color: var(--color-text-muted);
   flex-shrink: 0;
+  padding-top: 0.125rem;
+  white-space: nowrap;
 }
 
 // === Dark mode — stat icon backgrounds ===
