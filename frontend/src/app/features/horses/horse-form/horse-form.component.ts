@@ -12,7 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { HorsesService } from '../horses.service';
 import { ClientsService } from '../../clients/clients.service';
 import { BarnsService } from '../../barns/barns.service';
-import { Client, Barn } from '../../../core/models';
+import { Client, Barn, Horse } from '../../../core/models';
 import { AuthService } from '../../../core/services/auth.service';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
@@ -105,7 +105,7 @@ export class HorseFormComponent implements OnInit {
             vetPhone: horse.vetPhone,
             farrierName: horse.farrierName,
             farrierPhone: horse.farrierPhone,
-            clientId: horse.clientId,
+            clientId: horse.clientId ?? '',
             barnId: horse.barnId,
           });
           this.loading.set(false);
@@ -142,11 +142,17 @@ export class HorseFormComponent implements OnInit {
 
     this.saving.set(true);
     const raw = this.form.getRawValue();
-    const data = { ...raw, age: raw.age ?? undefined, weight: raw.weight ?? undefined };
+    const data = {
+      ...raw,
+      age: raw.age ?? undefined,
+      weight: raw.weight ?? undefined,
+      clientId: raw.clientId || null,
+      barnId: raw.barnId || null,
+    };
 
     const request$ = this.isEdit()
-      ? this.horsesService.update(this.horseId, data)
-      : this.horsesService.create(data);
+      ? this.horsesService.update(this.horseId, data as Partial<Horse>)
+      : this.horsesService.create(data as Partial<Horse>);
 
     request$.subscribe({
       next: () => {

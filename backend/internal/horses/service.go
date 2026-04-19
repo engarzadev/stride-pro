@@ -23,7 +23,7 @@ func NewService(repo *Repository, subsSvc *subscriptions.Service) *Service {
 
 // CreateInput holds data for creating or updating a horse.
 type CreateInput struct {
-	ClientID    uuid.UUID  `json:"client_id"`
+	ClientID    *uuid.UUID `json:"client_id"`
 	BarnID      *uuid.UUID `json:"barn_id"`
 	Name        string     `json:"name"`
 	Breed       string     `json:"breed"`
@@ -66,7 +66,7 @@ func (s *Service) Create(userID uuid.UUID, input CreateInput) (*models.Horse, er
 
 	h := &models.Horse{
 		UserID:       userID,
-		ClientID:     input.ClientID,
+		ClientID:     models.PtrToNullUUID(input.ClientID),
 		BarnID:       models.PtrToNullUUID(input.BarnID),
 		Name:         input.Name,
 		Breed:        input.Breed,
@@ -111,7 +111,7 @@ func (s *Service) Update(userID, horseID uuid.UUID, input CreateInput) (*models.
 	h := &models.Horse{
 		ID:           horseID,
 		UserID:       userID,
-		ClientID:     input.ClientID,
+		ClientID:     models.PtrToNullUUID(input.ClientID),
 		BarnID:       models.PtrToNullUUID(input.BarnID),
 		Name:         input.Name,
 		Breed:        input.Breed,

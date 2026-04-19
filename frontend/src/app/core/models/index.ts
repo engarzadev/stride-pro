@@ -35,7 +35,7 @@ export interface Horse {
   vetPhone: string;
   farrierName: string;
   farrierPhone: string;
-  clientId: string;
+  clientId: string | null;
   barnId: string | null;
   client?: Client;
   barn?: Barn;

@@ -41,7 +41,7 @@ type Client struct {
 type Horse struct {
 	ID        uuid.UUID      `json:"id"`
 	UserID    uuid.UUID      `json:"user_id"`
-	ClientID  uuid.UUID      `json:"client_id"`
+	ClientID  uuid.NullUUID  `json:"client_id"`
 	BarnID    uuid.NullUUID  `json:"barn_id"`
 	Name      string         `json:"name"`
 	Breed     string         `json:"breed"`
