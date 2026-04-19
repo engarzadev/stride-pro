@@ -8,7 +8,7 @@ import (
 	"github.com/stride-pro/backend/pkg/validator"
 )
 
-var validCategories = []string{"farrier", "vet", "dental", "deworming", "vaccination", "diet", "other"}
+var validCategories = []string{"bodywork", "dental", "deworming", "diet", "farrier", "fitting", "health", "lameness", "management", "other", "riding", "training", "vaccination", "vet"}
 
 // Service contains business logic for care log management.
 type Service struct {
