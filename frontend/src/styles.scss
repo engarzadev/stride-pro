@@ -682,6 +682,23 @@ html.dark {
   --mat-icon-button-icon-color: #94b8ac;
   --mat-icon-button-state-layer-color: #94b8ac;
 
+  // Checkboxes
+  --mat-checkbox-label-text-color: #dceae4;
+  --mdc-checkbox-unselected-icon-color: #7da090;
+  --mdc-checkbox-unselected-hover-icon-color: #94b8ac;
+
+  // Radio buttons
+  --mat-radio-button-label-text-color: #dceae4;
+  --mat-radio-button-ripple-color: #4cba8f;
+
+  // Slide toggle
+  --mat-slide-toggle-label-text-color: #dceae4;
+
+  // Form field placeholder & hint
+  --mdc-outlined-text-field-input-text-placeholder-color: #6a9485;
+  --mdc-filled-text-field-input-text-placeholder-color: #6a9485;
+  --mat-form-field-subscript-text-color: #7da090;
+
   // Chips in dark mode
   .chip-success {
     --mdc-chip-elevated-container-color: rgba(59, 98, 85, 0.25);
