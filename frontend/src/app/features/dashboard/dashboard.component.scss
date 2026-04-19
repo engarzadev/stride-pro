@@ -143,6 +143,7 @@
 
   > .mat-mdc-card {
     box-shadow: var(--shadow-sm);
+    min-width: 0;
   }
 }
 
@@ -477,6 +478,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+
+  @media (max-width: 640px) {
+    white-space: break-spaces;
+  }
 }
 
 .care-horse {
