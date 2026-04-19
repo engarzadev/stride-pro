@@ -13,6 +13,7 @@ import {
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { HorsesService } from '../horses.service';
 
 @Component({
@@ -24,9 +25,12 @@ import { HorsesService } from '../horses.service';
 })
 export class HorseListComponent implements OnInit {
   private readonly horsesService = inject(HorsesService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+
+  private readonly isOwner = this.authService.getStoredUser()?.role === 'owner';
 
   readonly loading = signal(true);
   readonly horses = signal<Horse[]>([]);
@@ -39,14 +43,21 @@ export class HorseListComponent implements OnInit {
     })),
   );
 
-  readonly columns: TableColumn[] = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'breed', label: 'Breed', sortable: true },
-    { key: 'clientName', label: 'Client', sortable: true },
-    { key: 'barnName', label: 'Barn', sortable: true },
-    { key: 'age', label: 'Age', sortable: true },
-    { key: 'gender', label: 'Gender', capitalize: true },
-  ];
+  readonly columns: TableColumn[] = this.isOwner
+    ? [
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'breed', label: 'Breed', sortable: true },
+        { key: 'age', label: 'Age', sortable: true },
+        { key: 'gender', label: 'Gender', capitalize: true },
+      ]
+    : [
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'breed', label: 'Breed', sortable: true },
+        { key: 'clientName', label: 'Client', sortable: true },
+        { key: 'barnName', label: 'Barn', sortable: true },
+        { key: 'age', label: 'Age', sortable: true },
+        { key: 'gender', label: 'Gender', capitalize: true },
+      ];
 
   readonly actions: TableAction[] = [
     { label: 'Edit', action: 'edit', class: 'btn-outline' },

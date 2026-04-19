@@ -76,7 +76,7 @@ export class AuthService {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
 
-  private getStoredUser(): User | null {
+  getStoredUser(): User | null {
     const userJson = localStorage.getItem(this.USER_KEY);
     if (userJson) {
       try {

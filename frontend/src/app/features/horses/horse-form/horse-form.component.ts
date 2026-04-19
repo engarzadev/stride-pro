@@ -13,6 +13,7 @@ import { HorsesService } from '../horses.service';
 import { ClientsService } from '../../clients/clients.service';
 import { BarnsService } from '../../barns/barns.service';
 import { Client, Barn } from '../../../core/models';
+import { AuthService } from '../../../core/services/auth.service';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -38,8 +39,10 @@ export class HorseFormComponent implements OnInit {
   private readonly quickCreateClient = inject(QuickCreateClientService);
   private readonly quickCreateBarn = inject(QuickCreateBarnService);
   private readonly subscriptionService = inject(SubscriptionService);
+  private readonly authService = inject(AuthService);
 
   readonly loading = signal(false);
+  readonly isOwner: boolean;
   readonly saving = signal(false);
   readonly isEdit = signal(false);
   readonly clients = signal<Client[]>([]);
@@ -62,6 +65,15 @@ export class HorseFormComponent implements OnInit {
     clientId: ['', [Validators.required]],
     barnId: [null as string | null],
   });
+
+  constructor() {
+    const user = this.authService.getStoredUser();
+    this.isOwner = user?.role === 'owner';
+    if (this.isOwner) {
+      this.form.controls.clientId.clearValidators();
+      this.form.controls.clientId.updateValueAndValidity();
+    }
+  }
 
   ngOnInit(): void {
     this.subscriptionService.load().subscribe(() => {

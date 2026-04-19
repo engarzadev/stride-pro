@@ -51,43 +51,19 @@
           </mat-card-content>
         </mat-card>
 
-        <mat-card class="form-card">
-          <mat-card-content>
-            <div class="card-section-title">Assignment</div>
-            <div class="form-row">
-              <mat-form-field>
-                <mat-label>Client</mat-label>
-                <mat-select #clientSelect formControlName="clientId">
-                  <mat-option [value]="0">Select a client</mat-option>
-                  @for (client of clients(); track client.id) {
-                    <mat-option [value]="client.id">
-                      {{ client.firstName }} {{ client.lastName }}
-                    </mat-option>
-                  }
-                </mat-select>
-                <button
-                  matSuffix
-                  mat-icon-button
-                  type="button"
-                  (click)="
-                    $event.stopPropagation();
-                    clientSelect.close();
-                    openCreateClient()"
-                  title="Create new client"
-                >
-                  <mat-icon>add</mat-icon>
-                </button>
-                @if (form.controls.clientId.errors) {
-                  <mat-error>Please select a client.</mat-error>
-                }
-              </mat-form-field>
-              @if (canManageBarns()) {
+        @if (!isOwner) {
+          <mat-card class="form-card">
+            <mat-card-content>
+              <div class="card-section-title">Assignment</div>
+              <div class="form-row">
                 <mat-form-field>
-                  <mat-label>Barn</mat-label>
-                  <mat-select #barnSelect formControlName="barnId">
-                    <mat-option [value]="null">No barn assigned</mat-option>
-                    @for (barn of barns(); track barn.id) {
-                      <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                  <mat-label>Client</mat-label>
+                  <mat-select #clientSelect formControlName="clientId">
+                    <mat-option [value]="0">Select a client</mat-option>
+                    @for (client of clients(); track client.id) {
+                      <mat-option [value]="client.id">
+                        {{ client.firstName }} {{ client.lastName }}
+                      </mat-option>
                     }
                   </mat-select>
                   <button
@@ -96,20 +72,46 @@
                     type="button"
                     (click)="
                       $event.stopPropagation();
-                      barnSelect.close();
-                      openCreateBarn()
-                    "
-                    title="Create new barn"
+                      clientSelect.close();
+                      openCreateClient()"
+                    title="Create new client"
                   >
                     <mat-icon>add</mat-icon>
                   </button>
+                  @if (form.controls.clientId.errors) {
+                    <mat-error>Please select a client.</mat-error>
+                  }
                 </mat-form-field>
-              } @else {
-                <app-upgrade-field-prompt label="Barn" />
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
+                @if (canManageBarns()) {
+                  <mat-form-field>
+                    <mat-label>Barn</mat-label>
+                    <mat-select #barnSelect formControlName="barnId">
+                      <mat-option [value]="null">No barn assigned</mat-option>
+                      @for (barn of barns(); track barn.id) {
+                        <mat-option [value]="barn.id">{{ barn.name }}</mat-option>
+                      }
+                    </mat-select>
+                    <button
+                      matSuffix
+                      mat-icon-button
+                      type="button"
+                      (click)="
+                        $event.stopPropagation();
+                        barnSelect.close();
+                        openCreateBarn()
+                      "
+                      title="Create new barn"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </mat-form-field>
+                } @else {
+                  <app-upgrade-field-prompt label="Barn" />
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
 
         <mat-card class="form-card">
           <mat-card-content>

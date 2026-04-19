@@ -10,6 +10,7 @@ import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { AuthService } from '../../../core/services/auth.service';
 import { HorsesService } from '../horses.service';
 import { CareLogComponent } from '../care-log/care-log.component';
 import { HorseRemindersComponent } from '../horse-reminders/horse-reminders.component';
@@ -27,8 +28,10 @@ export class HorseDetailComponent implements OnInit {
   private readonly horsesService = inject(HorsesService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
+  private readonly authService = inject(AuthService);
 
   readonly loading = signal(true);
+  readonly isOwner = this.authService.getStoredUser()?.role === 'owner';
   readonly horse = signal<Horse | null>(null);
 
   ngOnInit(): void {

@@ -35,22 +35,24 @@
               <label>Weight</label>
               <p>{{ h.weight ? h.weight + ' lbs' : '-' }}</p>
             </div>
-            <div class="detail-field">
-              <label>Client</label>
-              @if (h.client) {
-                <p><a [routerLink]="['/clients', h.clientId]">{{ h.client.firstName }} {{ h.client.lastName }}</a></p>
-              } @else {
-                <p>-</p>
-              }
-            </div>
-            <div class="detail-field">
-              <label>Barn</label>
-              @if (h.barn) {
-                <p><a [routerLink]="['/barns', h.barnId]">{{ h.barn.name }}</a></p>
-              } @else {
-                <p>-</p>
-              }
-            </div>
+            @if (!isOwner) {
+              <div class="detail-field">
+                <label>Client</label>
+                @if (h.client) {
+                  <p><a [routerLink]="['/clients', h.clientId]">{{ h.client.firstName }} {{ h.client.lastName }}</a></p>
+                } @else {
+                  <p>-</p>
+                }
+              </div>
+              <div class="detail-field">
+                <label>Barn</label>
+                @if (h.barn) {
+                  <p><a [routerLink]="['/barns', h.barnId]">{{ h.barn.name }}</a></p>
+                } @else {
+                  <p>-</p>
+                }
+              </div>
+            }
             <div class="detail-field">
               <label>Created</label>
               <p>{{ h.createdAt | dateFormat }}</p>
