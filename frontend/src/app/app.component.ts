@@ -2,13 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { HeaderComponent } from './shared/components/header/header.component';
-import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
+import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent],
+  imports: [RouterOutlet, HeaderComponent, BottomNavComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -17,7 +17,6 @@ export class AppComponent {
   // Injecting ThemeService here ensures it initializes on app startup
   private readonly themeService = inject(ThemeService);
   readonly showLayout = signal(true);
-  readonly sidebarOpen = signal(false);
 
   constructor() {
     this.router.events
@@ -25,11 +24,6 @@ export class AppComponent {
       .subscribe((e) => {
         const event = e as NavigationEnd;
         this.showLayout.set(!event.urlAfterRedirects.startsWith('/auth'));
-        this.sidebarOpen.set(false);
       });
-  }
-
-  toggleSidebar(): void {
-    this.sidebarOpen.update((v) => !v);
   }
 }
