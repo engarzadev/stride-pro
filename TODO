@@ -28,6 +28,6 @@ Care Log
 [x] Add virtual scroll to the logs section
 
 Tech Debt
-[ ] contrast text on login needs to be fixed
-[ ] contrast text for tabs in settings needs to be fixed
-[ ] fix scroll especailly in mobile view
+[x] contrast text on login needs to be fixed
+[x] contrast text for tabs in settings needs to be fixed
+[x] fix scroll especailly in mobile view
