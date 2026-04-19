@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CareLog } from '../../../core/models';
 import { SubscriptionService } from '../../../core/services/subscription.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -58,6 +58,7 @@ export class CareLogComponent implements OnInit {
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly toast = inject(ToastService);
   private readonly fb = inject(FormBuilder);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   readonly loading = signal(true);
   readonly canUseCareLog = signal(false);
@@ -93,6 +94,11 @@ export class CareLogComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const openForm = this.activatedRoute.snapshot.paramMap.get('showForm');
+    if (openForm) {
+      this.onAdd();
+    }
+
     this.subscriptionService.load().subscribe(() => {
       const allowed = this.subscriptionService.hasFeature('care_logs');
       this.canUseCareLog.set(allowed);

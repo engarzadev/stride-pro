@@ -1,7 +1,7 @@
-import { Component, inject, computed, signal, HostListener } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface BottomNavItem {
@@ -31,25 +31,40 @@ export class BottomNavComponent {
 
   readonly addMenuOpen = signal(false);
 
-  readonly quickActions: QuickAction[] = [
+  private readonly ownerActions: QuickAction[] = [
     { path: '/horses/new', label: 'Add Horse', icon: 'pets' },
-    { path: '/care-log', label: 'Care Log Entry', icon: 'monitor_heart' },
-    { path: '/reminders', label: 'Add Reminder', icon: 'notifications_active' },
+    { path: '/care-log?showForm=true', label: 'Care Log Entry', icon: 'monitor_heart' },
+    { path: '/reminders?showForm=true', label: 'Add Reminder', icon: 'notifications_active' },
   ];
+
+  private readonly professionalActions: QuickAction[] = [
+    { path: '/clients/new', label: 'New Client', icon: 'person_add' },
+    { path: '/appointments/new', label: 'New Appointment', icon: 'event' },
+    { path: '/horses/new', label: 'Add Horse', icon: 'pets' },
+    { path: '/invoices/new', label: 'Add Invoice', icon: 'receipt_long' },
+    { path: '/sessions/new', label: 'Add Session', icon: 'event' },
+  ];
+
+  readonly quickActions = computed(() => {
+    const user = this.currentUser();
+    return user?.role === 'owner' ? this.ownerActions : this.professionalActions;
+  });
 
   private readonly ownerItems: BottomNavItem[] = [
     { path: '/dashboard', label: 'Home', icon: 'home' },
     { path: '/horses', label: 'Horses', icon: 'pets' },
     { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/reminders', label: 'Reminders', icon: 'notifications' },
-    { path: '/settings', label: 'Profile', icon: 'person' },
+    { path: '/settings', label: 'Settings', icon: 'person' },
   ];
 
   private readonly professionalItems: BottomNavItem[] = [
     { path: '/dashboard', label: 'Home', icon: 'home' },
     { path: '/clients', label: 'Clients', icon: 'people' },
-    { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/horses', label: 'Horses', icon: 'pets' },
+    { path: '', label: 'Add', icon: 'add', isCenter: true },
+    { path: '/invoices', label: 'Invoices', icon: 'receipt_long' },
+    { path: '/sessions', label: 'Sessions', icon: 'event' },
     { path: '/settings', label: 'Profile', icon: 'person' },
   ];
 
@@ -65,7 +80,7 @@ export class BottomNavComponent {
 
   navigateTo(path: string): void {
     this.addMenuOpen.set(false);
-    this.router.navigate([path]);
+    this.router.navigateByUrl(path);
   }
 
   @HostListener('document:click')

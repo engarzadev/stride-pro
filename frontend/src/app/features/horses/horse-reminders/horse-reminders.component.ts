@@ -11,6 +11,7 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { CARE_LOG_CATEGORIES } from '../care-log/care-log.component';
 import { HorsesService } from '../horses.service';
+import { ActivatedRoute } from '@angular/router';
 
 const AUTO_INTERVALS: Record<string, { days: number; label: string }> = {
   deworming:   { days: 180, label: 'Deworming due' },
@@ -51,6 +52,7 @@ export class HorseRemindersComponent implements OnInit {
   private readonly horsesService = inject(HorsesService);
   private readonly toast = inject(ToastService);
   private readonly fb = inject(FormBuilder);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   private readonly reminders = signal<Reminder[]>([]);
   private readonly careLogs = signal<CareLog[]>([]);
@@ -75,6 +77,11 @@ export class HorseRemindersComponent implements OnInit {
   readonly completedReminders = computed(() => this.buildList(true));
 
   ngOnInit(): void {
+    const openForm = this.activatedRoute.snapshot.paramMap.get('showForm');
+    if (openForm) {
+      this.onAdd();
+    }
+
     this.load();
   }
 

@@ -1,7 +1,7 @@
 @if (addMenuOpen()) {
   <div class="add-menu-backdrop" (click)="addMenuOpen.set(false)"></div>
   <div class="add-menu">
-    @for (action of quickActions; track action.path) {
+    @for (action of quickActions(); track action.path) {
       <button class="add-menu-item" (click)="navigateTo(action.path)">
         <span class="add-menu-icon">
           <mat-icon>{{ action.icon }}</mat-icon>
