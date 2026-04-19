@@ -232,6 +232,15 @@ export class DashboardComponent implements OnInit {
     this.router.navigate([path]);
   }
 
+  navigateToLogCare(): void {
+    const hs = this.horses();
+    if (hs.length === 1) {
+      this.router.navigate(['/horses', hs[0].id], { queryParams: { showForm: '1' } });
+    } else {
+      this.router.navigate(['/horses']);
+    }
+  }
+
   private urgency(dueDate: string, today: Date): 'overdue' | 'soon' | 'upcoming' {
     const [y, m, d] = String(dueDate).substring(0, 10).split('-').map(Number);
     const due = new Date(y, m - 1, d);

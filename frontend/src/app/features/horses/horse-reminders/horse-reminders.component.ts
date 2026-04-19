@@ -77,7 +77,7 @@ export class HorseRemindersComponent implements OnInit {
   readonly completedReminders = computed(() => this.buildList(true));
 
   ngOnInit(): void {
-    const openForm = this.activatedRoute.snapshot.paramMap.get('showForm');
+    const openForm = this.activatedRoute.snapshot.queryParamMap.get('showForm');
     if (openForm) {
       this.onAdd();
     }
