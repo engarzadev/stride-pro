@@ -63,7 +63,7 @@
       <div class="log-controls">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>Category</mat-label>
-          <mat-select [value]="filterCategory()" (valueChange)="filterCategory.set($event)">
+          <mat-select [value]="filterCategory()" (selectionChange)="filterCategory.set($event.value)">
             <mat-option value="">All categories</mat-option>
             @for (cat of categories; track cat.value) {
               <mat-option [value]="cat.value">{{ cat.label }}</mat-option>

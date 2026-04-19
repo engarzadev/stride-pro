@@ -78,6 +78,7 @@
           }
         </mat-card-content>
       </mat-card>
+      @if(!isOwner) {
       <mat-card class="mb-6">
         <mat-card-content>
           <app-horse-reminders [horseId]="h.id" />
@@ -88,6 +89,7 @@
           <app-care-log [horseId]="h.id" />
         </mat-card-content>
       </mat-card>
+      }
     </app-detail-page>
   }
 }
