@@ -16,16 +16,20 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { HorsesService } from '../horses.service';
 
 export const CARE_LOG_CATEGORIES = [
-  { value: 'farrier', label: 'Farrier' },
-  { value: 'vet', label: 'Vet' },
+  { value: 'bodywork', label: 'Bodywork' },
   { value: 'dental', label: 'Dental' },
   { value: 'deworming', label: 'Deworming' },
-  { value: 'vaccination', label: 'Vaccination' },
   { value: 'diet', label: 'Diet' },
+  { value: 'farrier', label: 'Farrier' },
   { value: 'fitting', label: 'Fitting' },
-  { value: 'ride', label: 'Ride' },
-  { value: 'training', label: 'Training' },
+  { value: 'health', label: 'Health' },
+  { value: 'lameness', label: 'Lameness' },
+  { value: 'management', label: 'Management' },
   { value: 'other', label: 'Other' },
+  { value: 'riding', label: 'Riding' },
+  { value: 'training', label: 'Training' },
+  { value: 'vaccination', label: 'Vaccination' },
+  { value: 'vet', label: 'Vet' },
 ];
 
 @Component({
