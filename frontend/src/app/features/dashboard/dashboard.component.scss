@@ -249,7 +249,7 @@
 }
 
 .dashboard-grid--owner {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -297,7 +297,7 @@
   margin-top: 1.5rem;
 
   > .mat-mdc-card-content {
-    box-shadow: var(--shadow-sm);
+    padding-bottom: 1.25rem;
   }
 }
 
@@ -351,9 +351,12 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-title);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+  @media (max-width: 480px) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .reminder-sub {
@@ -391,6 +394,7 @@
 
 .care-category {
   flex-shrink: 0;
+  width: 120px;
 }
 
 .care-info {

@@ -1,6 +1,5 @@
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,7 +35,6 @@ export const CARE_LOG_CATEGORIES = [
     ReactiveFormsModule,
     RouterLink,
     DateFormatPipe,
-    ScrollingModule,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -81,12 +79,6 @@ export class CareLogComponent implements OnInit {
   readonly visibleLogs = computed(() =>
     this.filteredLogs().filter(l => l.id !== this.editingId())
   );
-
-  readonly viewportHeight = computed(() =>
-    Math.min(this.visibleLogs().length * 96, 480)
-  );
-
-  trackLog(_: number, log: CareLog): string { return log.id; }
 
   readonly categories = CARE_LOG_CATEGORIES;
 

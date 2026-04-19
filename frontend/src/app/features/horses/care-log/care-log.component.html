@@ -81,25 +81,27 @@
     @if (filteredLogs().length === 0) {
       <p class="empty-state">No entries match the selected filter.</p>
     } @else {
-      <cdk-virtual-scroll-viewport itemSize="96" class="log-viewport" [style.height.px]="viewportHeight()">
-        <div *cdkVirtualFor="let log of visibleLogs(); trackBy: trackLog" class="log-entry">
-          <div class="log-meta">
-            <span class="log-date">{{ log.date | dateFormat:'numeric' }}</span>
-            <span class="log-category">{{ categoryLabel(log.category) }}</span>
+      <div class="log-list">
+        @for (log of visibleLogs(); track log.id) {
+          <div class="log-entry">
+            <div class="log-meta">
+              <span class="log-date">{{ log.date | dateFormat:'numeric' }}</span>
+              <span class="log-category">{{ categoryLabel(log.category) }}</span>
+            </div>
+            @if (log.notes) {
+              <p class="log-notes">{{ log.notes }}</p>
+            }
+            <div class="log-actions">
+              <button mat-icon-button (click)="onEdit(log)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="onDelete(log)" title="Delete" class="delete-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
-          @if (log.notes) {
-            <p class="log-notes">{{ log.notes }}</p>
-          }
-          <div class="log-actions">
-            <button mat-icon-button (click)="onEdit(log)" title="Edit">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button (click)="onDelete(log)" title="Delete" class="delete-btn">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </div>
-      </cdk-virtual-scroll-viewport>
+        }
+      </div>
     }
   }
 }

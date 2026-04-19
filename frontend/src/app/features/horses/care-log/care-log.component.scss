@@ -47,8 +47,13 @@
   }
 }
 
-.log-viewport {
+.log-list {
   margin-top: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .log-entry {
@@ -58,12 +63,10 @@
   align-items: start;
   gap: 4px 8px;
   padding: 12px 16px;
-  height: 88px;
   box-sizing: border-box;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);
-  margin-bottom: 8px;
 
   .log-meta {
     display: flex;
