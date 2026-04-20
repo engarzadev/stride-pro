@@ -55,17 +55,17 @@ export class BottomNavComponent {
     { path: '/horses', label: 'Horses', icon: 'pets' },
     { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/reminders', label: 'Reminders', icon: 'notifications' },
-    { path: '/settings', label: 'Settings', icon: 'person' },
+    { path: '/settings', label: 'Settings', icon: 'settings' },
   ];
 
   private readonly professionalItems: BottomNavItem[] = [
     { path: '/dashboard', label: 'Home', icon: 'home' },
-    { path: '/clients', label: 'Clients', icon: 'people' },
-    { path: '/horses', label: 'Horses', icon: 'pets' },
-    { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/invoices', label: 'Invoices', icon: 'receipt_long' },
+    // { path: '/clients', label: 'Clients', icon: 'people' },
+    // { path: '/horses', label: 'Horses', icon: 'pets' },
+    { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/sessions', label: 'Sessions', icon: 'event' },
-    { path: '/settings', label: 'Profile', icon: 'person' },
+    { path: '/settings', label: 'Settings', icon: 'settings' },
   ];
 
   readonly navItems = computed(() => {

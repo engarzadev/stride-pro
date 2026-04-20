@@ -1,19 +1,23 @@
 <header class="app-header">
   @if (currentUser$ | async; as user) {
-    <button class="header-avatar" [matMenuTriggerFor]="userMenu" aria-label="User menu">
+    <!-- <button class="header-avatar" [matMenuTriggerFor]="userMenu" aria-label="User menu">
       {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
-    </button>
-
+    </button> -->
+    <img src="assets/logo.png" alt="Stride Pro" class="header-logo"/>
     <div class="header-greeting">
-      <span class="greeting-sub">Welcome</span>
-      <span class="greeting-name">{{ user.firstName }} {{ user.lastName }}</span>
+      <span class="greeting-sub">GaitKeeper</span>
     </div>
 
     <span class="spacer"></span>
 
+     <button class="header-avatar" [matMenuTriggerFor]="userMenu" aria-label="User menu">
+      {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+    </button>
+
+    <!-- 
     <button class="bell-btn" [matMenuTriggerFor]="userMenu" aria-label="Account">
       <mat-icon>notifications</mat-icon>
-    </button>
+    </button> -->
 
     <mat-menu #userMenu="matMenu">
       <div class="menu-user-info" mat-menu-item disabled>
