@@ -22,6 +22,7 @@ export class RegisterComponent {
   private readonly toast = inject(ToastService);
 
   readonly loading = signal(false);
+  readonly showPassword = signal(false);
   readonly selectedAccountType = signal<'owner' | 'professional' | null>(null);
   readonly showAccountTypeError = signal(false);
 

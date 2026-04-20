@@ -108,7 +108,7 @@ func (c *Config) validate() error {
 
 // IsProd returns true if the environment is production.
 func (c *Config) IsProd() bool {
-	return c.Environment == "prod"
+	return c.Environment == "prod" || c.Environment == "production"
 }
 
 // TLSEnabled returns true when both TLS certificate and key paths are configured.

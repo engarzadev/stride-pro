@@ -59,7 +59,10 @@
 
       <mat-form-field>
         <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password" placeholder="At least 6 characters">
+        <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="At least 6 characters">
+        <button mat-icon-button matSuffix type="button" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
         @if (form.controls.password.errors?.['required']) {
           <mat-error>Password is required.</mat-error>
         } @else if (form.controls.password.errors?.['minlength']) {
