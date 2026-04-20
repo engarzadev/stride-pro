@@ -34,7 +34,11 @@ type subscriptionResponse struct {
 
 // Get handles GET /api/subscription and returns the user's current plan and usage.
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	plan, err := h.service.GetCurrentPlan(userID)
 	if err != nil {

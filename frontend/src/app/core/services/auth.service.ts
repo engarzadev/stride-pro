@@ -10,11 +10,10 @@ export class AuthService {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
 
-  private readonly TOKEN_KEY = 'stride_pro_token';
   private readonly USER_KEY = 'stride_pro_user';
 
   private readonly _isAuthenticated$ = new BehaviorSubject<boolean>(
-    this.hasToken(),
+    this.hasStoredUser(),
   );
   private readonly _currentUser$ = new BehaviorSubject<User | null>(
     this.getStoredUser(),
@@ -50,30 +49,15 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
-    this._isAuthenticated$.next(false);
-    this._currentUser$.next(null);
-    this.router.navigate(['/auth/login']);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    // Tell the server to revoke the token and clear the HttpOnly cookies
+    this.api.post('/auth/logout', {}).subscribe({
+      complete: () => this.clearSession(),
+      error: () => this.clearSession(),
+    });
   }
 
   isAuthenticated(): boolean {
-    return this.hasToken();
-  }
-
-  private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem(this.TOKEN_KEY, response.tokens.accessToken);
-    localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
-    this._isAuthenticated$.next(true);
-    this._currentUser$.next(response.user);
-  }
-
-  private hasToken(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
+    return this.hasStoredUser();
   }
 
   getStoredUser(): User | null {
@@ -86,5 +70,23 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  private handleAuthResponse(response: AuthResponse): void {
+    // Tokens are set as HttpOnly cookies by the server — never stored in JS
+    localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+    this._isAuthenticated$.next(true);
+    this._currentUser$.next(response.user);
+  }
+
+  private clearSession(): void {
+    localStorage.removeItem(this.USER_KEY);
+    this._isAuthenticated$.next(false);
+    this._currentUser$.next(null);
+    this.router.navigate(['/auth/login']);
+  }
+
+  private hasStoredUser(): boolean {
+    return !!localStorage.getItem(this.USER_KEY);
   }
 }

@@ -16,7 +16,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         message = 'Unable to connect to server';
       } else if (error.status === 401) {
         message = 'Your session has expired. Please log in again.';
-        localStorage.removeItem('stride_pro_token');
         localStorage.removeItem('stride_pro_user');
         router.navigate(['/auth/login']);
       } else if (error.status === 403) {

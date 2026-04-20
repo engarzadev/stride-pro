@@ -25,7 +25,11 @@ func NewHandler(service *Service) *Handler {
 
 // List handles GET /api/invoices. Supports optional client_id query param.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	if clientIDStr := r.URL.Query().Get("client_id"); clientIDStr != "" {
 		clientID, err := uuid.Parse(clientIDStr)
@@ -59,7 +63,11 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Get handles GET /api/invoices/{id}.
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")
@@ -81,7 +89,11 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // Create handles POST /api/invoices.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	var input CreateInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -105,7 +117,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Update handles PUT /api/invoices/{id}.
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")
@@ -134,7 +150,11 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 // UpdateStatus handles PATCH /api/invoices/{id}/status.
 func (h *Handler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")
@@ -166,7 +186,11 @@ func (h *Handler) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 
 // Send handles POST /api/invoices/{id}/send — emails the invoice and marks it sent.
 func (h *Handler) Send(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")
@@ -183,7 +207,11 @@ func (h *Handler) Send(w http.ResponseWriter, r *http.Request) {
 
 // Delete handles DELETE /api/invoices/{id}.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid invoice ID")

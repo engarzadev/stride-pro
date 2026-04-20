@@ -25,7 +25,11 @@ func NewHandler(service *Service) *Handler {
 
 // List handles GET /api/horses/{horseId}/care-logs.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	horseID, err := uuid.Parse(mux.Vars(r)["horseId"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid horse ID")
@@ -47,7 +51,11 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Create handles POST /api/horses/{horseId}/care-logs.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	horseID, err := uuid.Parse(mux.Vars(r)["horseId"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid horse ID")
@@ -80,7 +88,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Update handles PUT /api/care-logs/{id}.
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid care log ID")
@@ -117,7 +129,11 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete handles DELETE /api/care-logs/{id}.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid care log ID")

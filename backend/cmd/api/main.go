@@ -15,13 +15,13 @@ import (
 	"github.com/stride-pro/backend/internal/barns"
 	biz "github.com/stride-pro/backend/internal/business_settings"
 	carelogs "github.com/stride-pro/backend/internal/care_logs"
-	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/clients"
 	"github.com/stride-pro/backend/internal/config"
 	"github.com/stride-pro/backend/internal/database"
 	"github.com/stride-pro/backend/internal/horses"
 	"github.com/stride-pro/backend/internal/invoices"
 	"github.com/stride-pro/backend/internal/notifications"
+	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/router"
 	"github.com/stride-pro/backend/internal/sessions"
 	svc "github.com/stride-pro/backend/internal/service_items"
@@ -29,7 +29,8 @@ import (
 )
 
 func main() {
-	// Load configuration
+	// Load configuration — fails fast on missing required values or insecure
+	// production settings (e.g. no HTTPS coverage, weak JWT secret).
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
@@ -51,7 +52,7 @@ func main() {
 
 	// Initialize services
 	authService := auth.NewService(db, cfg.JWTSecret)
-	authHandler := auth.NewHandler(authService)
+	authHandler := auth.NewHandler(authService, cfg.IsProd())
 
 	subsService := subscriptions.NewService(db)
 	subsHandler := subscriptions.NewHandler(subsService)
@@ -109,6 +110,7 @@ func main() {
 	// Set up router
 	handler := router.New(router.Deps{
 		DB:                     db,
+		Config:                 cfg,
 		AuthService:            authService,
 		AuthHandler:            authHandler,
 		ClientHandler:          clientHandler,
@@ -124,8 +126,8 @@ func main() {
 		ReminderHandler:        reminderHandler,
 	})
 
-	// Configure HTTP server
-	srv := &http.Server{
+	// Primary server (HTTPS when TLS is enabled, HTTP otherwise)
+	mainSrv := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      handler,
 		ReadTimeout:  15 * time.Second,
@@ -133,15 +135,53 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Start server in a goroutine
-	go func() {
-		log.Printf("server starting on port %s (env: %s)", cfg.Port, cfg.Environment)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server error: %v", err)
-		}
-	}()
+	// servers holds every server that needs graceful shutdown
+	servers := []*http.Server{mainSrv}
 
-	// Graceful shutdown
+	if cfg.TLSEnabled() {
+		// Direct TLS mode: also start an HTTP server on HTTPPort whose only job
+		// is to issue permanent 301 redirects to the HTTPS equivalent URL.
+		redirectSrv := &http.Server{
+			Addr: ":" + cfg.HTTPPort,
+			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				target := "https://" + r.Host + r.URL.RequestURI()
+				http.Redirect(w, r, target, http.StatusMovedPermanently)
+			}),
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 5 * time.Second,
+			IdleTimeout:  30 * time.Second,
+		}
+		servers = append(servers, redirectSrv)
+
+		go func() {
+			log.Printf("HTTP redirect server starting on port %s", cfg.HTTPPort)
+			if err := redirectSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("HTTP redirect server error: %v", err)
+			}
+		}()
+
+		go func() {
+			log.Printf("HTTPS server starting on port %s (env: %s)", cfg.Port, cfg.Environment)
+			if err := mainSrv.ListenAndServeTLS(cfg.TLSCertFile, cfg.TLSKeyFile); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("HTTPS server error: %v", err)
+			}
+		}()
+	} else {
+		// Proxy mode or dev: plain HTTP. In proxy mode the router's HTTPSRedirect
+		// middleware handles enforcement; in dev there is no enforcement.
+		if cfg.TLSProxyMode {
+			log.Printf("server starting on port %s — TLS terminated by upstream proxy (env: %s)", cfg.Port, cfg.Environment)
+		} else {
+			log.Printf("server starting on port %s (env: %s)", cfg.Port, cfg.Environment)
+		}
+		go func() {
+			if err := mainSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("server error: %v", err)
+			}
+		}()
+	}
+
+	// Graceful shutdown — wait for SIGINT or SIGTERM then drain all servers
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
@@ -150,8 +190,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("server forced to shutdown: %v", err)
+	for _, srv := range servers {
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Fatalf("server forced to shutdown: %v", err)
+		}
 	}
 
 	log.Println("server stopped")

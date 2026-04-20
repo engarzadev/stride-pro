@@ -26,7 +26,11 @@ func NewHandler(service *Service) *Handler {
 
 // List handles GET /api/appointments. Supports optional start/end query params for date filtering.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	startStr := r.URL.Query().Get("start")
 	endStr := r.URL.Query().Get("end")
@@ -68,7 +72,11 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Get handles GET /api/appointments/{id}.
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid appointment ID")
@@ -90,7 +98,11 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // Create handles POST /api/appointments.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	var input CreateInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -118,7 +130,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Update handles PUT /api/appointments/{id}.
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid appointment ID")
@@ -151,7 +167,11 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete handles DELETE /api/appointments/{id}.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid appointment ID")

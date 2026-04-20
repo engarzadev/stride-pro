@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -29,11 +30,14 @@ func NewRateLimiter(rate, capacity float64) *RateLimiter {
 		rate:     rate,
 		capacity: capacity,
 	}
-
-	// Periodically clean up stale entries
 	go rl.cleanup()
-
 	return rl
+}
+
+// NewAuthRateLimiter creates a stricter rate limiter suited for auth endpoints.
+// Allows 5 requests per minute per IP with a burst of 5.
+func NewAuthRateLimiter() *RateLimiter {
+	return NewRateLimiter(5.0/60.0, 5)
 }
 
 // Middleware returns an HTTP middleware that enforces rate limits per client IP.
@@ -42,7 +46,7 @@ func (rl *RateLimiter) Middleware(next http.Handler) http.Handler {
 		ip := extractIP(r)
 
 		if !rl.allow(ip) {
-			w.Header().Set("Retry-After", "1")
+			w.Header().Set("Retry-After", "60")
 			response.Error(w, http.StatusTooManyRequests, "Rate limit exceeded")
 			return
 		}
@@ -98,13 +102,20 @@ func (rl *RateLimiter) cleanup() {
 	}
 }
 
+// extractIP returns the best-effort client IP from the request.
+// It reads only the first address from X-Forwarded-For to avoid using
+// the full proxy chain as the key (which could be spoofed to bypass limits).
 func extractIP(r *http.Request) string {
-	// Check common proxy headers first
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		return xff
+		// X-Forwarded-For can be a comma-separated list: "client, proxy1, proxy2"
+		// Take only the first entry (reported client IP) and trim whitespace.
+		if idx := strings.Index(xff, ","); idx != -1 {
+			return strings.TrimSpace(xff[:idx])
+		}
+		return strings.TrimSpace(xff)
 	}
 	if xri := r.Header.Get("X-Real-IP"); xri != "" {
-		return xri
+		return strings.TrimSpace(xri)
 	}
 	return r.RemoteAddr
 }

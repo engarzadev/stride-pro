@@ -26,7 +26,11 @@ func NewHandler(service *Service) *Handler {
 
 // List handles GET /api/sessions. Supports optional appointment_id query param.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	if apptIDStr := r.URL.Query().Get("appointment_id"); apptIDStr != "" {
 		apptID, err := uuid.Parse(apptIDStr)
@@ -60,7 +64,11 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Get handles GET /api/sessions/{id}.
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid session ID")
@@ -82,7 +90,11 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 // Create handles POST /api/sessions.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 
 	var input CreateInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -110,7 +122,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Update handles PUT /api/sessions/{id}.
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid session ID")
@@ -139,7 +155,11 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete handles DELETE /api/sessions/{id}.
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	userID, ok := r.Context().Value(auth.UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
 	id, err := uuid.Parse(mux.Vars(r)["id"])
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, "Invalid session ID")

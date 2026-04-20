@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -14,11 +16,12 @@ import (
 // Handler exposes HTTP endpoints for authentication.
 type Handler struct {
 	service *Service
+	isProd  bool
 }
 
 // NewHandler creates an auth handler.
-func NewHandler(service *Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(service *Service, isProd bool) *Handler {
+	return &Handler{service: service, isProd: isProd}
 }
 
 // Register handles POST /api/auth/register.
@@ -33,7 +36,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	validator.Required(errs, "email", input.Email)
 	validator.Email(errs, "email", input.Email)
 	validator.Required(errs, "password", input.Password)
-	validator.MinLength(errs, "password", input.Password, 8)
+	validator.Password(errs, "password", input.Password)
 	validator.Required(errs, "first_name", input.FirstName)
 	validator.Required(errs, "last_name", input.LastName)
 	if errs.HasErrors() {
@@ -51,9 +54,12 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.setTokenCookies(w, tokens)
+
+	// Only return the user and expiry — token strings stay in HttpOnly cookies
 	response.JSON(w, http.StatusCreated, map[string]interface{}{
-		"user":   user,
-		"tokens": tokens,
+		"user":       user,
+		"expires_at": tokens.ExpiresAt,
 	})
 }
 
@@ -83,34 +89,67 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.setTokenCookies(w, tokens)
+
+	// Only return the user and expiry — token strings stay in HttpOnly cookies
 	response.JSON(w, http.StatusOK, map[string]interface{}{
-		"user":   user,
-		"tokens": tokens,
+		"user":       user,
+		"expires_at": tokens.ExpiresAt,
 	})
+}
+
+// Logout handles POST /api/auth/logout. Revokes the current access token
+// and clears the auth cookies.
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	// Try to revoke the token from cookie first, then fall back to header
+	tokenStr := h.tokenFromCookie(r)
+	if tokenStr == "" {
+		header := r.Header.Get("Authorization")
+		parts := strings.SplitN(header, " ", 2)
+		if len(parts) == 2 && strings.EqualFold(parts[0], "bearer") {
+			tokenStr = parts[1]
+		}
+	}
+
+	if tokenStr != "" {
+		// Best-effort revocation — don't fail the logout if this errors
+		_ = h.service.RevokeToken(tokenStr)
+	}
+
+	h.clearTokenCookies(w)
+	response.JSON(w, http.StatusOK, map[string]string{"message": "Logged out successfully"})
 }
 
 // Refresh handles POST /api/auth/refresh.
 func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
-	var body struct {
-		RefreshToken string `json:"refresh_token"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		response.Error(w, http.StatusBadRequest, "Invalid request body")
-		return
+	// Accept refresh token from cookie or request body
+	refreshToken := h.refreshTokenFromCookie(r)
+
+	if refreshToken == "" {
+		var body struct {
+			RefreshToken string `json:"refresh_token"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err == nil {
+			refreshToken = body.RefreshToken
+		}
 	}
 
-	if body.RefreshToken == "" {
+	if refreshToken == "" {
 		response.Error(w, http.StatusBadRequest, "refresh_token is required")
 		return
 	}
 
-	tokens, err := h.service.RefreshToken(body.RefreshToken)
+	tokens, err := h.service.RefreshToken(refreshToken)
 	if err != nil {
+		h.clearTokenCookies(w)
 		response.Error(w, http.StatusUnauthorized, "Invalid or expired refresh token")
 		return
 	}
 
-	response.JSON(w, http.StatusOK, tokens)
+	h.setTokenCookies(w, tokens)
+	response.JSON(w, http.StatusOK, map[string]interface{}{
+		"expires_at": tokens.ExpiresAt,
+	})
 }
 
 // Me handles GET /api/auth/me and returns the authenticated user.
@@ -128,4 +167,70 @@ func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusOK, user)
+}
+
+// setTokenCookies writes access and refresh tokens as HttpOnly cookies.
+func (h *Handler) setTokenCookies(w http.ResponseWriter, tokens *TokenPair) {
+	accessExpiry := time.Unix(tokens.ExpiresAt, 0)
+	refreshExpiry := time.Now().Add(7 * 24 * time.Hour)
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    tokens.AccessToken,
+		Path:     "/",
+		Expires:  accessExpiry,
+		HttpOnly: true,
+		Secure:   h.isProd,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    tokens.RefreshToken,
+		Path:     "/api/auth/refresh",
+		Expires:  refreshExpiry,
+		HttpOnly: true,
+		Secure:   h.isProd,
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+// clearTokenCookies expires both auth cookies immediately.
+func (h *Handler) clearTokenCookies(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		Path:     "/",
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   h.isProd,
+		SameSite: http.SameSiteLaxMode,
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		Path:     "/api/auth/refresh",
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   h.isProd,
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+func (h *Handler) tokenFromCookie(r *http.Request) string {
+	c, err := r.Cookie("access_token")
+	if err != nil {
+		return ""
+	}
+	return c.Value
+}
+
+func (h *Handler) refreshTokenFromCookie(r *http.Request) string {
+	c, err := r.Cookie("refresh_token")
+	if err != nil {
+		return ""
+	}
+	return c.Value
 }

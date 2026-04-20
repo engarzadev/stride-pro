@@ -1,19 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 
+// Tokens are stored as HttpOnly cookies set by the server and are sent
+// automatically with every same-site request. withCredentials: true ensures
+// the browser includes those cookies on all API calls.
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
-
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return next(cloned);
-  }
-
-  return next(req);
+  return next(req.clone({ withCredentials: true }));
 };

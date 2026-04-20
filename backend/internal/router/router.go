@@ -11,12 +11,13 @@ import (
 	"github.com/stride-pro/backend/internal/barns"
 	biz "github.com/stride-pro/backend/internal/business_settings"
 	carelogs "github.com/stride-pro/backend/internal/care_logs"
-	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/clients"
+	"github.com/stride-pro/backend/internal/config"
 	"github.com/stride-pro/backend/internal/database"
 	"github.com/stride-pro/backend/internal/horses"
 	"github.com/stride-pro/backend/internal/invoices"
 	"github.com/stride-pro/backend/internal/middleware"
+	"github.com/stride-pro/backend/internal/reminders"
 	"github.com/stride-pro/backend/internal/sessions"
 	svc "github.com/stride-pro/backend/internal/service_items"
 	"github.com/stride-pro/backend/internal/subscriptions"
@@ -26,6 +27,7 @@ import (
 // Deps holds all handler dependencies needed to configure routing.
 type Deps struct {
 	DB                     *database.DB
+	Config                 *config.Config
 	AuthService            *auth.Service
 	AuthHandler            *auth.Handler
 	ClientHandler          *clients.Handler
@@ -45,13 +47,42 @@ type Deps struct {
 func New(deps Deps) http.Handler {
 	r := mux.NewRouter()
 
-	// Global middleware
-	corsConfig := middleware.DefaultCORSConfig()
+	// Recovery must be outermost — catches panics from all middleware and handlers below
+	r.Use(middleware.Recovery)
+
+	// In proxy mode, redirect plain HTTP before anything else runs
+	if deps.Config.TLSProxyMode {
+		r.Use(middleware.HTTPSRedirect)
+	}
+
+	// Security headers on every response
+	r.Use(middleware.SecurityHeaders(deps.Config.IsProd()))
+
+	// CORS — uses the configured allowed origins (env-driven, not a wildcard)
+	// X-XSRF-TOKEN is included so the Angular CSRF header is not blocked by preflight
+	corsConfig := middleware.CORSConfig{
+		AllowedOrigins: deps.Config.AllowedOrigins,
+		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Authorization", "Content-Type", "Accept", "X-XSRF-TOKEN"},
+	}
 	r.Use(middleware.CORS(corsConfig))
+
+	// Set XSRF-TOKEN cookie on every response so the Angular client always has it
+	r.Use(middleware.CSRFSetCookie(deps.Config.IsProd()))
+
 	r.Use(middleware.Logging)
 
-	rateLimiter := middleware.NewRateLimiter(10, 50) // 10 req/s, burst of 50
-	r.Use(rateLimiter.Middleware)
+	// Global rate limiter: 10 req/s per IP, burst of 50
+	globalLimiter := middleware.NewRateLimiter(10, 50)
+	r.Use(globalLimiter.Middleware)
+
+	// Request body size limit: 2 MB
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			r.Body = http.MaxBytesReader(w, r.Body, 2<<20) // 2 MB
+			next.ServeHTTP(w, r)
+		})
+	})
 
 	// Handle preflight OPTIONS requests for all routes
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -67,17 +98,21 @@ func New(deps Deps) http.Handler {
 		response.JSON(w, http.StatusOK, map[string]string{"status": "healthy"})
 	}).Methods("GET")
 
-	// Public auth routes
-	r.HandleFunc("/api/auth/register", deps.AuthHandler.Register).Methods("POST")
-	r.HandleFunc("/api/auth/login", deps.AuthHandler.Login).Methods("POST")
+	// Auth routes — stricter rate limit (5 req/min per IP)
+	authLimiter := middleware.NewAuthRateLimiter()
+	r.Handle("/api/auth/register", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.Register))).Methods("POST")
+	r.Handle("/api/auth/login", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.Login))).Methods("POST")
 	r.HandleFunc("/api/auth/refresh", deps.AuthHandler.Refresh).Methods("POST")
 
 	// Protected routes
 	protected := r.PathPrefix("/api").Subrouter()
 	protected.Use(auth.Middleware(deps.AuthService))
+	// CSRF validation on all mutating requests within protected routes
+	protected.Use(middleware.CSRFValidate)
 
 	// Auth - protected
 	protected.HandleFunc("/auth/me", deps.AuthHandler.Me).Methods("GET")
+	protected.HandleFunc("/auth/logout", deps.AuthHandler.Logout).Methods("POST")
 
 	// Subscription
 	protected.HandleFunc("/subscription", deps.SubscriptionHandler.Get).Methods("GET")

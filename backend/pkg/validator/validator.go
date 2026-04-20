@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/mail"
 	"strings"
+	"unicode"
 )
 
 // Errors collects field-level validation errors.
@@ -74,5 +75,41 @@ func OneOf(errors Errors, field, value string, allowed []string) {
 func PositiveFloat(errors Errors, field string, value float64) {
 	if value <= 0 {
 		errors[field] = fmt.Sprintf("%s must be a positive number", field)
+	}
+}
+
+// Password checks that a password meets complexity requirements:
+// at least 8 characters, one uppercase letter, one lowercase letter, and one digit.
+func Password(errors Errors, field, value string) {
+	if len(value) < 8 {
+		errors[field] = fmt.Sprintf("%s must be at least 8 characters", field)
+		return
+	}
+
+	var hasUpper, hasLower, hasDigit bool
+	for _, ch := range value {
+		switch {
+		case unicode.IsUpper(ch):
+			hasUpper = true
+		case unicode.IsLower(ch):
+			hasLower = true
+		case unicode.IsDigit(ch):
+			hasDigit = true
+		}
+	}
+
+	var missing []string
+	if !hasUpper {
+		missing = append(missing, "one uppercase letter")
+	}
+	if !hasLower {
+		missing = append(missing, "one lowercase letter")
+	}
+	if !hasDigit {
+		missing = append(missing, "one number")
+	}
+
+	if len(missing) > 0 {
+		errors[field] = fmt.Sprintf("%s must contain at least %s", field, strings.Join(missing, ", "))
 	}
 }

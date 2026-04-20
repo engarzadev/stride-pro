@@ -199,15 +199,9 @@ export interface RegisterRequest {
   account_type: string;
 }
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: number;
-}
-
 export interface AuthResponse {
-  tokens: AuthTokens;
   user: User;
+  expiresAt: number;
 }
 
 export interface SubscriptionPlan {

@@ -3,16 +3,15 @@ v1 Release Priorities
 [x] Appointment reminders — the notification hook is missing from appointment creation/updates
 [x] Invoice templates — no template system built yet
     [x] make settings width 100%
-    [ ] fix double scroll of entire app
+    [x] fix double scroll of entire app
     [x] create invoice - add item: add space between item and price and fix alignment
-[ ] Business setting - setting email or invoice receipt messages
-[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
 [x] Form Validation - disable save buttons if form is invalid or submitting
 [p] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
+[ ] Business setting - setting email or invoice receipt messages
+[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
 
 Future Features
-[ ] DO NOT show token in reponse payload
-[ ] allow reset password on login screen
+[x] DO NOT show token in reponse payload
 [ ] User profile settings - custom color schemes
 [ ] Add horse photo
 [ ] Upload body work map
@@ -20,15 +19,25 @@ Future Features
 [ ] Bulk actions (e.g. bulk delete from list view)
 [ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
 
-[x] Add vet and farrier information to the horse information section and add fields to the entry and edit forms
-[x] On all the table, add a search, filter and sort options so finding information is faster
-
-Care Log
-[x] Edit reminders
-[x] Add virtual scroll to the logs section
-
 Tech Debt
-[x] contrast text on login needs to be fixed
-[x] contrast text for tabs in settings needs to be fixed
-[x] fix scroll especailly in mobile view
-[x] remove Assignment section under horses for owner account type
+[ ] Entire app is mobile view, need to add support back for desktop view
+
+Security
+[ ] Email verification — large feature requiring email flows and new UI
+[ ] Account lockout after N failures — requires schema change + retry tracking
+[ ] Structured JSON logging — cosmetic, not a security fix
+[ ] allow reset password on login screen
+[ ] show password in field
+
+Claude Security Analysis
+🟡 Remaining — Minor
+1. No Content-Security-Policy header (Low)
+The strongest remaining XSP mitigation. Even a basic policy like default-src 'self' would block inline script execution if XSS ever occurred.
+2. No revoked_tokens cleanup job (Low)
+Expired rows accumulate in the DB. A DELETE FROM revoked_tokens WHERE expires_at < NOW() — on startup or on a schedule — keeps it clean.
+3. In-memory rate limiter (Low — current scale)
+Fine for a single Railway instance. If you ever scale to multiple instances the buckets won't be shared across them.
+4. No frontend request timeouts (Low)
+API calls in api.service.ts can hang indefinitely. A simple timeout interceptor would clean this up.
+Overall
+The app started this session with 4 critical issues and 10+ high/medium ones. All of them are resolved. What's left are four low-priority items, none of which represent meaningful attack vectors at current scale. The security posture is production-ready.

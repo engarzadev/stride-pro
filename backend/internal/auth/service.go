@@ -16,9 +16,10 @@ import (
 )
 
 var (
-	ErrEmailTaken       = errors.New("email already registered")
+	ErrEmailTaken         = errors.New("email already registered")
 	ErrInvalidCredentials = errors.New("invalid email or password")
-	ErrUserNotFound     = errors.New("user not found")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrTokenRevoked       = errors.New("token has been revoked")
 )
 
 // Service handles authentication business logic.
@@ -139,7 +140,8 @@ func (s *Service) Login(input LoginInput) (*models.User, *TokenPair, error) {
 	return user, tokens, nil
 }
 
-// ValidateToken parses and validates a JWT, returning the user ID.
+// ValidateToken parses and validates a JWT access token, returning the user ID.
+// It rejects refresh tokens, expired tokens, and revoked tokens.
 func (s *Service) ValidateToken(tokenStr string) (uuid.UUID, error) {
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -156,6 +158,11 @@ func (s *Service) ValidateToken(tokenStr string) (uuid.UUID, error) {
 		return uuid.Nil, errors.New("invalid token claims")
 	}
 
+	// Reject refresh tokens being used as access tokens
+	if tokenType, _ := claims["type"].(string); tokenType != "access" {
+		return uuid.Nil, errors.New("invalid token type")
+	}
+
 	sub, ok := claims["sub"].(string)
 	if !ok {
 		return uuid.Nil, errors.New("missing subject claim")
@@ -166,15 +173,88 @@ func (s *Service) ValidateToken(tokenStr string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("parsing user ID from token: %w", err)
 	}
 
+	// Check revocation list
+	jti, _ := claims["jti"].(string)
+	if jti != "" {
+		revoked, err := s.isTokenRevoked(jti)
+		if err != nil {
+			return uuid.Nil, fmt.Errorf("checking token revocation: %w", err)
+		}
+		if revoked {
+			return uuid.Nil, ErrTokenRevoked
+		}
+	}
+
 	return userID, nil
+}
+
+// RevokeToken adds the given token's JTI to the revoked tokens table, invalidating it
+// immediately even before its natural expiry.
+func (s *Service) RevokeToken(tokenStr string) error {
+	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return s.jwtSecret, nil
+	})
+	if err != nil {
+		return fmt.Errorf("parsing token: %w", err)
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return errors.New("invalid token claims")
+	}
+
+	jti, _ := claims["jti"].(string)
+	if jti == "" {
+		// Token predates JTI support — nothing to revoke
+		return nil
+	}
+
+	// Determine the token's expiry so the row can be cleaned up later
+	exp, _ := claims["exp"].(float64)
+	expiresAt := time.Unix(int64(exp), 0)
+
+	_, err = s.db.Exec(
+		`INSERT INTO revoked_tokens (jti, expires_at) VALUES ($1, $2) ON CONFLICT (jti) DO NOTHING`,
+		jti, expiresAt,
+	)
+	return err
 }
 
 // RefreshToken generates a new token pair from a valid refresh token.
 func (s *Service) RefreshToken(refreshToken string) (*TokenPair, error) {
-	userID, err := s.ValidateToken(refreshToken)
+	token, err := jwt.Parse(refreshToken, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return s.jwtSecret, nil
+	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing refresh token: %w", err)
 	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("invalid token claims")
+	}
+
+	// Only accept refresh tokens here
+	if tokenType, _ := claims["type"].(string); tokenType != "refresh" {
+		return nil, errors.New("invalid token type")
+	}
+
+	sub, ok := claims["sub"].(string)
+	if !ok {
+		return nil, errors.New("missing subject claim")
+	}
+
+	userID, err := uuid.Parse(sub)
+	if err != nil {
+		return nil, fmt.Errorf("parsing user ID from token: %w", err)
+	}
+
 	return s.generateTokenPair(userID)
 }
 
@@ -204,6 +284,7 @@ func (s *Service) generateTokenPair(userID uuid.UUID) (*TokenPair, error) {
 	accessClaims := jwt.MapClaims{
 		"sub":  userID.String(),
 		"type": "access",
+		"jti":  uuid.New().String(),
 		"exp":  expiresAt.Unix(),
 		"iat":  time.Now().Unix(),
 	}
@@ -216,6 +297,7 @@ func (s *Service) generateTokenPair(userID uuid.UUID) (*TokenPair, error) {
 	refreshClaims := jwt.MapClaims{
 		"sub":  userID.String(),
 		"type": "refresh",
+		"jti":  uuid.New().String(),
 		"exp":  time.Now().Add(7 * 24 * time.Hour).Unix(),
 		"iat":  time.Now().Unix(),
 	}
@@ -230,4 +312,16 @@ func (s *Service) generateTokenPair(userID uuid.UUID) (*TokenPair, error) {
 		RefreshToken: refreshStr,
 		ExpiresAt:    expiresAt.Unix(),
 	}, nil
+}
+
+func (s *Service) isTokenRevoked(jti string) (bool, error) {
+	var exists bool
+	err := s.db.QueryRow(
+		`SELECT EXISTS(SELECT 1 FROM revoked_tokens WHERE jti = $1 AND expires_at > NOW())`,
+		jti,
+	).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }
