@@ -50,22 +50,24 @@ func New(deps Deps) http.Handler {
 	// Recovery must be outermost — catches panics from all middleware and handlers below
 	r.Use(middleware.Recovery)
 
-	// In proxy mode, redirect plain HTTP before anything else runs
-	if deps.Config.TLSProxyMode {
-		r.Use(middleware.HTTPSRedirect)
-	}
-
-	// Security headers on every response
-	r.Use(middleware.SecurityHeaders(deps.Config.IsProd()))
-
-	// CORS — uses the configured allowed origins (env-driven, not a wildcard)
-	// X-XSRF-TOKEN is included so the Angular CSRF header is not blocked by preflight
+	// CORS must run before HTTPSRedirect so that redirect responses (301) also carry
+	// Access-Control-Allow-Origin. Without this, the browser blocks the redirect and
+	// the request fails with a CORS error before it can reach the actual handler.
+	// X-XSRF-TOKEN is included so the Angular CSRF header is not blocked by preflight.
 	corsConfig := middleware.CORSConfig{
 		AllowedOrigins: deps.Config.AllowedOrigins,
 		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Authorization", "Content-Type", "Accept", "X-XSRF-TOKEN"},
 	}
 	r.Use(middleware.CORS(corsConfig))
+
+	// In proxy mode, redirect plain HTTP after CORS headers are already set
+	if deps.Config.TLSProxyMode {
+		r.Use(middleware.HTTPSRedirect)
+	}
+
+	// Security headers on every response
+	r.Use(middleware.SecurityHeaders(deps.Config.IsProd()))
 
 	// Set XSRF-TOKEN cookie on every response so the Angular client always has it
 	r.Use(middleware.CSRFSetCookie(deps.Config.IsProd()))
