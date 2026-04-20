@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter, inject, computed } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface NavItem {
@@ -28,7 +28,7 @@ export class SidebarComponent {
   private readonly allNavItems: NavItem[] = [
     { path: '/dashboard', label: 'Dashboard', icon: 'home', roles: ['owner', 'professional'] },
     { path: '/clients', label: 'Clients', icon: 'people', roles: ['professional'] },
-    { path: '/horses', label: 'Horses', icon: 'pets', roles: ['owner', 'professional'] },
+    { path: '/horses', label: 'Horses', icon: 'chess_knight', roles: ['owner', 'professional'] },
     { path: '/care-log', label: 'Care Log', icon: 'monitor_heart', roles: ['owner'] },
     { path: '/reminders', label: 'Reminders', icon: 'notifications_active', roles: ['owner'] },
     { path: '/barns', label: 'Barns', icon: 'warehouse', roles: ['professional'] },

@@ -129,7 +129,6 @@
 // === Dashboard grid (secondary content — sits below hero stats) ===
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
 
   @media (max-width: 768px) {
@@ -272,14 +271,17 @@
   }
 }
 
+.dashboard-grid--owner {
+  grid-template-columns: 3fr 2fr;
+
+   @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dashboard-grid--owner,
 .dashboard-grid--professional {
   padding-top: 1.5rem;
-  grid-template-columns: 3fr 2fr;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
 
   @media (max-width: 640px) {
     gap: 1rem;

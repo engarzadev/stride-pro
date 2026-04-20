@@ -32,7 +32,7 @@ export class BottomNavComponent {
   readonly addMenuOpen = signal(false);
 
   private readonly ownerActions: QuickAction[] = [
-    { path: '/horses/new', label: 'Add Horse', icon: 'pets' },
+    { path: '/horses/new', label: 'Add Horse', icon: 'chess_knight' },
     { path: '/care-log?showForm=true', label: 'Care Log Entry', icon: 'monitor_heart' },
     { path: '/reminders?showForm=true', label: 'Add Reminder', icon: 'notifications_active' },
   ];
@@ -40,7 +40,7 @@ export class BottomNavComponent {
   private readonly professionalActions: QuickAction[] = [
     { path: '/clients/new', label: 'New Client', icon: 'person_add' },
     { path: '/appointments/new', label: 'New Appointment', icon: 'event' },
-    { path: '/horses/new', label: 'Add Horse', icon: 'pets' },
+    { path: '/horses/new', label: 'Add Horse', icon: 'chess_knight' },
     { path: '/invoices/new', label: 'Add Invoice', icon: 'receipt_long' },
     { path: '/sessions/new', label: 'Add Session', icon: 'event' },
   ];
@@ -52,7 +52,7 @@ export class BottomNavComponent {
 
   private readonly ownerItems: BottomNavItem[] = [
     { path: '/dashboard', label: 'Home', icon: 'home' },
-    { path: '/horses', label: 'Horses', icon: 'pets' },
+    { path: '/horses', label: 'Horses', icon: 'chess_knight' },
     { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/reminders', label: 'Reminders', icon: 'notifications' },
     { path: '/settings', label: 'Settings', icon: 'settings' },
@@ -62,7 +62,7 @@ export class BottomNavComponent {
     { path: '/dashboard', label: 'Home', icon: 'home' },
     { path: '/invoices', label: 'Invoices', icon: 'receipt_long' },
     // { path: '/clients', label: 'Clients', icon: 'people' },
-    // { path: '/horses', label: 'Horses', icon: 'pets' },
+    // { path: '/horses', label: 'Horses', icon: 'chess_knight' },
     { path: '', label: 'Add', icon: 'add', isCenter: true },
     { path: '/sessions', label: 'Sessions', icon: 'event' },
     { path: '/settings', label: 'Settings', icon: 'settings' },
