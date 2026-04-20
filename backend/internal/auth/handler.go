@@ -169,10 +169,23 @@ func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, user)
 }
 
+// cookieSameSite returns the appropriate SameSite policy for the environment.
+// In production the frontend and backend are on different domains (Vercel vs Railway),
+// so cross-site requests require SameSite=None + Secure=true.
+// In development both run on localhost so Lax is sufficient and avoids the
+// browser requirement for Secure on None cookies.
+func (h *Handler) cookieSameSite() http.SameSite {
+	if h.isProd {
+		return http.SameSiteNoneMode
+	}
+	return http.SameSiteLaxMode
+}
+
 // setTokenCookies writes access and refresh tokens as HttpOnly cookies.
 func (h *Handler) setTokenCookies(w http.ResponseWriter, tokens *TokenPair) {
 	accessExpiry := time.Unix(tokens.ExpiresAt, 0)
 	refreshExpiry := time.Now().Add(7 * 24 * time.Hour)
+	sameSite := h.cookieSameSite()
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
@@ -181,7 +194,7 @@ func (h *Handler) setTokenCookies(w http.ResponseWriter, tokens *TokenPair) {
 		Expires:  accessExpiry,
 		HttpOnly: true,
 		Secure:   h.isProd,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -191,12 +204,14 @@ func (h *Handler) setTokenCookies(w http.ResponseWriter, tokens *TokenPair) {
 		Expires:  refreshExpiry,
 		HttpOnly: true,
 		Secure:   h.isProd,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 	})
 }
 
 // clearTokenCookies expires both auth cookies immediately.
 func (h *Handler) clearTokenCookies(w http.ResponseWriter) {
+	sameSite := h.cookieSameSite()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
 		Value:    "",
@@ -205,7 +220,7 @@ func (h *Handler) clearTokenCookies(w http.ResponseWriter) {
 		MaxAge:   -1,
 		HttpOnly: true,
 		Secure:   h.isProd,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 	})
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
@@ -215,7 +230,7 @@ func (h *Handler) clearTokenCookies(w http.ResponseWriter) {
 		MaxAge:   -1,
 		HttpOnly: true,
 		Secure:   h.isProd,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 	})
 }
 
