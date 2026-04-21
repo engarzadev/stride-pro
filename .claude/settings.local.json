@@ -10,7 +10,8 @@
       "Bash(grep -E \"\\\\.\\(ts|tsx|html\\)$\")",
       "Bash(npm run:*)",
       "Bash(grep -r \"panic\\\\|recover\\\\|defer\\\\|X-Frame-Options\\\\|X-Content-Type\\\\|Content-Security\\\\|X-XSS\\\\|Strict-Transport\" /Users/dev/stride-pro/backend --include=*.go)",
-      "Bash(grep -r \"secret\\\\|Secret\\\\|token\\\\|Token\\\\|password\\\\|Password\\\\|auth\\\\|Auth\" /Users/dev/stride-pro/backend/internal/auth --include=*.go)"
+      "Bash(grep -r \"secret\\\\|Secret\\\\|token\\\\|Token\\\\|password\\\\|Password\\\\|auth\\\\|Auth\" /Users/dev/stride-pro/backend/internal/auth --include=*.go)",
+      "Bash(grep -E \"\\\\.\\(go|ts|js\\)$\")"
     ]
   }
 }
