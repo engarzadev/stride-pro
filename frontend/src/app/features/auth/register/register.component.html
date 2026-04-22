@@ -1,7 +1,7 @@
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-header">
-      <span class="auth-logo">🐎</span>
+      <img src="assets/logo4.png" alt="Stride Pro" class="header-logo"/>
       <h1>StridePro</h1>
       <p>Create your account</p>
     </div>
@@ -11,17 +11,21 @@
         class="account-type-card"
         [class.selected]="selectedAccountType() === 'owner'"
         (click)="selectAccountType('owner')">
-        <mat-icon class="account-type-icon">chess_knight</mat-icon>
-        <div class="account-type-label">Horse Owner</div>
-        <div class="account-type-desc">Track your horse's care, health records, and reminders</div>
+        <!-- <mat-icon class="account-type-icon">chess_knight</mat-icon> -->
+        <div class="account-type-text">
+          <div class="account-type-label">Horse Owner</div>
+          <div class="account-type-desc">Track care, health records & reminders</div>
+        </div>
       </div>
       <div
         class="account-type-card"
         [class.selected]="selectedAccountType() === 'professional'"
         (click)="selectAccountType('professional')">
-        <mat-icon class="account-type-icon">work</mat-icon>
-        <div class="account-type-label">Professional</div>
-        <div class="account-type-desc">Manage your clients, schedule, and business</div>
+        <!-- <mat-icon class="account-type-icon">work</mat-icon> -->
+        <div class="account-type-text">
+          <div class="account-type-label">Professional</div>
+          <div class="account-type-desc">Manage clients, schedule & business</div>
+        </div>
       </div>
     </div>
     @if (showAccountTypeError()) {
