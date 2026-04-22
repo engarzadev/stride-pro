@@ -16,13 +16,20 @@
       }
     </div>
 
+    @if (!canUseCareLog()) {
+      <a routerLink="/billing" class="upgrade-notice">
+        <mat-icon>lock</mat-icon>
+        <span>Reminders require a Base plan or higher. Click here to upgrade.</span>
+      </a>
+    }
+
     @if (horses().length === 0) {
       <div class="empty-state">
         <mat-icon class="empty-icon">notifications</mat-icon>
         <p class="empty-title">No horses yet</p>
         <p class="empty-desc">Add a horse to start tracking reminders.</p>
       </div>
-    } @else if (selectedHorseId()) {
+    } @else if (selectedHorseId() && canUseCareLog()) {
       <app-horse-reminders [horseId]="selectedHorseId()!" />
     }
   </div>

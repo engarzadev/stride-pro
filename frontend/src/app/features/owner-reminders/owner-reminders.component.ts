@@ -2,10 +2,12 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { Horse } from '../../core/models';
 import { HorsesService } from '../horses/horses.service';
 import { HorseRemindersComponent } from '../horses/horse-reminders/horse-reminders.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
+import { SubscriptionService } from '../../core/services/subscription.service';
 
 @Component({
   selector: 'app-owner-reminders',
@@ -14,6 +16,7 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
     MatSelectModule,
     MatFormFieldModule,
     MatIconModule,
+    RouterLink,
     HorseRemindersComponent,
     LoadingSpinnerComponent,
   ],
@@ -22,8 +25,10 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
 })
 export class OwnerRemindersComponent implements OnInit {
   private readonly horsesService = inject(HorsesService);
+  private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(true);
+  readonly canUseCareLog = signal(false);
   readonly horses = signal<Horse[]>([]);
   readonly selectedHorseId = signal<string | null>(null);
 
@@ -33,6 +38,10 @@ export class OwnerRemindersComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.subscriptionService.load().subscribe(() => {
+      this.canUseCareLog.set(this.subscriptionService.hasFeature('care_logs'));
+    });
+
     this.horsesService.getAll().subscribe({
       next: (horses) => {
         this.horses.set(horses);

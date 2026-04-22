@@ -511,15 +511,15 @@ h4 {
   }
 
   .form-main {
-    padding-bottom: 5rem;
+    padding-bottom: 9rem;
   }
 
   .form-aside {
     position: fixed;
-    bottom: 0;
+    bottom: 64px;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 101;
     padding: 0.75rem 1rem;
     background: $surface;
     border-top: 1px solid $border;
