@@ -8,7 +8,7 @@ The frontend follows a **Core / Features / Shared** architecture with lazy-loade
 
 ```
 src/app/
-├── core/        # Singleton services, interceptors, guards, models
+├── core/        # Singleton services, interceptors, guards, models, utils
 ├── features/    # Lazy-loaded feature domains (one folder per domain)
 └── shared/      # Reusable components, directives, and pipes
 ```
@@ -19,16 +19,20 @@ The `core/` layer is loaded once at startup. Nothing outside of `core/` should d
 
 | Path | Purpose |
 |------|---------|
-| `core/services/api.service.ts` | Generic HTTP wrapper (`get`, `post`, `put`, `delete`) — all feature services use this instead of `HttpClient` directly |
-| `core/services/auth.service.ts` | Authentication state — exposes `isAuthenticated$` and `currentUser$` as observables backed by `BehaviorSubject`; persists token and user to `localStorage` |
-| `core/interceptors/auth.interceptor.ts` | Attaches `Authorization: Bearer <token>` to every outgoing request |
-| `core/interceptors/error.interceptor.ts` | Centralized HTTP error handling |
-| `core/guards/auth.guard.ts` | Redirects unauthenticated users away from protected routes |
-| `core/models/index.ts` | Shared TypeScript interfaces (`User`, `Client`, `Horse`, `Barn`, `Appointment`, `Session`, `Invoice`, `ApiResponse<T>`, `PaginatedResponse<T>`) |
+| `services/api.service.ts` | Generic HTTP wrapper (`get`, `post`, `put`, `patch`, `delete`) — all feature services use this instead of `HttpClient` directly. Handles camelCase ↔ snake_case conversion and unwraps the `{ data }` response envelope. |
+| `services/auth.service.ts` | Authentication state — login, register, logout. Persists user to `localStorage`. |
+| `services/subscription.service.ts` | Loads the current user's subscription plan and exposes `hasFeature()` for feature gating. |
+| `services/theme.service.ts` | Dark/light mode toggle — adds/removes `dark` class on `<html>`. |
+| `interceptors/auth.interceptor.ts` | Sets `withCredentials: true` on all requests so HttpOnly cookies are sent. |
+| `interceptors/csrf.interceptor.ts` | Reads the `XSRF-TOKEN` cookie and attaches it as the `X-XSRF-TOKEN` header on mutating requests. |
+| `interceptors/error.interceptor.ts` | Centralized HTTP error handling — shows toast messages, handles 401 session expiry redirect, suppresses subscription-gated 403s. |
+| `guards/auth.guard.ts` | Redirects unauthenticated users to `/auth/login`. |
+| `models/index.ts` | Shared TypeScript interfaces (`User`, `Client`, `Horse`, `Barn`, `Appointment`, `Session`, `Invoice`, `Reminder`, `CareLog`, `SubscriptionPlan`, etc.) |
+| `utils/camel-case.ts` | `keysToCamel` / `keysToSnake` recursive object key converters used by `ApiService`. |
 
 ### Features
 
-Each domain under `features/` is self-contained and la`zy-loaded. The typical structure inside a feature folder is:
+Each domain under `features/` is self-contained and lazy-loaded. The typical structure inside a feature folder is:
 
 ```
 features/<domain>/
@@ -36,33 +40,59 @@ features/<domain>/
 ├── <domain>-detail/     # Read-only detail view component
 ├── <domain>-form/       # Create / edit form component
 ├── <domain>.service.ts  # HTTP calls scoped to this domain
-└── <domain>.routes.ts   # Route definitions (lazy-loaded via loadComponent)
+└── <domain>.routes.ts   # Route definitions (lazy-loaded via loadChildren)
 ```
 
-| Feature | Domain |
-|---------|--------|
-| `auth/` | Login and registration pages |
-| `dashboard/` | Summary/overview page |
-| `clients/` | Client management |
-| `horses/` | Horse management |
-| `barns/` | Barn management |
-| `appointments/` | Appointment scheduling |
-| `sessions/` | Training session tracking |
-| `invoices/` | Invoice management |
+| Feature | Domain | Account Type |
+|---------|--------|--------------|
+| `auth/` | Login and registration | Both |
+| `dashboard/` | Summary/overview page | Both |
+| `horses/` | Horse records, care log, reminders | Both |
+| `owner-care-log/` | Owner-facing care log page | Owner |
+| `owner-reminders/` | Owner-facing reminders page | Owner |
+| `clients/` | Client management | Professional |
+| `barns/` | Barn management | Professional |
+| `appointments/` | Appointment scheduling | Professional |
+| `sessions/` | Training session tracking | Professional |
+| `invoices/` | Invoice management | Professional |
+| `billing/` | Subscription plan management | Both |
+| `settings/` | Account and business settings | Both |
 
 ### Shared
 
 `shared/` contains UI building blocks with no business logic.
 
-| Component / Service | Purpose |
-|---------------------|---------|
-| `HeaderComponent` | Top navigation bar |
-| `SidebarComponent` | Side navigation |
-| `PageHeaderComponent` | Consistent page title area |
+**Components:**
+
+| Component | Purpose |
+|-----------|---------|
+| `HeaderComponent` | Top navigation bar with user menu |
+| `SidebarComponent` | Side navigation — items filtered by account type (owner vs professional) |
+| `BottomNavComponent` | Mobile bottom navigation bar with quick-add menu |
+| `PageHeaderComponent` | Consistent page title with optional action button |
+| `FormPageComponent` | Page layout for create/edit forms with save/cancel actions |
+| `DetailPageComponent` | Page layout for read-only detail views |
 | `DataTableComponent` | Reusable sortable data table with configurable columns and row actions |
-| `LoadingSpinnerComponent` | Full-screen loading indicator |
-| `ConfirmDialogService` | Imperative confirmation modal |
-| `ToastService` | Notification toasts |
+| `LoadingSpinnerComponent` | Loading indicator |
+| `ConfirmDialogComponent` | Confirmation modal |
+| `ToastService` | Notification toasts (success, error) |
+| `BreedAutocompleteComponent` | Searchable horse breed selector |
+| `HorseMultiselectAutocompleteComponent` | Multi-horse selector for sessions |
+| `QuickCreateBarnComponent` / `QuickCreateClientComponent` | Inline create dialogs from within forms |
+| `UpgradeFieldPromptComponent` | Inline upgrade prompt for gated form fields |
+
+**Pipes:**
+
+| Pipe | Purpose |
+|------|---------|
+| `DateFormatPipe` | Consistent date formatting |
+| `CurrencyFormatPipe` | Currency display formatting |
+
+**Directives:**
+
+| Directive | Purpose |
+|-----------|---------|
+| `ClickOutsideDirective` | Detects clicks outside a host element |
 
 ## Key Patterns
 
@@ -86,15 +116,26 @@ isLoading = signal(false);
 ### Feature Service Pattern
 Every feature service follows the same CRUD contract through `ApiService`:
 ```typescript
-getAll()         → Observable<PaginatedResponse<T>>
+getAll()         → Observable<T[]>
 getById(id)      → Observable<T>
 create(body)     → Observable<T>
 update(id, body) → Observable<T>
 delete(id)       → Observable<void>
 ```
 
+### API Layer
+All HTTP calls go through `ApiService`. It:
+1. Converts request bodies from camelCase → snake_case before sending
+2. Unwraps the `{ data: ... }` response envelope
+3. Converts response keys from snake_case → camelCase
+
+Never use `HttpClient` directly — always go through `ApiService`.
+
+### Theming
+Dark mode is implemented via CSS custom properties. `ThemeService` toggles a `dark` class on `<html>`. Component styles use `var(--color-*)` tokens defined in `styles.scss`. For dark mode overrides in component SCSS, use `:host-context(html.dark)`.
+
 ### Routing
-Routes are lazy-loaded via `loadComponent`. Protected routes use `canActivate: [authGuard]`. The root path redirects to `/dashboard`.
+Routes are lazy-loaded via `loadChildren` / `loadComponent` in `app.routes.ts`. All routes except `/auth` are protected by `authGuard`. The root path redirects to `/dashboard`.
 
 ## Project Structure
 
@@ -103,15 +144,25 @@ frontend/
 ├── src/
 │   ├── app/
 │   │   ├── core/
+│   │   │   ├── guards/
+│   │   │   ├── interceptors/
+│   │   │   ├── models/
+│   │   │   ├── services/
+│   │   │   └── utils/
 │   │   ├── features/
 │   │   ├── shared/
+│   │   │   ├── components/
+│   │   │   ├── directives/
+│   │   │   └── pipes/
 │   │   ├── app.component.ts
+│   │   ├── app.config.ts
 │   │   └── app.routes.ts
 │   ├── environments/
-│   │   ├── environment.ts          # Dev: http://localhost:8080/api
-│   │   └── environment.prod.ts     # Prod API URL
-│   ├── styles.scss                 # Global styles
+│   │   ├── environment.ts          # Dev: /api (proxied to localhost:8080)
+│   │   └── environment.prod.ts     # Prod: https://stride-pro-production.up.railway.app/api
+│   ├── styles.scss                 # Global styles + CSS custom properties
 │   └── main.ts
+├── proxy.conf.json                 # Dev proxy: /api → localhost:8080
 ├── angular.json
 ├── tsconfig.json
 └── package.json
@@ -121,9 +172,9 @@ frontend/
 
 ```bash
 npm install          # Install dependencies
-npm start            # Dev server at http://localhost:4200
+npm start            # Dev server at http://localhost:4200 (proxies /api to backend)
 npm run build        # Production build → dist/stride-pro/
-npm test             # Run unit tests
+ng test              # Run unit tests
 ```
 
-The dev server proxies API calls to the Go backend at `http://localhost:8080/api` (configured in `src/environments/environment.ts`).
+The dev server proxies `/api` requests to the Go backend at `http://localhost:8080` via `proxy.conf.json`.

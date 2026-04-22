@@ -4,7 +4,7 @@ Go REST API powering the Stride Pro equine management platform.
 
 ## Architecture
 
-The backend follows a **layered architecture** pattern. Each feature domain (appointments, barns, clients, horses, sessions, invoices) is organized into three layers:
+The backend follows a **layered architecture** pattern. Each feature domain is organized into three layers:
 
 ### Handler → Service → Repository
 
@@ -33,21 +33,25 @@ backend/
 │   └── api/
 │       └── main.go              # Application entrypoint
 ├── internal/
-│   ├── appointments/            # Appointments feature
+│   ├── appointments/            # Scheduling and calendar management
 │   │   ├── handler.go
 │   │   ├── service.go
 │   │   └── repository.go
-│   ├── auth/                    # Authentication (handler, middleware, service)
-│   ├── barns/                   # Barns feature
-│   ├── clients/                 # Clients feature
-│   ├── horses/                  # Horses feature
-│   ├── sessions/                # Training sessions feature
-│   ├── invoices/                # Invoices feature
-│   ├── notifications/           # Email and SMS notifications
-│   ├── subscriptions/           # Subscription management
+│   ├── auth/                    # Authentication (login, register, JWT, middleware)
+│   ├── barns/                   # Barn / location management
+│   ├── business_settings/       # Business profile for invoicing
+│   ├── care_logs/               # Horse care event tracking (farrier, vet, diet, etc.)
+│   ├── clients/                 # Client (horse-owner) management
+│   ├── horses/                  # Horse records and details
+│   ├── invoices/                # Invoicing and line items
+│   ├── notifications/           # Email (SendGrid) and SMS (Twilio) notifications
+│   ├── reminders/               # Upcoming care reminders (manual and auto-generated)
+│   ├── service_items/           # Reusable service price catalog
+│   ├── sessions/                # Training / care session notes
+│   ├── subscriptions/           # Subscription plans and feature gating
 │   ├── config/                  # Environment variable configuration
-│   ├── database/                # Database connection and migrations
-│   ├── middleware/               # CORS, logging, rate limiting
+│   ├── database/                # Database connection and health check
+│   ├── middleware/              # CORS, CSRF, logging, rate limiting, recovery, security headers
 │   ├── models/                  # Shared data models
 │   └── router/                  # Route definitions
 ├── migrations/                  # SQL migration files
@@ -58,6 +62,35 @@ backend/
 └── go.sum
 ```
 
+## Subscription Feature Gating
+
+All new users start on the **Free** plan. Plan limits are enforced at the service layer — requests that exceed a limit return `403 Forbidden`. See the [root README](../README.md) for account types and subscription plan details.
+
+The account type is stored as the `role` field on the user record (`owner` or `professional`). The subscription tier is stored in `users.subscription_tier`.
+
+### Feature Flags
+
+Plans are defined in `internal/subscriptions/model.go`. Each plan has a list of feature flags checked at the service layer via `SubscriptionService.RequireFeature()` or `HasFeature()`. Key flags:
+
+| Flag | Description |
+|------|-------------|
+| `clients_max_10` / `clients_unlimited` | Client resource limits |
+| `horses_max_20` / `horses_unlimited` | Horse resource limits |
+| `care_logs` | Full care log access |
+| `care_log_reminders` | Auto-generated care reminders |
+| `session_notes` | Session notes and findings |
+| `barn_management` | Barn / location management |
+| `email_notifications` | Email via SendGrid |
+| `sms_notifications` | SMS via Twilio |
+| `multi_horse_sessions` | Multi-horse session tracking |
+| `advanced_reporting` | Advanced reporting and analytics |
+| `client_portal` | Client self-service portal |
+| `api_access` | REST API access |
+| `custom_branding` | Custom branding |
+| `priority_support` | Priority support |
+
+The `GET /api/subscription` endpoint returns the current plan and live usage counts for enforced resources.
+
 ## Running
 
 ```bash
@@ -66,32 +99,6 @@ go mod download         # Download dependencies
 go run ./cmd/api        # Start the server on :8080
 ```
 
-## Subscription Plans
-
-All new users start on the **Free** plan. Plan limits are enforced at the API layer — requests that exceed a limit return `403 Forbidden`.
-
-| Feature | Free | Base ($29.99) | Trainer Add-on ($49.99) | Enterprise ($99.99) |
-|---------|------|---------------|-------------------------|---------------------|
-| Clients | Max 10 | Unlimited | Unlimited | Unlimited |
-| Horses | Max 20 | Unlimited | Unlimited | Unlimited |
-| Appointments | Basic | Full (with reminders) | Full | Full |
-| Invoices | Basic | Full (with templates) | Full | Full |
-| Session notes | — | Yes | Yes | Yes |
-| Barn management | — | Yes | Yes | Yes |
-| Email notifications | — | Yes | Yes | Yes |
-| SMS notifications | — | — | Yes | Yes |
-| Multi-horse sessions | — | — | Yes | Yes |
-| Advanced reporting | — | — | Yes | Yes |
-| Client portal | — | — | Yes | Yes |
-| API access | — | — | — | Yes |
-| Custom branding | — | — | — | Yes |
-| Priority support | — | — | — | Yes |
-
-A user's plan is stored in `users.subscription_tier`. The `GET /api/subscription` endpoint returns the current plan and live usage counts for enforced resources.
-
 ## Configuration
 
-See `.env.example` for all available environment variables. Required for local development:
-
-- `DATABASE_URL` — PostgreSQL connection string
-- `JWT_SECRET` — Secret key for signing JWT tokens
+See `.env.example` for all available environment variables. See the [root README](../README.md#environment-variables) for a summary of required and optional variables.
