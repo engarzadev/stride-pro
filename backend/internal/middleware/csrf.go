@@ -28,20 +28,13 @@ func CSRFSetCookie(isProd bool) func(http.Handler) http.Handler {
 					response.Error(w, http.StatusInternalServerError, "Internal server error")
 					return
 				}
-				// SameSite=None is required in production because the frontend
-				// (Vercel) and backend (Railway) are on different domains.
-				// SameSite=None requires Secure=true, which is set in prod.
-				sameSite := http.SameSiteLaxMode
-				if isProd {
-					sameSite = http.SameSiteNoneMode
-				}
 				http.SetCookie(w, &http.Cookie{
 					Name:     csrfCookieName,
 					Value:    token,
 					Path:     "/",
-					HttpOnly: false, // Must be readable by JavaScript
+					HttpOnly: false,
 					Secure:   isProd,
-					SameSite: sameSite,
+					SameSite: http.SameSiteLaxMode,
 				})
 			}
 

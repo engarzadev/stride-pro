@@ -169,15 +169,9 @@ func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, user)
 }
 
-// cookieSameSite returns the appropriate SameSite policy for the environment.
-// In production the frontend and backend are on different domains (Vercel vs Railway),
-// so cross-site requests require SameSite=None + Secure=true.
-// In development both run on localhost so Lax is sufficient and avoids the
-// browser requirement for Secure on None cookies.
+// cookieSameSite returns the SameSite policy. Lax is used in all environments
+// because the frontend and backend are served from the same origin.
 func (h *Handler) cookieSameSite() http.SameSite {
-	if h.isProd {
-		return http.SameSiteNoneMode
-	}
 	return http.SameSiteLaxMode
 }
 

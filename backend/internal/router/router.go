@@ -3,6 +3,8 @@ package router
 
 import (
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -184,5 +186,31 @@ func New(deps Deps) http.Handler {
 	protected.HandleFunc("/settings/service-items/{id}", deps.ServiceItemHandler.Update).Methods("PUT")
 	protected.HandleFunc("/settings/service-items/{id}", deps.ServiceItemHandler.Delete).Methods("DELETE")
 
+	// Serve the Angular SPA in production — static files from the embedded
+	// dist directory, with a fallback to index.html for client-side routes.
+	spaDir := filepath.Join(".", "public")
+	if _, err := os.Stat(spaDir); err == nil {
+		spa := spaHandler{staticPath: spaDir, indexPath: "index.html"}
+		r.PathPrefix("/").Handler(spa)
+	}
+
 	return r
+}
+
+// spaHandler serves static files from a directory and falls back to index.html
+// for any path that doesn't match a file, enabling Angular's client-side routing.
+type spaHandler struct {
+	staticPath string
+	indexPath  string
+}
+
+func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path := filepath.Join(h.staticPath, filepath.Clean(r.URL.Path))
+
+	if info, err := os.Stat(path); err == nil && !info.IsDir() {
+		http.ServeFile(w, r, path)
+		return
+	}
+
+	http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
 }
