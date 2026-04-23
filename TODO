@@ -1,51 +1,109 @@
-v1 Release Priorities
-[x] Subscription enforcement - plan limits exist in code but aren't enforced at the API layer
-[x] Appointment reminders — the notification hook is missing from appointment creation/updates
-[x] Invoice templates — no template system built yet
-    [x] make settings width 100%
-    [x] fix double scroll of entire app
-    [x] create invoice - add item: add space between item and price and fix alignment
-[x] Form Validation - disable save buttons if form is invalid or submitting
-[p] Email notifications — stub only, no real email provider integrated, and not triggered by any workflows
-[ ] Business setting - setting email or invoice receipt messages
-[ ] Stripe integration - allow users to upgrade/downgrade subscription plans via Stripe checkout; webhook updates users.subscription_tier on successful payment
+Legend: [x] done  [ ] not started  [p] in progress  [!] needs revisit
 
-Future Features
-[x] DO NOT show token in reponse payload
-[ ] User profile settings - custom color schemes
-[ ] Add horse photo
-[ ] Upload body work map
-[ ] Ability to upload resources to a client profile (e.g. body worker can upload link to a clients profile for supplement recommendations)
-[ ] Bulk actions (e.g. bulk delete from list view)
-[ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRE-BETA  (must be working before any beta users)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Tech Debt
-[x] Entire app is mobile view, need to add support back for desktop view
+[ ] Reset password on login screen — Severity: High
+    No "Forgot password?" link on login page. No reset-password endpoint or frontend flow exists.
+    Requires: reset token table, POST /api/auth/forgot-password + /api/auth/reset-password endpoints,
+    frontend forgot-password component and route.
+    Blocked by: email provider must be configured (SENDGRID_API_KEY set in prod env).
 
-Security
-[ ] Email verification — blocked by email provider integration ([p] Email notifications must be done first).
-    Requires: email_verified column, verification token table, email sending, new frontend screens.
-    Severity: Medium. Implement after email provider is integrated.
-[ ] Account lockout after N failures — implement now, no dependencies.
-    Requires: failed_login_attempts + locked_until columns on users, counter logic in auth/service.go Login, reset on success.
-    IP-based rate limiter (5 req/min) exists but does not protect against distributed or per-account attacks.
-    Severity: Medium. Recommended next security task.
-[ ] Structured JSON logging — cosmetic only, not a security fix. Skip unless a log aggregation service (Datadog, Loki, etc.) is added.
-    Severity: Low. Not worth implementing at current scale.
-[ ] Reset password on login screen — blocked by email provider integration ([p] Email notifications must be done first).
-    Requires: reset token table, forgot-password + reset endpoints, frontend forgot-password flow.
-    Severity: Medium. Implement after email provider is integrated.
-[x] show password in field
+[ ] Stripe integration — Severity: High
+    No payment processing exists. Users cannot upgrade or downgrade plans.
+    Requires: Stripe Checkout session creation endpoint, webhook handler to update
+    users.subscription_tier on payment success/failure, frontend upgrade flow in settings.
 
-Claude Security Analysis
-🟡 Remaining — Minor
-1. No Content-Security-Policy header (Low)
-The strongest remaining XSP mitigation. Even a basic policy like default-src 'self' would block inline script execution if XSS ever occurred.
-2. No revoked_tokens cleanup job (Low)
-Expired rows accumulate in the DB. A DELETE FROM revoked_tokens WHERE expires_at < NOW() — on startup or on a schedule — keeps it clean.
-3. In-memory rate limiter (Low — current scale)
-Fine for a single Railway instance. If you ever scale to multiple instances the buckets won't be shared across them.
-4. No frontend request timeouts (Low)
-API calls in api.service.ts can hang indefinitely. A simple timeout interceptor would clean this up.
-Overall
-The app started this session with 4 critical issues and 10+ high/medium ones. All of them are resolved. What's left are four low-priority items, none of which represent meaningful attack vectors at current scale. The security posture is production-ready.
+[!] Appointment reminders — Severity: High
+    Marked done but INCOMPLETE. Booking confirmation email fires on appointment
+    create/update (notifications service), but scheduled reminders are NOT auto-created.
+    The reminders table and CRUD exist but nothing creates reminder records automatically.
+    Requires: auto-create reminder record(s) on appointment save (e.g. 24h before), and a
+    background job or cron to send them when they come due.
+
+[p] Email notifications — Severity: High
+    SendGrid is wired and booking confirmations fire. Invoice sending works.
+    Remaining: SENDGRID_API_KEY must be set in the production environment.
+    Needs testing end-to-end in prod before beta.
+
+[ ] Business settings — email receipt message — Severity: Medium
+    Invoice message (shown on invoice PDF/email) is implemented. A separate configurable
+    email receipt/footer message for outbound emails does not exist yet.
+    Requires: additional field in business_settings table + UI in Business settings tab.
+
+[ ] Account lockout after N failures — Severity: Medium
+    No per-account brute-force protection. IP rate limiter (5 req/min) exists but
+    does not protect against distributed attacks targeting a single account.
+    Requires: failed_login_attempts + locked_until columns on users table (migration),
+    increment on bad password in auth/service.go Login, reset on success, 429 response when locked.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+V1 LAUNCH  (needed before public v1 release)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[x] Subscription enforcement — plan limits enforced at API layer
+[x] Form validation — save buttons disabled when form is invalid or submitting
+[x] Invoice templates — template system built
+[x] Desktop view — responsive layout restored
+[x] Show/hide password toggle on login and register
+
+[ ] Email verification — Severity: Medium
+    New users are never asked to verify their email address.
+    Requires: email_verified column on users, verification token table, send verification
+    email on register, block certain actions until verified, resend verification UI.
+    Blocked by: email provider configured in prod (same dependency as password reset).
+    Implement alongside or after password reset flow.
+
+[ ] Content-Security-Policy header — Severity: Low
+    Security headers are set (X-Frame-Options, HSTS, etc.) but CSP is missing.
+    Even a basic default-src 'self' would block inline script execution if XSS occurred.
+    Requires: add CSP header in backend/internal/middleware/security.go.
+    Small change, good hardening before public launch.
+
+[ ] Frontend HTTP request timeouts — Severity: Low
+    API calls in api.service.ts can hang indefinitely. No timeout interceptor exists.
+    Requires: add a timeout() RxJS operator in a new timeout interceptor or in ApiService.
+    Prevents UI from freezing on slow/dropped network.
+
+[ ] revoked_tokens cleanup job — Severity: Low
+    Expired rows accumulate in revoked_tokens table indefinitely. Index on expires_at exists.
+    Requires: on startup goroutine (or pg_cron) running
+    DELETE FROM revoked_tokens WHERE expires_at < NOW() periodically.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+POST-LAUNCH / FUTURE FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Horse photo — upload and display a photo on the horse profile
+[ ] Upload body work map — attach a body map image/document to a horse or session record
+[ ] Upload resources to client profile — attach links or files (e.g. supplement PDFs) to a client
+[ ] Bulk actions — multi-select rows in list views with bulk delete (data-table component)
+[ ] Invoice — add new service item inline from the item dropdown (currently must go to Service Catalog settings)
+[ ] User profile — custom color scheme / accent color beyond dark/light mode toggle
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TECH DEBT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] Structured JSON logging — Low priority. Skip unless a log aggregation service
+    (Datadog, Loki, etc.) is added. Current log.Printf output is sufficient.
+
+[ ] In-memory rate limiter — Low priority. Fine for a single Railway instance.
+    Only relevant if the app scales to multiple instances (shared Redis bucket needed).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMPLETED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[x] Subscription enforcement
+[x] Form validation (disabled save on invalid/submitting)
+[x] Invoice templates
+[x] Invoice UI — spacing and alignment fixes
+[x] Settings — full-width layout fix
+[x] Double scroll fix
+[x] Desktop view support
+[x] Token not returned in response payload
+[x] Show/hide password in login and register fields
+[x] Invoice send — send button wired to email provider, updates status to "sent"
+[x] Invoice service item autocomplete dropdown
