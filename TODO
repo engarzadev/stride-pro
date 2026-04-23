@@ -27,7 +27,7 @@ Security
 [ ] Account lockout after N failures — requires schema change + retry tracking
 [ ] Structured JSON logging — cosmetic, not a security fix
 [ ] allow reset password on login screen
-[ ] show password in field
+[x] show password in field
 
 Claude Security Analysis
 🟡 Remaining — Minor
