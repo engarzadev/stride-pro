@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -50,7 +50,7 @@ export class AppointmentFormComponent implements OnInit {
   readonly clients = signal<Client[]>([]);
   readonly allHorses = signal<Horse[]>([]);
   readonly barns = signal<Barn[]>([]);
-  readonly canManageBarns = signal(false);
+  readonly canManageBarns = computed(() => this.subscriptionService.hasFeature('barn_management'));
   private appointmentId = '';
 
   readonly form = this.fb.nonNullable.group({
@@ -73,10 +73,6 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subscriptionService.load().subscribe(() => {
-      const has = this.subscriptionService.hasFeature('barn_management');
-      this.canManageBarns.set(has);
-    });
     this.clientsService.getAll().subscribe((c) => this.clients.set(c));
     this.horsesService.getAll().subscribe((h) => this.allHorses.set(h));
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));

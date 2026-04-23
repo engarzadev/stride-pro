@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
@@ -40,7 +40,7 @@ export class BarnListComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly barns = signal<Barn[]>([]);
-  readonly canManageBarns = signal(false);
+  readonly canManageBarns = computed(() => this.subscriptionService.hasFeature('barn_management'));
 
   readonly columns: TableColumn[] = [
     { key: 'name', label: 'Name', sortable: true },
@@ -61,11 +61,6 @@ export class BarnListComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.subscriptionService.load().subscribe(() => {
-      this.canManageBarns.set(
-        this.subscriptionService.hasFeature('barn_management'),
-      );
-    });
     this.loadBarns();
   }
 

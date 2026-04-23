@@ -28,7 +28,7 @@ export class OwnerRemindersComponent implements OnInit {
   private readonly subscriptionService = inject(SubscriptionService);
 
   readonly loading = signal(true);
-  readonly canUseCareLog = signal(false);
+  readonly canUseCareLog = computed(() => this.subscriptionService.hasFeature('care_logs'));
   readonly horses = signal<Horse[]>([]);
   readonly selectedHorseId = signal<string | null>(null);
 
@@ -38,10 +38,6 @@ export class OwnerRemindersComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.subscriptionService.load().subscribe(() => {
-      this.canUseCareLog.set(this.subscriptionService.hasFeature('care_logs'));
-    });
-
     this.horsesService.getAll().subscribe({
       next: (horses) => {
         this.horses.set(horses);

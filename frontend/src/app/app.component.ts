@@ -13,7 +13,7 @@ import { SidebarComponent } from './shared/components/sidebar/sidebar.component'
 })
 export class AppComponent {
   private readonly router = inject(Router);
-  readonly showLayout = signal(true);
+  readonly showLayout = signal(!window.location.pathname.startsWith('/auth'));
 
   constructor() {
     this.router.events

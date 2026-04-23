@@ -1,5 +1,5 @@
 import { DatePipe, TitleCasePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -55,7 +55,7 @@ export class ClientOnboardingComponent implements OnInit {
   readonly step = signal(1);
   readonly saving = signal(false);
   readonly barns = signal<Barn[]>([]);
-  readonly canManageBarns = signal(false);
+  readonly canManageBarns = computed(() => this.subscriptionService.hasFeature('barn_management'));
 
   readonly createdClient = signal<Client | null>(null);
   readonly createdHorse = signal<Horse | null>(null);
@@ -101,13 +101,9 @@ export class ClientOnboardingComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.subscriptionService.load().subscribe(() => {
-      const has = this.subscriptionService.hasFeature('barn_management');
-      this.canManageBarns.set(has);
-      if (!has) {
-        this.horseForm.controls.barnId.disable();
-      }
-    });
+    if (!this.subscriptionService.hasFeature('barn_management')) {
+      this.horseForm.controls.barnId.disable();
+    }
     this.barnsService.getAll().subscribe((b) => this.barns.set(b));
   }
 

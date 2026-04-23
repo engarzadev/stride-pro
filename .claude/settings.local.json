@@ -16,7 +16,8 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "mcp__Claude_in_Chrome__navigate",
       "Bash(grep -r \"DELETE\" /Users/dev/stride-pro/frontend/src/app/features/*/\\\\*-list --include=\"*.ts\")",
-      "Bash(grep -n \"sendInvoice\" /Users/dev/stride-pro/backend/internal/invoices/*.go)"
+      "Bash(grep -n \"sendInvoice\" /Users/dev/stride-pro/backend/internal/invoices/*.go)",
+      "Bash(grep -l \"subscriptionService.load\\\\|canManage\\\\|hasFeature\" /Users/dev/stride-pro/frontend/src/app/features/**/*.component.ts)"
     ]
   }
 }

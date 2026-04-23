@@ -61,7 +61,7 @@ export class CareLogComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
 
   readonly loading = signal(true);
-  readonly canUseCareLog = signal(false);
+  readonly canUseCareLog = computed(() => this.subscriptionService.hasFeature('care_logs'));
   readonly logs = signal<CareLog[]>([]);
   readonly showForm = signal(false);
   readonly editingId = signal<string | null>(null);
@@ -99,15 +99,11 @@ export class CareLogComponent implements OnInit {
       this.onAdd();
     }
 
-    this.subscriptionService.load().subscribe(() => {
-      const allowed = this.subscriptionService.hasFeature('care_logs');
-      this.canUseCareLog.set(allowed);
-      if (allowed) {
-        this.loadLogs();
-      } else {
-        this.loading.set(false);
-      }
-    });
+    if (this.subscriptionService.hasFeature('care_logs')) {
+      this.loadLogs();
+    } else {
+      this.loading.set(false);
+    }
   }
 
   loadLogs(): void {

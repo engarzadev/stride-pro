@@ -40,7 +40,7 @@ export class SessionListComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly sessions = signal<Session[]>([]);
-  readonly canManageSessions = signal(false);
+  readonly canManageSessions = computed(() => this.subscriptionService.hasFeature('session_notes'));
 
   readonly tableSessions = computed(() =>
     this.sessions().map((s) => ({
@@ -87,11 +87,6 @@ export class SessionListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.subscriptionService.load().subscribe(() => {
-      this.canManageSessions.set(
-        this.subscriptionService.hasFeature('session_notes'),
-      );
-    });
     this.loadSessions();
   }
 

@@ -97,14 +97,10 @@ export class SessionFormComponent implements OnInit {
       .subscribe((a) => this.appointments.set(a));
 
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      // Creating a new session — check feature access
-      this.subscriptionService.load().subscribe(() => {
-        if (!this.subscriptionService.hasFeature('session_notes')) {
-          this.toast.error('Session management requires a paid plan');
-          this.router.navigate(['/sessions']);
-        }
-      });
+    if (!id && !this.subscriptionService.hasFeature('session_notes')) {
+      this.toast.error('Session management requires a paid plan');
+      this.router.navigate(['/sessions']);
+      return;
     }
     if (id) {
       this.isEdit.set(true);

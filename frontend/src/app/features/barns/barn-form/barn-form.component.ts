@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormPageComponent } from '../../../shared/components/form-page/form-page.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -36,7 +36,7 @@ export class BarnFormComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly isEdit = signal(false);
-  readonly canManageBarns = signal(false);
+  readonly canManageBarns = computed(() => this.subscriptionService.hasFeature('barn_management'));
   readonly allHorses = signal<Horse[]>([]);
   readonly selectedHorse = signal<Horse[]>([]);
   private originalHorse: Horse[] = [];
@@ -53,28 +53,24 @@ export class BarnFormComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    const hasBarnMgmt = this.subscriptionService.hasFeature('barn_management');
 
-    this.subscriptionService.load().subscribe(() => {
-      const has = this.subscriptionService.hasFeature('barn_management');
-      this.canManageBarns.set(has);
+    if (!hasBarnMgmt && !id) {
+      this.toast.error('Barn management requires a paid plan');
+      this.router.navigate(['/barns']);
+      return;
+    }
 
-      if (!has && !id) {
-        this.toast.error('Barn management requires a paid plan');
-        this.router.navigate(['/barns']);
-        return;
-      }
-
-      if (has) {
-        this.horsesService.getAll().subscribe((horses) => {
-          this.allHorses.set(horses);
-          if (id) {
-            const assigned = horses.filter((h) => h.barnId === id);
-            this.selectedHorse.set(assigned);
-            this.originalHorse = assigned;
-          }
-        });
-      }
-    });
+    if (hasBarnMgmt) {
+      this.horsesService.getAll().subscribe((horses) => {
+        this.allHorses.set(horses);
+        if (id) {
+          const assigned = horses.filter((h) => h.barnId === id);
+          this.selectedHorse.set(assigned);
+          this.originalHorse = assigned;
+        }
+      });
+    }
 
     if (id) {
       this.isEdit.set(true);
