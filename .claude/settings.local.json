@@ -14,7 +14,9 @@
       "Bash(grep -E \"\\\\.\\(go|ts|js\\)$\")",
       "mcp__Claude_in_Chrome__computer",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
-      "mcp__Claude_in_Chrome__navigate"
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(grep -r \"DELETE\" /Users/dev/stride-pro/frontend/src/app/features/*/\\\\*-list --include=\"*.ts\")",
+      "Bash(grep -n \"sendInvoice\" /Users/dev/stride-pro/backend/internal/invoices/*.go)"
     ]
   }
 }

@@ -20,13 +20,21 @@ Future Features
 [ ] Invoice - use dropdrown for items, can add new items in dropdown, auto select newly added item
 
 Tech Debt
-[ ] Entire app is mobile view, need to add support back for desktop view
+[x] Entire app is mobile view, need to add support back for desktop view
 
 Security
-[ ] Email verification — large feature requiring email flows and new UI
-[ ] Account lockout after N failures — requires schema change + retry tracking
-[ ] Structured JSON logging — cosmetic, not a security fix
-[ ] allow reset password on login screen
+[ ] Email verification — blocked by email provider integration ([p] Email notifications must be done first).
+    Requires: email_verified column, verification token table, email sending, new frontend screens.
+    Severity: Medium. Implement after email provider is integrated.
+[ ] Account lockout after N failures — implement now, no dependencies.
+    Requires: failed_login_attempts + locked_until columns on users, counter logic in auth/service.go Login, reset on success.
+    IP-based rate limiter (5 req/min) exists but does not protect against distributed or per-account attacks.
+    Severity: Medium. Recommended next security task.
+[ ] Structured JSON logging — cosmetic only, not a security fix. Skip unless a log aggregation service (Datadog, Loki, etc.) is added.
+    Severity: Low. Not worth implementing at current scale.
+[ ] Reset password on login screen — blocked by email provider integration ([p] Email notifications must be done first).
+    Requires: reset token table, forgot-password + reset endpoints, frontend forgot-password flow.
+    Severity: Medium. Implement after email provider is integrated.
 [x] show password in field
 
 Claude Security Analysis
