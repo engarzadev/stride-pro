@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
+import { inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +17,6 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
-  private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
@@ -26,16 +26,33 @@ export class RegisterComponent {
   readonly selectedAccountType = signal<'owner' | 'professional' | null>(null);
   readonly showAccountTypeError = signal(false);
 
-  readonly form = this.fb.nonNullable.group({
-    firstName: ['', [Validators.required]],
-    lastName: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+  // Per-field updateOn:'blur' so errors appear as user leaves each field
+  readonly form = new FormGroup({
+    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required], updateOn: 'blur' }),
+    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required], updateOn: 'blur' }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email], updateOn: 'blur' }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
   });
+
+  readonly passwordValue = signal('');
+  readonly passwordRequirements = computed(() => {
+    const pw = this.passwordValue();
+    return [
+      { label: 'At least 8 characters', met: pw.length >= 8 },
+      { label: 'One uppercase letter', met: /[A-Z]/.test(pw) },
+      { label: 'One lowercase letter', met: /[a-z]/.test(pw) },
+      { label: 'One number', met: /\d/.test(pw) },
+    ];
+  });
+  readonly passwordTouched = signal(false);
 
   selectAccountType(type: 'owner' | 'professional'): void {
     this.selectedAccountType.set(type);
     this.showAccountTypeError.set(false);
+  }
+
+  onPasswordInput(event: Event): void {
+    this.passwordValue.set((event.target as HTMLInputElement).value);
   }
 
   onSubmit(): void {
@@ -44,8 +61,8 @@ export class RegisterComponent {
       return;
     }
 
+    this.form.markAllAsTouched();
     if (this.form.invalid) {
-      this.form.markAllAsTouched();
       return;
     }
 

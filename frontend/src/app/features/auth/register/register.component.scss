@@ -35,7 +35,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 
   h1 {
     font-size: 1.25rem;
@@ -53,57 +53,65 @@
 // === Account type selector ===
 .account-type-selector {
   display: flex;
-  gap: 0.625rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .account-type-card {
   flex: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.625rem 0.75rem;
+  text-align: center;
+  gap: 0.25rem;
+  padding: 0.875rem 0.75rem;
   border: 2px solid var(--color-border);
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
   background-color: var(--color-surface);
+  user-select: none;
 
   &:hover {
     border-color: var(--color-text-muted);
+    background-color: rgba(0, 0, 0, 0.02);
   }
 
   &.selected {
     border-color: var(--color-primary);
-    background-color: rgba(59, 98, 85, 0.06);
+    background-color: rgba(59, 98, 85, 0.07);
+
+    .account-type-icon,
+    .account-type-label {
+      color: var(--color-primary);
+    }
   }
 }
 
-:host-context(html.dark) .account-type-card.selected {
-  background-color: rgba(76, 186, 143, 0.08);
+:host-context(html.dark) .account-type-card {
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  &.selected {
+    background-color: rgba(76, 186, 143, 0.08);
+  }
 }
 
 .account-type-icon {
-  font-size: 1.5rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  font-size: 1.625rem;
+  width: 1.625rem;
+  height: 1.625rem;
   color: var(--color-text-muted);
-  flex-shrink: 0;
-
-  .selected & {
-    color: var(--color-primary);
-  }
-}
-
-.account-type-text {
-  text-align: center;
+  transition: color 0.2s ease;
+  margin-bottom: 0.125rem;
 }
 
 .account-type-label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-title);
+  transition: color 0.2s ease;
 }
 
 .account-type-desc {
@@ -115,37 +123,77 @@
 .account-type-error {
   font-size: 0.75rem;
   color: #b94040;
-  margin: -0.5rem 0 0.75rem;
+  margin: -0.25rem 0 0.75rem;
   text-align: center;
 }
 
 // === Form ===
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+  align-items: start;
 }
 
 mat-form-field {
   width: 100%;
-
-  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-    margin-bottom: -0.25rem;
-  }
 
   ::ng-deep input.mat-mdc-input-element {
     color: var(--color-text);
   }
 }
 
+.password-requirements {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-border);
+      transition: background-color 0.2s ease;
+      margin-top: 0.3rem;
+    }
+
+    &.met {
+      color: var(--color-primary);
+
+      &::before {
+        background-color: var(--color-primary);
+      }
+    }
+  }
+}
+
 .auth-submit {
   width: 100%;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }
 
 .auth-footer {
   text-align: center;
-  margin-top: 0.75rem;
+  margin-top: 0.875rem;
   font-size: 0.8125rem;
   color: var(--color-text-muted);
 
