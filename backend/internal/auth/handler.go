@@ -152,6 +152,77 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// UpdateProfile handles PUT /api/auth/profile.
+func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	var input UpdateProfileInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	errs := validator.Errors{}
+	validator.Required(errs, "first_name", input.FirstName)
+	validator.Required(errs, "last_name", input.LastName)
+	validator.Required(errs, "email", input.Email)
+	validator.Email(errs, "email", input.Email)
+	if errs.HasErrors() {
+		response.ValidationError(w, errs)
+		return
+	}
+
+	user, err := h.service.UpdateProfile(userID, input)
+	if errors.Is(err, ErrEmailTaken) {
+		response.ErrorWithCode(w, http.StatusConflict, "Email already in use", "EMAIL_TAKEN")
+		return
+	}
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, "Failed to update profile")
+		return
+	}
+	response.JSON(w, http.StatusOK, user)
+}
+
+// ChangePassword handles POST /api/auth/change-password.
+func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(UserIDKey).(uuid.UUID)
+	if !ok {
+		response.Error(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	var input ChangePasswordInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	errs := validator.Errors{}
+	validator.Required(errs, "current_password", input.CurrentPassword)
+	validator.Required(errs, "new_password", input.NewPassword)
+	validator.Password(errs, "new_password", input.NewPassword)
+	if errs.HasErrors() {
+		response.ValidationError(w, errs)
+		return
+	}
+
+	if err := h.service.ChangePassword(userID, input); err != nil {
+		if errors.Is(err, ErrInvalidCredentials) {
+			// Return 422 so the error interceptor shows the message without redirecting to login
+			response.Error(w, http.StatusUnprocessableEntity, "Current password is incorrect")
+			return
+		}
+		response.Error(w, http.StatusInternalServerError, "Failed to update password")
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]string{"message": "Password updated successfully"})
+}
+
 // Me handles GET /api/auth/me and returns the authenticated user.
 func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(UserIDKey).(uuid.UUID)

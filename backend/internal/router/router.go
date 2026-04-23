@@ -117,6 +117,8 @@ func New(deps Deps) http.Handler {
 	// Auth - protected
 	protected.HandleFunc("/auth/me", deps.AuthHandler.Me).Methods("GET")
 	protected.HandleFunc("/auth/logout", deps.AuthHandler.Logout).Methods("POST")
+	protected.HandleFunc("/auth/profile", deps.AuthHandler.UpdateProfile).Methods("PUT")
+	protected.HandleFunc("/auth/change-password", deps.AuthHandler.ChangePassword).Methods("POST")
 
 	// Subscription
 	protected.HandleFunc("/subscription", deps.SubscriptionHandler.Get).Methods("GET")

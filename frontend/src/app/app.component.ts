@@ -4,8 +4,6 @@ import { filter } from 'rxjs';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
-import { ThemeService } from './core/services/theme.service';
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -15,8 +13,6 @@ import { ThemeService } from './core/services/theme.service';
 })
 export class AppComponent {
   private readonly router = inject(Router);
-  // Injecting ThemeService here ensures it initializes on app startup
-  private readonly themeService = inject(ThemeService);
   readonly showLayout = signal(true);
 
   constructor() {

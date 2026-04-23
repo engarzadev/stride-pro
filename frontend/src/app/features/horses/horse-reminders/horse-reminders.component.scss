@@ -130,21 +130,3 @@
   margin-top: 6px;
 }
 
-:host-context(html.dark) {
-  .reminder-row {
-    &.overdue {
-      border-color: rgba(248, 113, 113, 0.4);
-      background: rgba(220, 38, 38, 0.08);
-    }
-
-    &.soon {
-      border-color: rgba(252, 211, 77, 0.4);
-      background: rgba(217, 119, 6, 0.08);
-    }
-  }
-
-  .badge-auto     { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
-  .badge-category { background: rgba(76, 186, 143, 0.15); color: #4cba8f; }
-  .done-btn  { color: #4cba8f; }
-  .delete-btn { color: #f87171; }
-}

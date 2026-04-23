@@ -20,12 +20,3 @@
   padding-top: 24px;
 }
 
-:host-context(html.dark) {
-  ::ng-deep .mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
-    color: #b8d4ca;
-  }
-
-  ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-    color: #ffffff;
-  }
-}

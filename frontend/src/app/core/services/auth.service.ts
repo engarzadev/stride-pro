@@ -5,6 +5,12 @@ import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models';
 import { ApiService } from './api.service';
 import { keysToCamel } from '../utils/camel-case';
 
+interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly api = inject(ApiService);
@@ -46,6 +52,20 @@ export class AuthService {
     return this.api
       .post<AuthResponse>('/auth/register', body)
       .pipe(tap((response) => this.handleAuthResponse(response)));
+  }
+
+  updateProfile(firstName: string, lastName: string, email: string): Observable<User> {
+    const body: UpdateProfileRequest = { firstName, lastName, email };
+    return this.api.put<User>('/auth/profile', body).pipe(
+      tap((user) => {
+        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+        this._currentUser$.next(user);
+      }),
+    );
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.api.post<void>('/auth/change-password', { currentPassword, newPassword });
   }
 
   logout(): void {

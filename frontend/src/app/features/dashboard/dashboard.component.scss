@@ -504,37 +504,3 @@
   }
 }
 
-// === Dark mode — stat icon backgrounds ===
-:host-context(html.dark) {
-  .stat-icon {
-    &.clients-icon {
-      background-color: rgba(37, 99, 235, 0.15);
-      color: #60a5fa;
-    }
-
-    &.horses-icon {
-      background-color: rgba(22, 163, 74, 0.15);
-      color: #4ade80;
-    }
-
-    &.appointments-icon {
-      background-color: rgba(217, 119, 6, 0.15);
-      color: #fbbf24;
-    }
-
-    &.invoices-icon {
-      background-color: rgba(147, 51, 234, 0.15);
-      color: #c084fc;
-    }
-
-    &.reminders-icon {
-      background-color: rgba(37, 99, 235, 0.15);
-      color: #60a5fa;
-    }
-
-    &.overdue-icon {
-      background-color: rgba(220, 38, 38, 0.15);
-      color: #f87171;
-    }
-  }
-}

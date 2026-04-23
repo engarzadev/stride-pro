@@ -115,19 +115,3 @@
   color: #ef4444;
 }
 
-:host-context(html.dark) {
-  .upgrade-notice {
-    background: rgba(249, 168, 37, 0.1);
-    border-color: rgba(249, 168, 37, 0.3);
-    color: #fbbf24;
-  }
-
-  .log-category {
-    background: rgba(76, 186, 143, 0.15);
-    color: #4cba8f;
-  }
-
-  .delete-btn {
-    color: #f87171;
-  }
-}

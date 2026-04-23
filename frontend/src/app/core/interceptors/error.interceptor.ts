@@ -32,7 +32,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 404) {
         message = 'The requested resource was not found';
       } else if (error.status === 409) {
-        message = error.error?.error?.message || 'Scheduling conflict detected';
+        const err409 = error.error?.error;
+        message = (typeof err409 === 'string' ? err409 : err409?.message) || 'Conflict';
       } else if (error.status === 422) {
         const err = error.error?.error;
         const fields = err?.fields;

@@ -258,6 +258,81 @@ func (s *Service) RefreshToken(refreshToken string) (*TokenPair, error) {
 	return s.generateTokenPair(userID)
 }
 
+// UpdateProfileInput holds the fields a user can update on their profile.
+type UpdateProfileInput struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+}
+
+// ChangePasswordInput holds the current and new passwords for a password change.
+type ChangePasswordInput struct {
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
+}
+
+// UpdateProfile updates first_name, last_name, and email for the given user.
+func (s *Service) UpdateProfile(userID uuid.UUID, input UpdateProfileInput) (*models.User, error) {
+	// If email is changing, make sure it isn't already taken by another account
+	var existingID uuid.UUID
+	err := s.db.QueryRow(`SELECT id FROM users WHERE email = $1`, input.Email).Scan(&existingID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("checking email: %w", err)
+	}
+	if err == nil && existingID != userID {
+		return nil, ErrEmailTaken
+	}
+
+	user := &models.User{}
+	err = s.db.QueryRow(`
+		UPDATE users
+		SET first_name = $1, last_name = $2, email = $3, updated_at = NOW()
+		WHERE id = $4
+		RETURNING id, email, password_hash, first_name, last_name, role, subscription_tier, created_at, updated_at`,
+		input.FirstName, input.LastName, input.Email, userID,
+	).Scan(
+		&user.ID, &user.Email, &user.PasswordHash,
+		&user.FirstName, &user.LastName, &user.Role,
+		&user.SubscriptionTier, &user.CreatedAt, &user.UpdatedAt,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrUserNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("updating profile: %w", err)
+	}
+	return user, nil
+}
+
+// ChangePassword verifies the current password then replaces it with the new one.
+func (s *Service) ChangePassword(userID uuid.UUID, input ChangePasswordInput) error {
+	var hash string
+	err := s.db.QueryRow(`SELECT password_hash FROM users WHERE id = $1`, userID).Scan(&hash)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrUserNotFound
+	}
+	if err != nil {
+		return fmt.Errorf("fetching user: %w", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(input.CurrentPassword)); err != nil {
+		return ErrInvalidCredentials
+	}
+
+	newHash, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("hashing password: %w", err)
+	}
+
+	if _, err = s.db.Exec(
+		`UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+		string(newHash), userID,
+	); err != nil {
+		return fmt.Errorf("updating password: %w", err)
+	}
+	return nil
+}
+
 // GetUserByID looks up a user by their ID.
 func (s *Service) GetUserByID(id uuid.UUID) (*models.User, error) {
 	user := &models.User{}

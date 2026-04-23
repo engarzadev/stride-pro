@@ -1,17 +1,119 @@
-<mat-card class="settings-card">
-  <mat-card-content>
-    <div class="setting-row">
-      <div class="setting-info">
-        <div class="setting-label">Dark Mode</div>
-        <div class="setting-description">Switch between light and dark theme</div>
+<div class="settings-sections">
+
+  <!-- ── Profile ─────────────────────────────────────────────── -->
+  <section>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <mat-card class="settings-card">
+        <mat-card-content>
+          <div class="card-section-title">Profile</div>
+          <div class="form-row">
+            <mat-form-field>
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" />
+              @if (profileForm.controls.firstName.errors?.['required'] && profileForm.controls.firstName.touched) {
+                <mat-error>First name is required.</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" />
+              @if (profileForm.controls.lastName.errors?.['required'] && profileForm.controls.lastName.touched) {
+                <mat-error>Last name is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+            @if (profileForm.controls.email.errors?.['required'] && profileForm.controls.email.touched) {
+              <mat-error>Email is required.</mat-error>
+            } @else if (profileForm.controls.email.errors?.['email'] && profileForm.controls.email.touched) {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <div class="form-actions general-settings">
+        <button mat-flat-button color="primary" type="submit"
+          [disabled]="savingProfile() || profileForm.invalid || profileForm.pristine">
+          {{ savingProfile() ? 'Saving...' : 'Save Profile' }}
+        </button>
       </div>
-      <!-- disabled for now -->
-      <mat-slide-toggle
-        [checked]="isDark()"
-        (change)="onToggle()"
-        color="primary"
-        aria-label="Toggle dark mode"
-      />
-    </div>
-  </mat-card-content>
-</mat-card>
+    </form>
+  </section>
+
+  <!-- ── Change Password ─────────────────────────────────────── -->
+  <section>
+    <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+      <mat-card class="settings-card">
+        <mat-card-content>
+          <div class="card-section-title">Change Password</div>
+          <mat-form-field>
+            <mat-label>Current Password</mat-label>
+            <input matInput [type]="showCurrentPassword() ? 'text' : 'password'"
+              formControlName="currentPassword" />
+            <button mat-icon-button matSuffix type="button"
+              (click)="showCurrentPassword.set(!showCurrentPassword())"
+              [attr.aria-label]="showCurrentPassword() ? 'Hide password' : 'Show password'">
+              <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>New Password</mat-label>
+            <input matInput [type]="showNewPassword() ? 'text' : 'password'"
+              formControlName="newPassword" />
+            <button mat-icon-button matSuffix type="button"
+              (click)="showNewPassword.set(!showNewPassword())"
+              [attr.aria-label]="showNewPassword() ? 'Hide password' : 'Show password'">
+              <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (passwordForm.controls.newPassword.errors?.['minlength'] && passwordForm.controls.newPassword.touched) {
+              <mat-error>Password must be at least 8 characters.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Confirm New Password</mat-label>
+            <input matInput type="password" formControlName="confirmPassword" />
+            @if (passwordForm.errors?.['mismatch'] && passwordForm.controls.confirmPassword.touched) {
+              <mat-error>Passwords do not match.</mat-error>
+            }
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+      <div class="form-actions general-settings">
+        <button mat-flat-button color="primary" type="submit"
+          [disabled]="savingPassword() || passwordForm.invalid">
+          {{ savingPassword() ? 'Saving...' : 'Update Password' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ── Subscription (professionals only) ──────────────────── -->
+  @if (isProfessional()) {
+    <section>
+      <mat-card class="settings-card">
+        <mat-card-content>
+          <div class="card-section-title">Subscription</div>
+          <div class="subscription-row">
+            <div class="subscription-info">
+              <div class="tier-row">
+                <span class="tier-badge tier-{{ subscriptionTier() }}">
+                  {{ tierConfig().label }}
+                </span>
+                <span class="tier-label">Current plan</span>
+              </div>
+              <p class="tier-description">{{ tierConfig().description }}</p>
+            </div>
+            @if (tierConfig().next) {
+              <button mat-stroked-button color="primary" type="button" disabled>
+                Upgrade Plan
+              </button>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+
+</div>

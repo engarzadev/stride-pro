@@ -27,11 +27,6 @@
   line-height: 1;
 }
 
-:host-context(html.dark) .upgrade-field-prompt {
-  border-color: var(--color-border);
-  &:hover { border-color: var(--color-text-muted); }
-}
-
 .prompt-body {
   display: flex;
   align-items: center;

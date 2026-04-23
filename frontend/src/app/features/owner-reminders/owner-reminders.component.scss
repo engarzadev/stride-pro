@@ -49,12 +49,6 @@
   }
 }
 
-:host-context(html.dark) .upgrade-notice {
-  background: rgba(249, 168, 37, 0.1);
-  border-color: rgba(249, 168, 37, 0.3);
-  color: #fbbf24;
-}
-
 .empty-state {
   display: flex;
   flex-direction: column;
