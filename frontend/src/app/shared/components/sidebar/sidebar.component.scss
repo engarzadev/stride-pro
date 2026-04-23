@@ -51,24 +51,9 @@
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 64px;
-    left: 0;
-    bottom: 0;
-    z-index: 90;
-    transform: translateX(-100%);
-    transition: transform 0.2s ease;
-
-    &.collapsed {
-      transform: translateX(0);
-    }
-  }
-}
-
-@media (max-width: 599px) {
-  .sidebar {
-    top: 56px;
+// Hidden on mobile — bottom nav handles navigation there
+@media (max-width: 1023px) {
+  :host {
+    display: none;
   }
 }

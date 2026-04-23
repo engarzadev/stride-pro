@@ -3,12 +3,13 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { BottomNavComponent } from './shared/components/bottom-nav/bottom-nav.component';
+import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, BottomNavComponent],
+  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

@@ -79,7 +79,7 @@
         </ul>
       }
 
-      <button type="submit" mat-raised-button color="primary" class="auth-submit" [disabled]="loading()">
+      <button type="submit" mat-raised-button color="primary" class="auth-submit" [disabled]="loading() || !allRequirementsMet()">
         @if (loading()) { Creating account... } @else { Create Account }
       </button>
     </form>

@@ -164,6 +164,13 @@
   line-height: 1;
 }
 
+// === Desktop — sidebar handles nav ===
+@media (min-width: 1024px) {
+  :host {
+    display: none;
+  }
+}
+
 // === Dark mode ===
 :host-context(html.dark) {
   .bottom-nav {

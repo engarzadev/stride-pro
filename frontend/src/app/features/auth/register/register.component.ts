@@ -44,6 +44,7 @@ export class RegisterComponent {
       { label: 'One number', met: /\d/.test(pw) },
     ];
   });
+  readonly allRequirementsMet = computed(() => this.passwordRequirements().every(r => r.met));
   readonly passwordTouched = signal(false);
 
   selectAccountType(type: 'owner' | 'professional'): void {
