@@ -40,6 +40,10 @@ type Config struct {
 	TwilioAccountSID  string
 	TwilioAuthToken   string
 	TwilioPhoneNumber string
+
+	// AppBaseURL is the public-facing frontend URL used to build email links
+	// (e.g. password reset). Example: "https://app.stridepro.com"
+	AppBaseURL string
 }
 
 // Load reads configuration from environment variables.
@@ -63,6 +67,7 @@ func Load() (*Config, error) {
 		TwilioAccountSID:  getEnv("TWILIO_ACCOUNT_SID", ""),
 		TwilioAuthToken:   getEnv("TWILIO_AUTH_TOKEN", ""),
 		TwilioPhoneNumber: getEnv("TWILIO_PHONE_NUMBER", ""),
+		AppBaseURL:        getEnv("APP_BASE_URL", "http://localhost:4200"),
 	}
 
 	// Parse allowed origins from comma-separated env var

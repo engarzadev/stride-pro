@@ -68,6 +68,14 @@ export class AuthService {
     return this.api.post<void>('/auth/change-password', { currentPassword, newPassword });
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.api.post<{ message: string }>('/auth/forgot-password', { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.api.post<{ message: string }>('/auth/reset-password', { token, newPassword });
+  }
+
   logout(): void {
     // Tell the server to revoke the token and clear the HttpOnly cookies
     this.api.post('/auth/logout', {}).subscribe({

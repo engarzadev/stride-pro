@@ -223,6 +223,65 @@ func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]string{"message": "Password updated successfully"})
 }
 
+// ForgotPassword handles POST /api/auth/forgot-password.
+// Always returns 200 so callers cannot enumerate registered emails.
+func (h *Handler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Email string `json:"email"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	errs := validator.Errors{}
+	validator.Required(errs, "email", input.Email)
+	validator.Email(errs, "email", input.Email)
+	if errs.HasErrors() {
+		response.ValidationError(w, errs)
+		return
+	}
+
+	// Ignore the error intentionally — we never reveal whether the email exists.
+	_ = h.service.ForgotPassword(input.Email)
+
+	response.JSON(w, http.StatusOK, map[string]string{
+		"message": "If an account with that email exists, a reset link has been sent.",
+	})
+}
+
+// ResetPassword handles POST /api/auth/reset-password.
+func (h *Handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Token       string `json:"token"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		response.Error(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+
+	errs := validator.Errors{}
+	validator.Required(errs, "token", input.Token)
+	validator.Required(errs, "new_password", input.NewPassword)
+	validator.Password(errs, "new_password", input.NewPassword)
+	if errs.HasErrors() {
+		response.ValidationError(w, errs)
+		return
+	}
+
+	if err := h.service.ResetPassword(input.Token, input.NewPassword); err != nil {
+		if errors.Is(err, ErrResetTokenInvalid) {
+			response.Error(w, http.StatusUnprocessableEntity, "This reset link is invalid or has expired.")
+			return
+		}
+		response.Error(w, http.StatusInternalServerError, "Failed to reset password")
+		return
+	}
+
+	response.JSON(w, http.StatusOK, map[string]string{"message": "Password reset successfully."})
+}
+
 // Me handles GET /api/auth/me and returns the authenticated user.
 func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(UserIDKey).(uuid.UUID)

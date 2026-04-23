@@ -53,6 +53,7 @@ func main() {
 	// Initialize services
 	authService := auth.NewService(db, cfg.JWTSecret)
 	authHandler := auth.NewHandler(authService, cfg.IsProd())
+	// emailSender is set on authService below, after the sender is constructed
 
 	subsService := subscriptions.NewService(db)
 	subsHandler := subscriptions.NewHandler(subsService)
@@ -77,6 +78,7 @@ func main() {
 		emailSender = notifications.NewStubEmailSender()
 		log.Println("email: using stub (set SENDGRID_API_KEY to enable real sending)")
 	}
+	authService.SetEmailSender(emailSender, cfg.AppBaseURL)
 	notifService := notifications.NewService(db, emailSender, notifications.NewStubSMSSender())
 
 	apptRepo := appointments.NewRepository(db)

@@ -106,6 +106,8 @@ func New(deps Deps) http.Handler {
 	authLimiter := middleware.NewAuthRateLimiter()
 	r.Handle("/api/auth/register", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.Register))).Methods("POST")
 	r.Handle("/api/auth/login", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.Login))).Methods("POST")
+	r.Handle("/api/auth/forgot-password", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.ForgotPassword))).Methods("POST")
+	r.Handle("/api/auth/reset-password", authLimiter.Middleware(http.HandlerFunc(deps.AuthHandler.ResetPassword))).Methods("POST")
 	r.HandleFunc("/api/auth/refresh", deps.AuthHandler.Refresh).Methods("POST")
 
 	// Protected routes

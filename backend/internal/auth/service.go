@@ -2,7 +2,10 @@
 package auth
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"time"
@@ -16,16 +19,25 @@ import (
 )
 
 var (
-	ErrEmailTaken         = errors.New("email already registered")
-	ErrInvalidCredentials = errors.New("invalid email or password")
-	ErrUserNotFound       = errors.New("user not found")
-	ErrTokenRevoked       = errors.New("token has been revoked")
+	ErrEmailTaken              = errors.New("email already registered")
+	ErrInvalidCredentials      = errors.New("invalid email or password")
+	ErrUserNotFound            = errors.New("user not found")
+	ErrTokenRevoked            = errors.New("token has been revoked")
+	ErrResetTokenInvalid       = errors.New("reset token is invalid or expired")
 )
+
+// PasswordResetter is satisfied by notifications.EmailSender; defined here to
+// avoid an import cycle between auth and notifications.
+type PasswordResetter interface {
+	SendHTML(recipient, subject, htmlBody string) error
+}
 
 // Service handles authentication business logic.
 type Service struct {
-	db        *database.DB
-	jwtSecret []byte
+	db          *database.DB
+	jwtSecret   []byte
+	emailSender PasswordResetter
+	appBaseURL  string // e.g. "https://app.stridepro.com" — used to build reset links
 }
 
 // NewService creates an auth service with the given database and JWT secret.
@@ -34,6 +46,13 @@ func NewService(db *database.DB, jwtSecret string) *Service {
 		db:        db,
 		jwtSecret: []byte(jwtSecret),
 	}
+}
+
+// SetEmailSender configures the email sender used for password reset emails.
+// Call this from main after constructing the service.
+func (s *Service) SetEmailSender(sender PasswordResetter, appBaseURL string) {
+	s.emailSender = sender
+	s.appBaseURL = appBaseURL
 }
 
 // RegisterInput holds the data needed to create a new user.
@@ -399,4 +418,115 @@ func (s *Service) isTokenRevoked(jti string) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+// ForgotPassword looks up the user by email, creates a single-use reset token
+// valid for 1 hour, and sends a reset-link email. If no account matches the
+// email we return nil (no enumeration — the caller always returns 200).
+func (s *Service) ForgotPassword(email string) error {
+	var userID uuid.UUID
+	var firstName string
+	err := s.db.QueryRow(
+		`SELECT id, first_name FROM users WHERE email = $1`, email,
+	).Scan(&userID, &firstName)
+	if errors.Is(err, sql.ErrNoRows) {
+		// Do not reveal whether the email is registered.
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("querying user by email: %w", err)
+	}
+
+	// Generate a cryptographically random 32-byte token.
+	raw := make([]byte, 32)
+	if _, err := rand.Read(raw); err != nil {
+		return fmt.Errorf("generating reset token: %w", err)
+	}
+	rawHex := hex.EncodeToString(raw) // sent to the user in the URL
+	hash := sha256.Sum256([]byte(rawHex))
+	tokenHash := hex.EncodeToString(hash[:]) // stored in the DB
+
+	expiresAt := time.Now().Add(1 * time.Hour)
+	_, err = s.db.Exec(
+		`INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+		 VALUES ($1, $2, $3)`,
+		userID, tokenHash, expiresAt,
+	)
+	if err != nil {
+		return fmt.Errorf("storing reset token: %w", err)
+	}
+
+	if s.emailSender != nil {
+		resetURL := fmt.Sprintf("%s/auth/reset-password?token=%s", s.appBaseURL, rawHex)
+		subject, body := passwordResetEmail(firstName, resetURL)
+		// Best-effort — log but don't fail; the token is already stored.
+		if err := s.emailSender.SendHTML(email, subject, body); err != nil {
+			return fmt.Errorf("sending reset email: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// ResetPassword validates the raw token, checks it hasn't been used or expired,
+// then updates the user's password and marks the token as used.
+func (s *Service) ResetPassword(rawToken, newPassword string) error {
+	hash := sha256.Sum256([]byte(rawToken))
+	tokenHash := hex.EncodeToString(hash[:])
+
+	var tokenID uuid.UUID
+	var userID uuid.UUID
+	var usedAt sql.NullTime
+	err := s.db.QueryRow(
+		`SELECT id, user_id, used_at FROM password_reset_tokens
+		 WHERE token_hash = $1 AND expires_at > NOW()`,
+		tokenHash,
+	).Scan(&tokenID, &userID, &usedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ErrResetTokenInvalid
+	}
+	if err != nil {
+		return fmt.Errorf("looking up reset token: %w", err)
+	}
+	if usedAt.Valid {
+		return ErrResetTokenInvalid
+	}
+
+	newHash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("hashing new password: %w", err)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf("beginning transaction: %w", err)
+	}
+	defer tx.Rollback() //nolint:errcheck
+
+	if _, err = tx.Exec(
+		`UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+		string(newHash), userID,
+	); err != nil {
+		return fmt.Errorf("updating password: %w", err)
+	}
+
+	if _, err = tx.Exec(
+		`UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1`,
+		tokenID,
+	); err != nil {
+		return fmt.Errorf("marking token used: %w", err)
+	}
+
+	return tx.Commit()
+}
+
+// passwordResetEmail returns the subject and HTML body for a password reset email.
+func passwordResetEmail(firstName, resetURL string) (subject, body string) {
+	subject = "Reset your Stride Pro password"
+	body = fmt.Sprintf(`<p>Hi %s,</p>
+<p>We received a request to reset your Stride Pro password. Click the button below to choose a new one. This link expires in 1 hour.</p>
+<p><a href="%s" style="background:#3b6255;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;">Reset Password</a></p>
+<p>If you didn't request this, you can safely ignore this email — your password won't change.</p>
+<p>— The Stride Pro Team</p>`, firstName, resetURL)
+	return
 }
